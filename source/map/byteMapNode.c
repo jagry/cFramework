@@ -1,5 +1,6 @@
 #include <jagry/buffer.h>
 #include <memory.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "byteMapNode.h"
@@ -12,8 +13,10 @@ if( jResultIsNotError( result = jagryInitializeBuffer( &( *object )->key , bytes
 	{
 		if( jResultIsNotError( result = jagryCreatePBuffer( value , &( *object )->value ) ) )
 			{
+				printf( "=== create self = %p , owner = %p\r\n" , *object , owner ) ;
 				if( ( ( *object )->owner = owner ) )
-					++owner->count;
+					printf( "\t%li->%li\r\n" , ( *object )->owner->count , ( *object )->owner->count + 1 ) ,
+					++owner->count ;
 				memset( ( *object )->subs , 0 , sizeof( ( *object )->subs ) ) ;
 				( *object )->count = 0 ;
 				return jSuccesResult ;
@@ -37,10 +40,12 @@ return result ;
 }*/
 
 JVoid freeByteMapNode( PByteMapNode self ) {
+printf( "=== free self = %p , owner = %p\r\n" , self , self->owner ) ;
+if( self->owner )
+	printf( "\t%li->%li\r\n" , self->owner->count , self->owner->count - 1 ) ,
+	--self->owner->count ;
 if( self->value )
 	jagryFreeBuffer( self->value ) ;
-if( self->owner )
-	--self->owner->count ;
-jagryFreeBuffer( &self->key ) ;
+jagryClearBuffer( &self->key ) ;
 free( self ) ;
 }

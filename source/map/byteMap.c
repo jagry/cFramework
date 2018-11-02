@@ -8,14 +8,18 @@
 
 #include "byteMap.h"
 
-#ifndef NDEBUG
-	#define ADDRETURN1 1
-	#define ADDRETURN2 2
-	#define ADDRETURN3 4
-	#define ADDRETURN4 8
-
-	int addReturn = ADDRETURN1 | ADDRETURN2 | ADDRETURN3 | ADDRETURN4 ;
-#endif
+#define addByteMapReturn() \
+	{ \
+		if( out && jResultIsError( result = jagrySetBuffer( out , valueIn.bytes , valueIn.size ) ) ) \
+			freeByteMapNode( node->subs[ *( JPByte )local.bytes ] ) ; \
+		else \
+			{ \
+				freeByteMapNode( *pointer ) ; \
+				*pointer = node ; \
+				++self->count ; \
+				return jSuccesResult ; \
+			} \
+	}
 
 static JResult setByteMapOut( JPCBuffer in , JPBuffer out ) {
 //return out ? jagrySetBuffer( out , in->bytes , in->size ) : jSuccesResult ;
@@ -46,20 +50,10 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 			return ( out && jResultIsError( result = jagrySetBuffer( out , valueIn.bytes , valueIn.size ) ) ) ? result : jMapValueAlreadyExistsWarningResult ;
 		else
 			{
-				if( jResultIsNotError( result = createByteMapNode( ( *pointer )->key.bytes , ( *pointer )->key.size - local.size , &valueIn , *pointer , &node ) ) )
+				if( jResultIsNotError( result = createByteMapNode( ( *pointer )->key.bytes , ( *pointer )->key.size - local.size , &valueIn , ( *pointer )->owner , &node ) ) )
 					{
 						if( jResultIsNotError( result = createByteMapNode( local.bytes + 1 , local.size - 1 , ( *pointer )->value , node , &node->subs[ *( JPByte )local.bytes ] ) ) )
-							{
-								if( out && jResultIsError( result = jagrySetBuffer( out , valueIn.bytes , valueIn.size ) ) )
-									freeByteMapNode( node->subs[ *( JPByte )local.bytes ] ) ;
-								else
-									{
-										freeByteMapNode( *pointer ) ;
-										*pointer = node ;
-										++self->count ;
-										return jSuccesResult ;
-									}
-							}
+							addByteMapReturn()
 						freeByteMapNode( node ) ;
 					}
 				return result ;
@@ -80,7 +74,7 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 		else
 			if( *( JPByte )argument.bytes != *( JPByte )local.bytes )
 				{
-					if( jResultIsNotError( result = createByteMapNode( keyIn.bytes , keyIn.size - argument.size , 0 , *pointer , &node ) ) )
+					if( jResultIsNotError( result = createByteMapNode( keyIn.bytes , keyIn.size - argument.size , 0 , ( *pointer )->owner , &node ) ) )
 						{
 							if( jResultIsNotError( result = createByteMapNode( ( JPByte )argument.bytes + 1 , argument.size - 1 , &valueIn , node , &node->subs[ *( JPByte )argument.bytes ] ) ) )
 								{
@@ -107,30 +101,44 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 }
 
 static JResult eraseByteMap( PByteMap self , JBuffer in , JPBuffer out ) {
-JResult result ;
 PByteMapNode node = self->node ;
 if( !node )
 	return jMapValueNotFoundErrorResult ;
 for( JBuffer local = node->key ; ; ++in.bytes , --in.size )
 	if( in.size == 0 )
-		{
-			if( local.size == 0 )
-				if( node->value )
-					if( out && jResultIsError( result = jagrySetBuffer( out , node->value->bytes , node->value->size ) ) ) 
-						return result ;
-					else
-						return jMapValueNotFoundErrorResult ;
-				else
-					return jMapValueNotFoundErrorResult ;
+		if( local.size == 0 )
+			if( node->value )
+				{
+					{
+						JResult result ;
+						if( out && jResultIsError( result = jagrySetBuffer( out , node->value->bytes , node->value->size ) ) ) 
+							return result ;
+					}
+					{
+						PByteMapNode owner = node->owner ;
+						loop : freeByteMapNode( node ) ;
+						if( owner )
+							{
+								if( !--owner->count )
+									if( !owner->value )
+									{
+										node = owner ;
+										goto loop;
+									}
+							}
+						else
+							self->node = 0 ;
+						--self->count ;
+						return jSuccesResult ;
+					}
+				}
 			else
 				return jMapValueNotFoundErrorResult ;
-		}
+		else
+			return jMapValueNotFoundErrorResult ;
 	else
 		if( local.size == 0 )
-			{
-				local = ( node = node->subs[ *( JPByte )local.bytes ] )->key ;
-				continue ;
-			}
+			local = ( node = node->subs[ *( JPByte )in.bytes ] )->key ;
 		else
 			if( *( JPByte )in.bytes != *( JPByte )local.bytes )
 				return jMapValueNotFoundErrorResult ;

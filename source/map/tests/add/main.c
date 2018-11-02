@@ -74,16 +74,15 @@ for( JSize counter = 0 ; ( sizeof( items ) / sizeof( *items ) ) > counter ; ++co
 		jAddMap( map , key , value , 0 ) ;
 		draw( ( ByteMap* )map ) ;
 	}
-/*{
-	JBuffer value = jEmptyBuffer( ) ;
+{
+	JBuffer value1 = jEmptyBuffer( ) ;
 	for( JSize counter = 0 ; ( sizeof( items ) / sizeof( *items ) ) > counter ; ++counter )
 		{
-			JBuffer
-				key = jBuffer( items[ counter ] , strlen( items[ counter ] ) ) ,
-				value = jEmptyBuffer( items[ counter ] , strlen( items[ counter ] ) ) ;
-			jEraseMap( map , key , value ) ;
+			JBuffer key = jBuffer( items[ counter ] , strlen( items[ counter ] ) ) ;
+			jEraseMap( map , key , &value1 ) ;
 			draw( ( ByteMap* )map ) ;
 		}
-}*/
+	jagryClearBuffer( &value1 ) ;
+}
 return 0 ;
 }

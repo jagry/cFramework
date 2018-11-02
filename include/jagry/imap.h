@@ -53,6 +53,6 @@ jInterface( JMap , JBase , jBaseSupers , methods , jMapAll( JMap ) , JMapMethods
 #define jReleaseMap( argument ) jReleaseBase( argument )
 
 #define jAddMap( self , keyIn , valueIn , out ) ( self )->methods->add( ( self ) , ( keyIn ) , ( valueIn ) , ( out ) )
-#define jEraseMap( self , keyIn , valueIn , out ) ( self )->methods->add( ( self ) , ( keyIn ) , ( valueIn ) , ( out ) )
+#define jEraseMap( self , in , out ) ( self )->methods->erase( ( self ) , ( in ) , ( out ) )
 
 #endif

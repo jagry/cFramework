@@ -1,6 +1,6 @@
+#include <jagry/buffer.h>
 #include <stdlib.h>
 #include <string.h>
-#include <jagry/buffer.h>
 
 JResult jagryAddBufferCharacter( JPBuffer self , JByte byte ) {
 JSize size = self->size + 1 ;
@@ -27,8 +27,10 @@ return jPointerIsNilWarningResult ;
 
 JResult jagryCreateBuffer( JPCByte bytesIn , JSize sizeIn , JPPBuffer out ) {
 JResult result ;
-if( ( *out = malloc( sizeof( JBuffer ) ) ) == 0 ) return jNotEnoughtMemoryErrorResult ;
-if( jResultIsError( result = jagryInitializeBuffer( *out , bytesIn , sizeIn ) ) ) free( *out ) ;
+if( ( *out = malloc( sizeof( JBuffer ) ) ) == 0 )
+	return jNotEnoughtMemoryErrorResult ;
+if( jResultIsError( result = jagryInitializeBuffer( *out , bytesIn , sizeIn ) ) )
+	free( *out ) ;
 return result ;
 }
 
@@ -57,14 +59,14 @@ if( ( self->bytes = malloc( size ) ) == 0 )
 	return jNotEnoughtMemoryErrorResult ;
 memcpy( self->bytes , bytes , self->size = size ) ;
 return jSuccesResult ;
-
 }
 
 JResult jagrySetBuffer( JPBuffer self , JPVoid bytes , JSize size ) {
 JPByte local ;
 if( size )
 	{
-		if( ( local = malloc( size ) ) == 0 ) return jNotEnoughtMemoryErrorResult ;
+		if( ( local = malloc( size ) ) == 0 )
+			return jNotEnoughtMemoryErrorResult ;
 		memcpy( local , bytes , size ) ;
 	}
 else
