@@ -47,7 +47,9 @@ if( self->node == 0 )
 for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes , --argument.size )
 	if( argument.size == 0 )
 		if( local.size == 0 )
-			return ( out && jResultIsError( result = jagrySetBuffer( out , valueIn.bytes , valueIn.size ) ) ) ? result : jMapValueAlreadyExistsWarningResult ;
+			return node->value ?
+				out ? jResultIsError( result = jagrySetBuffer( out , valueIn.bytes , valueIn.size ) ) ? result : jMapValueAlreadyExistsWarningResult : jMapValueAlreadyExistsWarningResult :
+				jMapValueNotFoundErrorResult ;
 		else
 			{
 				if( jResultIsNotError( result = createByteMapNode( ( *pointer )->key.bytes , ( *pointer )->key.size - local.size , &valueIn , ( *pointer )->owner , &node ) ) )
@@ -97,40 +99,47 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 					return result ;
 				}
 			else
-				++local.bytes , --local.size ;
+				++local.bytes ,
+				--local.size ;
 }
 
 static JResult eraseByteMap( PByteMap self , JBuffer in , JPBuffer out ) {
-PByteMapNode node = self->node ;
-if( !node )
+PByteMapNode current = self->node ;
+if( !current )
 	return jMapValueNotFoundErrorResult ;
-for( JBuffer local = node->key ; ; ++in.bytes , --in.size )
+for( JBuffer local = current->key ; ; ++in.bytes , --in.size )
 	if( in.size == 0 )
 		if( local.size == 0 )
-			if( node->value )
+			if( current->value )
 				{
-					{
-						JResult result ;
-						if( out && jResultIsError( result = jagrySetBuffer( out , node->value->bytes , node->value->size ) ) ) 
-							return result ;
-					}
-					{
-						PByteMapNode owner = node->owner ;
-						loop : freeByteMapNode( node ) ;
-						if( owner )
-							{
-								if( !--owner->count )
-									if( !owner->value )
-									{
-										node = owner ;
-										goto loop;
-									}
-							}
-						else
-							self->node = 0 ;
-						--self->count ;
-						return jSuccesResult ;
-					}
+					JPBuffer value = current->value;
+					current->value = 0 ;
+					if( current->count == 0 )
+						{
+							PByteMapNode owner = current->owner ;
+							if( owner )
+								{
+									if( owner->value || owner->count > 1 )
+										{
+											owner->subs[ ( ( JPByte )in.bytes )[ -1 - current->key.size ] ] = 0 ;
+											current->value = 0 ;
+											freeByteMapNode( current ) ;
+											return jSuccesResult ;
+										}
+									else
+										{
+										}
+								}
+							else
+								{
+									self->node = 0 ;
+									self->count = 0 ;
+									current->value = 0 ;
+									freeByteMapNode( current ) ;
+									return jSuccesResult ;
+								}
+						}
+					return jSuccesResult ;
 				}
 			else
 				return jMapValueNotFoundErrorResult ;
@@ -138,12 +147,13 @@ for( JBuffer local = node->key ; ; ++in.bytes , --in.size )
 			return jMapValueNotFoundErrorResult ;
 	else
 		if( local.size == 0 )
-			local = ( node = node->subs[ *( JPByte )in.bytes ] )->key ;
+			local = ( current = current->subs[ *( JPByte )in.bytes ] )->key ;
 		else
 			if( *( JPByte )in.bytes != *( JPByte )local.bytes )
 				return jMapValueNotFoundErrorResult ;
 			else
-				++local.bytes , --local.size ;
+				++local.bytes ,
+				--local.size ;
 }
 
 static ByteMapMethods byteMapMethods = {

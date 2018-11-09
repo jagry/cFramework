@@ -10,7 +10,13 @@
 
 #define indent "   "
 
-JPCharacter1 items[] = { "AbbbCdddEfff" , "AbbbGhhh" , "AbbbCddd" } ;
+JPCharacter1 addItems[] = { "AbbbCdddEfff" , "AbbbGhhh" , "AbbbCddd" } ;
+JPCharacter1 eraseItems[] = { "AbbbGhhh" , "AbbbCddd" , "AbbbCdddEfff" } ;
+
+/*ByteMapNode byteMapNodes[] = { { .count = 0 , .owner = 0 } } ;
+const ByteMap byteMaps[] = {
+	{ .count = 0 , .node = 0 , .methods = 0 } ,
+	{ .count = 1 , .node = &byteMapNodes[ 0 ] , .methods = 0 } } ;*/
 
 void drawBuffer( JBuffer buffer , JCounter level ) {
 printf( "buffer{ size = " jSizeSpecifier " , bytes = %p [" , buffer.size , buffer.bytes ) ;
@@ -23,7 +29,7 @@ void drawNode( ByteMapNode* node , JCounter level ) {
 printf( "mapNode{\r\n" ) ;
 for( JCounter indentCounter = level ; indentCounter ; --indentCounter )
 	printf( "%s" , indent ) ;
-printf( "%scount = " jCounterSpecifier jNewLine , indent , node->count  ) ;
+printf( "%scount = " jSignedInteger2Specifier jNewLine , indent , node->count  ) ;
 for( JCounter indentCounter = level ; indentCounter ; --indentCounter )
 	printf( "%s" , indent ) ;
 printf( "%skey = " , indent ) ;
@@ -66,19 +72,19 @@ if( jResultIsError( result ) )
 if( map == 0 )
 	exit( -2 ) ;
 draw( ( ByteMap* )map ) ;
-for( JSize counter = 0 ; ( sizeof( items ) / sizeof( *items ) ) > counter ; ++counter )
+for( JSize counter = 0 ; ( sizeof( addItems ) / sizeof( *addItems ) ) > counter ; ++counter )
 	{
 		JBuffer
-			key = jBuffer( items[ counter ] , strlen( items[ counter ] ) ) ,
-			value = jBuffer( items[ counter ] , strlen( items[ counter ] ) ) ;
+			key = jBuffer( addItems[ counter ] , strlen( addItems[ counter ] ) ) ,
+			value = jBuffer( addItems[ counter ] , strlen( addItems[ counter ] ) ) ;
 		jAddMap( map , key , value , 0 ) ;
 		draw( ( ByteMap* )map ) ;
 	}
 {
 	JBuffer value1 = jEmptyBuffer( ) ;
-	for( JSize counter = 0 ; ( sizeof( items ) / sizeof( *items ) ) > counter ; ++counter )
+	for( JSize counter = 0 ; ( sizeof( eraseItems ) / sizeof( *eraseItems ) ) > counter ; ++counter )
 		{
-			JBuffer key = jBuffer( items[ counter ] , strlen( items[ counter ] ) ) ;
+			JBuffer key = jBuffer( eraseItems[ counter ] , strlen( eraseItems[ counter ] ) ) ;
 			jEraseMap( map , key , &value1 ) ;
 			draw( ( ByteMap* )map ) ;
 		}

@@ -3,11 +3,11 @@ typedef ByteMapNode * PByteMapNode ;
 typedef PByteMapNode * PPByteMapNode ;
 
 struct ByteMapNode {
-	ByteMapNode* owner ;
-	JCounter count ;
 	JBuffer key ;
 	JPBuffer value ;
-	PByteMapNode subs[ jMaxUnsignedInteger1 + 1 ] ; } ;
+	PByteMapNode owner ;
+	PByteMapNode subs[ jMaxUnsignedInteger1 + 1 ] ;
+	JSignedInteger2 count ; } ;
 
 JResult createByteMapNode( JCPCByte , JSize , JPCBuffer , PByteMapNode , PPByteMapNode ) ;
 JResult createEmptyByteMapNode( JCPCByte , JSize , PPByteMapNode ) ;
