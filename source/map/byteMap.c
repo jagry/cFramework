@@ -107,16 +107,29 @@ static JResult eraseByteMap( PByteMap self , JBuffer in , JPBuffer out ) {
 PByteMapNode current = self->node ;
 if( !current )
 	return jMapValueNotFoundErrorResult ;
-for( JBuffer local = current->key ; ; ++in.bytes , --in.size )
+for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 	if( in.size == 0 )
-		if( local.size == 0 )
+		if( currentKey.size == 0 )
 			if( current->value )
 				{
-					JPBuffer value = current->value;
+					JPBuffer key ,
+						value = current->value ;
 					current->value = 0 ;
+					if( current->count == 1 )
+						{
+							JSignedInteger1 counter ;
+							PByteMapNode subNode ;
+							JBuffer temp = jEmptyBuffer ;
+							for( counter = 0 ; !current->subs[ counter ] ; ++counter ) ;
+							subNode = current->subs[ counter ] ;
+							jagryConcateBuffer( &current->key , &( ( JBuffer ){ .bytes = &counter , .size = 1 } ), &temp ) ;
+							jagryConcateBuffer( &temp , &( ( JBuffer ){ .bytes = &counter , .size = 1 } ), &key ) ;
+							jagryClearBuffer( temp ) ;
+						}
 					if( current->count == 0 )
 						{
-							PByteMapNode owner = current->owner ;
+							
+							/*PByteMapNode owner = current->owner ;
 							if( owner )
 								{
 									if( owner->value || owner->count > 1 )
@@ -132,12 +145,12 @@ for( JBuffer local = current->key ; ; ++in.bytes , --in.size )
 								}
 							else
 								{
+									//current->value = 0 ;
+									freeByteMapNode( current ) ;
 									self->node = 0 ;
 									self->count = 0 ;
-									current->value = 0 ;
-									freeByteMapNode( current ) ;
 									return jSuccesResult ;
-								}
+								}*/
 						}
 					return jSuccesResult ;
 				}
@@ -146,14 +159,14 @@ for( JBuffer local = current->key ; ; ++in.bytes , --in.size )
 		else
 			return jMapValueNotFoundErrorResult ;
 	else
-		if( local.size == 0 )
-			local = ( current = current->subs[ *( JPByte )in.bytes ] )->key ;
+		if( currentKey.size == 0 )
+			currentKey = ( current = current->subs[ *( JPByte )in.bytes ] )->key ;
 		else
-			if( *( JPByte )in.bytes != *( JPByte )local.bytes )
+			if( *( JPByte )in.bytes != *( JPByte )currentKey.bytes )
 				return jMapValueNotFoundErrorResult ;
 			else
-				++local.bytes ,
-				--local.size ;
+				++currentKey.bytes ,
+				--currentKey.size ;
 }
 
 static ByteMapMethods byteMapMethods = {
