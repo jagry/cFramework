@@ -19,6 +19,17 @@ if( self->bytes )
 self->size = 0 ;
 }
 
+JResult jagryConcateBuffer( JCPCBuffer in1 , JCPCBuffer in2 , JPBuffer out ) {
+JBuffer local ;
+jagryClearBuffer( out ) ;
+if( ( local.bytes = malloc( local.size = in1->size + in2->size ) ) == 0 )
+	return jNotEnoughtMemoryErrorResult ;
+*out = local ;
+memcpy( local.bytes , in1->bytes , in1->size ) ;
+memcpy( local.bytes + in1->size , in2->bytes , in2->size ) ;
+return jSuccesResult ;
+}
+
 JResult jagryCreatePBuffer( JPCBuffer in , JPPBuffer out ) {
 if( in ) return jagryCreateBuffer( in->bytes , in->size , out ) ;
 *out = 0 ;
