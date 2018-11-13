@@ -45,14 +45,6 @@ if( jResultIsError( result = jagryInitializeBuffer( *out , bytesIn , sizeIn ) ) 
 return result ;
 }
 
-//void jagryDumpBuffer( JIDump dump , JCPCBuffer self ) {
-/*jagryDumpString1( dump , "buffer{ size = " ) ;
-jagryDumpDecimalSignedInteger( dump , self->size ) ;
-jagryDumpString1( dump , " , value = " ) ;
-jagryDumpByteArray( dump , self->bytes , self->size ) ;
-jagryDumpString1( dump , " }" ) ;*/
-//}
-
 JVoid jagryFreeBuffer( JPBuffer self ) {
 if( self->bytes )
 	free( self->bytes ) ;

@@ -8,6 +8,25 @@
 
 #include "byteMap.h"
 
+#define STRINGIFY2( x ) #x
+#define STRINGIFY( x ) STRINGIFY2( x )
+#define __LINE_STRING__ STRINGIFY( __LINE__ )
+
+#ifdef DEBUG
+	#define eraseByteMapReturn( bit , value ) \
+		{ \
+			eraseByteMapReturnBits |= bit ; \
+			return value ; \
+		}
+	#define eraseByteMapReturnMapEmpty ( 1 << 0 )
+	#define eraseByteMapReturnMapOther ( 1 << 1 )
+	#define eraseByteMapAllReturn ( \
+		eraseByteMapReturnMapEmpty | \
+		eraseByteMapReturnMapOther )
+
+	JSignedInteger8 eraseByteMapReturnBits = 0 ;
+#endif
+
 #define addByteMapReturn() \
 	{ \
 		if( out && jResultIsError( result = jagrySetBuffer( out , valueIn.bytes , valueIn.size ) ) ) \
@@ -37,7 +56,7 @@ if( self->node == 0 )
 	{
 		if( jResultIsError( result = createByteMapNode( keyIn.bytes , keyIn.size , &valueIn , 0 , &self->node ) ) )
 			return result ;
-		if( jResultIsError( result = setByteMapOut( &valueIn , out ) ) )
+		if( jResultIsError( result = out ? jagrySetBuffer( out , valueIn.bytes , valueIn.size ) : jSuccesResult ) )
 			freeByteMapNode( self->node ) ,
 			self->node = 0 ;
 		else
@@ -103,54 +122,78 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 				--local.size ;
 }
 
+void drawByteMapBuffer( JBuffer buffer ) {
+printf( "buffer{ size = " jSizeSpecifier " , bytes = %p [" , buffer.size , buffer.bytes ) ;
+for( ; buffer.size ; ++buffer.bytes , --buffer.size )
+	printf( " " jUnsignedInteger1Specifier , *( JPByte )buffer.bytes ) ;
+printf( " ] }" ) ;
+}
+
 static JResult eraseByteMap( PByteMap self , JBuffer in , JPBuffer out ) {
 PByteMapNode current = self->node ;
+printf( "Enter = " ) ;
+drawByteMapBuffer( in ) ;
+printf( "\r\n" ) ;
 if( !current )
-	return jMapValueNotFoundErrorResult ;
+	eraseByteMapReturn( eraseByteMapReturnMapEmpty , jMapValueNotFoundErrorResult )
 for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
+{
+	printf( "Itertion\r\n   current key = " ) ;
+	drawByteMapBuffer( currentKey ) ;
+	printf( "\r\n   in = " ) ;
+	drawByteMapBuffer( in ) ;
+	printf( "\r\n" ) ;
 	if( in.size == 0 )
 		if( currentKey.size == 0 )
 			if( current->value )
 				{
-					JPBuffer key ,
-						value = current->value ;
-					current->value = 0 ;
-					if( current->count == 1 )
-						{
-							JSignedInteger1 counter ;
-							PByteMapNode subNode ;
-							JBuffer temp = jEmptyBuffer ;
-							for( counter = 0 ; !current->subs[ counter ] ; ++counter ) ;
-							subNode = current->subs[ counter ] ;
-							jagryConcateBuffer( &current->key , &( ( JBuffer ){ .bytes = &counter , .size = 1 } ), &temp ) ;
-							jagryConcateBuffer( &temp , &( ( JBuffer ){ .bytes = &counter , .size = 1 } ), &key ) ;
-							jagryClearBuffer( temp ) ;
-						}
+					JPBuffer value = current->value ;
+					PByteMapNode owner = current->owner ;
+					//current->value = 0 ;
 					if( current->count == 0 )
-						{
-							
-							/*PByteMapNode owner = current->owner ;
-							if( owner )
+						if( owner )
+							if( owner->value )
 								{
-									if( owner->value || owner->count > 1 )
-										{
-											owner->subs[ ( ( JPByte )in.bytes )[ -1 - current->key.size ] ] = 0 ;
-											current->value = 0 ;
-											freeByteMapNode( current ) ;
-											return jSuccesResult ;
-										}
-									else
-										{
-										}
+									owner->subs[ ( ( JPByte )in.bytes )[ -1 - current->key.size ] ] = 0 ;
+									freeByteMapNode( current ) ;
+									// Установить буффер
+									printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+									exit( -1 ) ;
+									return jSuccesResult ;
 								}
 							else
 								{
-									//current->value = 0 ;
-									freeByteMapNode( current ) ;
-									self->node = 0 ;
-									self->count = 0 ;
-									return jSuccesResult ;
-								}*/
+									printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+									exit( -1 ) ;
+								}
+						else
+							{
+								freeByteMapNode( current ) ;
+								self->node = 0 ;
+								self->count = 0 ;
+								printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+								exit( -1 ) ;
+								return jSuccesResult ;
+							}
+					else
+						if( current->count == 1 )
+							{
+								printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+								exit( -1 ) ;
+							}
+						else
+							{
+								printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+								exit( -1 ) ;
+							}
+					if( owner->value )
+						{
+							freeByteMapNode( current ) ;
+						}
+					else
+						{
+							printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+							exit( -1 ) ;
 						}
 					return jSuccesResult ;
 				}
@@ -167,6 +210,7 @@ for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 			else
 				++currentKey.bytes ,
 				--currentKey.size ;
+}
 }
 
 static ByteMapMethods byteMapMethods = {

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "byteMapNode.h"
+#include "jagry.h"
 
 JResult createByteMapNode( JCPCByte bytes , JSize size , JPCBuffer value , PByteMapNode owner , PPByteMapNode object ) {
 JResult result ;
@@ -15,7 +16,7 @@ if( jResultIsNotError( result = jagryInitializeBuffer( &( *object )->key , bytes
 			{
 				printf( "=== create self = %p , owner = %p\r\n" , *object , owner ) ;
 				if( ( ( *object )->owner = owner ) )
-					printf( "\t%li->%li\r\n" , ( *object )->owner->count , ( *object )->owner->count + 1 ) ,
+					printf( "\t" jSignedInteger2Specifier "->" jSignedIntegerSpecifier "\r\n" , ( *object )->owner->count , ( *object )->owner->count + 1 ) ,
 					++owner->count ;
 				memset( ( *object )->subs , 0 , sizeof( ( *object )->subs ) ) ;
 				( *object )->count = 0 ;
@@ -42,7 +43,7 @@ return result ;
 JVoid freeByteMapNode( PByteMapNode self ) {
 printf( "=== free self = %p , owner = %p\r\n" , self , self->owner ) ;
 if( self->owner )
-	printf( "\t%li->%li\r\n" , self->owner->count , self->owner->count - 1 ) ,
+	printf( "\t" jSignedInteger2Specifier "->" jSignedIntegerSpecifier "\r\n" , self->owner->count , self->owner->count - 1 ) ,
 	--self->owner->count ;
 if( self->value )
 	jagryFreeBuffer( self->value ) ;

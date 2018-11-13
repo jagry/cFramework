@@ -81,7 +81,7 @@ for( JSize counter = 0 ; ( sizeof( addItems ) / sizeof( *addItems ) ) > counter 
 		draw( ( ByteMap* )map ) ;
 	}
 {
-	JBuffer value1 = jEmptyBuffer( ) ;
+	JBuffer value1 = jEmptyBuffer ;
 	for( JSize counter = 0 ; ( sizeof( eraseItems ) / sizeof( *eraseItems ) ) > counter ; ++counter )
 		{
 			JBuffer key = jBuffer( eraseItems[ counter ] , strlen( eraseItems[ counter ] ) ) ;
