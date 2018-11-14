@@ -1,31 +1,6 @@
-#include <jagry/imap.h>
-#include <jagry/lbase.h>
-#include <memory.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "byteMapNode.h"
-
-#include "byteMap.h"
-
 #define STRINGIFY2( x ) #x
 #define STRINGIFY( x ) STRINGIFY2( x )
 #define __LINE_STRING__ STRINGIFY( __LINE__ )
-
-#ifdef DEBUG
-	#define eraseByteMapReturn( bit , value ) \
-		{ \
-			eraseByteMapReturnBits |= bit ; \
-			return value ; \
-		}
-	#define eraseByteMapReturnMapEmpty ( 1 << 0 )
-	#define eraseByteMapReturnMapOther ( 1 << 1 )
-	#define eraseByteMapAllReturn ( \
-		eraseByteMapReturnMapEmpty | \
-		eraseByteMapReturnMapOther )
-
-	JSignedInteger8 eraseByteMapReturnBits = 0 ;
-#endif
 
 #define addByteMapReturn() \
 	{ \
@@ -40,7 +15,21 @@
 			} \
 	}
 
-static JResult setByteMapOut( JPCBuffer in , JPBuffer out ) {
+#include <jagry/imap.h>
+#include <jagry/lbase.h>
+#include <memory.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "byteMapNode.h"
+
+#include "byteMap.h"
+
+#ifdef DEBUG
+	JUnsignedInteger8 jagryDebugEraseByteMap = 0 ;
+#endif
+
+	static JResult setByteMapOut( JPCBuffer in , JPBuffer out ) {
 //return out ? jagrySetBuffer( out , in->bytes , in->size ) : jSuccesResult ;
 if( out )
 	return jagrySetBuffer( out , in->bytes , in->size ) ;
@@ -135,7 +124,7 @@ printf( "Enter = " ) ;
 drawByteMapBuffer( in ) ;
 printf( "\r\n" ) ;
 if( !current )
-	eraseByteMapReturn( eraseByteMapReturnMapEmpty , jMapValueNotFoundErrorResult )
+	eraseByteMapReturn( eraseByteMapPointMapEmpty , jMapValueNotFoundErrorResult )
 for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 {
 	printf( "Itertion\r\n   current key = " ) ;

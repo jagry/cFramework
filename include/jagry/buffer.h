@@ -1,7 +1,7 @@
 #ifndef jagryBuffer
 #define jagryBuffer
 
-#define jEmptyBuffer( ) jBuffer( 0 , 0 )
+#define jEmptyBuffer jBuffer( 0 , 0 )
 #define jBuffer( bytesIn , sizeIn ) { .bytes = bytesIn , .size = sizeIn }
 
 typedef struct JBuffer JBuffer ;
@@ -9,9 +9,11 @@ typedef struct JBuffer JBuffer ;
 typedef JBuffer const JCBuffer ;
 typedef JBuffer * JPBuffer ;
 
+//typedef JPBuffer const JCPBuffer ;
 typedef JCBuffer * JPCBuffer ;
 typedef JPBuffer * JPPBuffer ;
 
+typedef JPCBuffer const JCPCBuffer ;
 
 #include "result.h"
 
@@ -24,6 +26,7 @@ JSize size ;
 
 JResult jagryAddBufferByte( JPBuffer , JByte ) ;
 JVoid jagryClearBuffer( JPBuffer ) ;
+JResult jagryConcateBuffer( JCPCBuffer , JCPCBuffer , JPBuffer ) ;
 JResult jagryCreatePBuffer( JPCBuffer , JPPBuffer ) ;
 JResult jagryCreateBuffer( JPCByte , JSize , JPPBuffer ) ;
 //void jagryDumpBuffer( JIDump , JCPCBuffer ) ;

@@ -29,17 +29,17 @@
 #define jMinSignedInteger4 ( ~jMaxSignedInteger4 )
 #define jMinSignedInteger8 ( ~jMaxSignedInteger8 )
 
-#define jSignedIntegerSpecifier "%li"
+#define jSignedIntegerSpecifier "%i"
 #define jSignedInteger1Specifier "%i"
-#define jSignedInteger2Specifier "%i"
+#define jSignedInteger2Specifier "%hi"
 #define jSignedInteger4Specifier "%i"
-#define jSignedInteger8Specifier "%li"
+#define jSignedInteger8Specifier "%lli"
 
-#define jUnsignedIntegerSpecifier "%lu"
+#define jUnsignedIntegerSpecifier "%u"
 #define jUnsignedInteger1Specifier "%u"
-#define jUnsignedInteger2Specifier "%u"
+#define jUnsignedInteger2Specifier "%hu"
 #define jUnsignedInteger4Specifier "%u"
-#define jUnsignedInteger8Specifier "%lu"
+#define jUnsignedInteger8Specifier "%llu"
 
 #define jByteSpecifier jUnsignedInteger1Specifier
 #define jCounterSpecifier jSignedIntegerSpecifier
@@ -54,18 +54,18 @@ typedef int JCharacter4 ;
 typedef signed char JSignedInteger1 ;
 typedef signed short JSignedInteger2 ;
 typedef signed int JSignedInteger4 ;
-typedef signed long JSignedInteger8 ;
+typedef signed long long JSignedInteger8 ;
 
 typedef unsigned char JUnsignedInteger1 ;
 typedef unsigned short JUnsignedInteger2 ;
 typedef unsigned int JUnsignedInteger4 ;
-typedef unsigned long JUnsignedInteger8 ;
+typedef unsigned long long JUnsignedInteger8 ;
 
 typedef void JVoid ;
 
 #ifdef _LP64
-	typedef JSignedInteger8 JSignedInteger ;
-	typedef JUnsignedInteger8 JUnsignedInteger ;
+	typedef signed int JSignedInteger ;
+	typedef unsigned int JUnsignedInteger ;
 	typedef JUnsignedInteger8 jPointerInteger ;
 #else
 	typedef JSignedInteger4 JSignedInteger ;

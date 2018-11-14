@@ -8,5 +8,5 @@ JVoid drawBuffer( JBuffer buffer , JCounter level ) {
 printf( "buffer{ size = " jSizeSpecifier " , bytes = [" , buffer.size ) ;
 for( ; buffer.size ; ++buffer.bytes , --buffer.size , --buffer.bytes )
 	printf( " " jUnsignedInteger1Specifier , *( JPByte )buffer.bytes ) ;
-printf( " ] }\r\n" ) ;
+printf( " ] }" jNewLine ) ;
 }

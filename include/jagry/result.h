@@ -7,6 +7,7 @@
 
 #define jResultIsError( argument ) ( ( argument ) < 0 )
 #define jResultIsNotError( argument ) ( ( argument ) >= 0 )
+#define jResultSpecifier jSignedIntegerSpecifier
 
 #include "../jagry.h"
 
