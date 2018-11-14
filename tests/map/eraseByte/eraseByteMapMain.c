@@ -30,7 +30,7 @@ JResult result ;
 			printf( "jagryByteMap returned error " jResultSpecifier jNewLine "\terror: %s:" jSignedIntegerSpecifier jNewLine , result , __FILE__ , __LINE__ ) ;
 			return -1 ;
 		}
-	if( ( result = jEraseMap( map , key , 0 ) ) != jMapValueNotFoundErrorResult )
+	if( ( result = jEraseMap( map , key , value ) ) != jMapValueNotFoundErrorResult )
 		{
 			printf( "jEraseMap returned " jResultSpecifier ", must be " jResultSpecifier jNewLine "\terror: %s:" jSignedIntegerSpecifier jNewLine ,
 				result , jMapValueNotFoundErrorResult , __FILE__ , __LINE__ ) ;
@@ -46,7 +46,7 @@ JResult result ;
 }
 { // eraseByteMapPointMapEmpty without return value
 	JBuffer key = jEmptyBuffer ;
-	printf( "test '" jStringify( eraseByteMapPointMapEmpty ) "' with return value: " ) ;
+	printf( "test '" jStringify( eraseByteMapPointMapEmpty ) "' without return value: " ) ;
 	if( jResultIsError( result = jagryByteMap( &map ) ) )
 		{
 			printf( "jagryByteMap returned error " jResultSpecifier jNewLine "\terror: %s:" jSignedIntegerSpecifier jNewLine , result , __FILE__ , __LINE__ ) ;
