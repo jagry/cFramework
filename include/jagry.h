@@ -41,6 +41,8 @@
 #define jUnsignedInteger4Specifier "%u"
 #define jUnsignedInteger8Specifier "%llu"
 
+#define jPointerSpecifier "%p"
+
 #define jByteSpecifier jUnsignedInteger1Specifier
 #define jCounterSpecifier jSignedIntegerSpecifier
 #define jSizeSpecifier jSignedIntegerSpecifier

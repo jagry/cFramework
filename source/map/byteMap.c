@@ -119,87 +119,107 @@ printf( " ] }" ) ;
 }
 
 static JResult eraseByteMap( PByteMap self , JBuffer in , JPBuffer out ) {
+PByteMapNode owner ;
 PByteMapNode current = self->node ;
 printf( "Enter = " ) ;
 drawByteMapBuffer( in ) ;
-printf( "\r\n" ) ;
+printf( jNewLine ) ;
 if( !current )
-	eraseByteMapReturn( eraseByteMapPointMapEmpty , jMapValueNotFoundErrorResult )
+	{
+		// Map пустой, возвращаем "элемент не нейден"
+		eraseByteMapReturn( eraseByteMapPointMapEmpty , jMapValueNotFoundErrorResult )
+	}
+//owner = current->owner ;
 for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
-{
-	printf( "Itertion\r\n   current key = " ) ;
-	drawByteMapBuffer( currentKey ) ;
-	printf( "\r\n   in = " ) ;
-	drawByteMapBuffer( in ) ;
-	printf( "\r\n" ) ;
-	if( in.size == 0 )
-		if( currentKey.size == 0 )
-			if( current->value )
-				{
-					JPBuffer value = current->value ;
-					PByteMapNode owner = current->owner ;
-					//current->value = 0 ;
-					if( current->count == 0 )
-						if( owner )
-							if( owner->value )
+	{
+		printf( "Itertion" jNewLine "   current key = " ) ;
+		drawByteMapBuffer( currentKey ) ;
+		printf( jNewLine "   in = " ) ;
+		drawByteMapBuffer( in ) ;
+		printf( jNewLine ) ;
+		if( in.size == 0 )
+			if( currentKey.size == 0 )
+				if( current->value )
+					{
+						JPBuffer value = current->value ;
+						//current->value = 0 ;
+						if( current->count == 0 )
+							if( owner )
+								if( owner->value )
+									{
+										owner->subs[ ( ( JPByte )in.bytes )[ -1 - current->key.size ] ] = 0 ;
+										freeByteMapNode( current ) ;
+										// Установить буффер
+										printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+										exit( -1 ) ;
+										return jSuccesResult ;
+									}
+								else
+									if( owner->count > 2 )
+										{
+											printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+											exit( -1 ) ;
+										}
+									else
+										{
+											printf( "break " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+											break ;
+										}
+							else
 								{
-									owner->subs[ ( ( JPByte )in.bytes )[ -1 - current->key.size ] ] = 0 ;
 									freeByteMapNode( current ) ;
-									// Установить буффер
+									self->node = 0 ;
+									self->count = 0 ;
 									printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
 									exit( -1 ) ;
 									return jSuccesResult ;
+								}
+						else
+							if( current->count == 1 )
+								{
+									printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+									exit( -1 ) ;
 								}
 							else
 								{
 									printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
 									exit( -1 ) ;
 								}
-						else
-							{
-								freeByteMapNode( current ) ;
-								self->node = 0 ;
-								self->count = 0 ;
-								printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-								exit( -1 ) ;
-								return jSuccesResult ;
-							}
-					else
-						if( current->count == 1 )
-							{
-								printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-								exit( -1 ) ;
-							}
-						else
-							{
-								printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-								exit( -1 ) ;
-							}
-					if( owner->value )
-						{
-							freeByteMapNode( current ) ;
-						}
-					else
-						{
-							printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-							exit( -1 ) ;
-						}
-					return jSuccesResult ;
-				}
+						printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+						exit( -1 ) ;
+						return jSuccesResult ;
+					}
+				else
+					return jMapValueNotFoundErrorResult ;
 			else
 				return jMapValueNotFoundErrorResult ;
 		else
-			return jMapValueNotFoundErrorResult ;
+			if( currentKey.size == 0 )
+				currentKey = ( current = current->subs[ *( JPByte )in.bytes ] )->key ;
+			else
+				if( *( JPByte )in.bytes != *( JPByte )currentKey.bytes )
+					return jMapValueNotFoundErrorResult ;
+				else
+					++currentKey.bytes ,
+					--currentKey.size ;
+	}
+for( ; ; )
+	if( owner->value )
+		if( owner->count == 2 )
+			{
+				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+				exit( -1 ) ;
+			}
+		else
+			{
+				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+				exit( -1 ) ;
+			}
 	else
-		if( currentKey.size == 0 )
-			currentKey = ( current = current->subs[ *( JPByte )in.bytes ] )->key ;
-		else
-			if( *( JPByte )in.bytes != *( JPByte )currentKey.bytes )
-				return jMapValueNotFoundErrorResult ;
-			else
-				++currentKey.bytes ,
-				--currentKey.size ;
-}
+		{
+			printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+			exit( -1 ) ;
+		}
 }
 
 static ByteMapMethods byteMapMethods = {

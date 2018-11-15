@@ -2,7 +2,7 @@
 #define jagryBuffer
 
 #define jEmptyBuffer jBuffer( 0 , 0 )
-#define jBuffer( bytesIn , sizeIn ) { .bytes = bytesIn , .size = sizeIn }
+#define jBuffer( bytesIn , sizeIn ) ( ( JBuffer ){ .bytes = bytesIn , .size = sizeIn } )
 
 typedef struct JBuffer JBuffer ;
 
