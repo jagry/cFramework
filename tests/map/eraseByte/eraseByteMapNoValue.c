@@ -10,9 +10,7 @@
 
 #include "eraseByteMap.h"
 
-extern JUnsignedInteger8 jagryDebugEraseByteMap ;
-
-JResult emptyNull() {
+JResult noValueNull() {
 JIMap map ;
 JResult result ;
 JBuffer key = jEmptyBuffer ;
@@ -27,10 +25,16 @@ if( ( result = jEraseMap( map , key , 0 ) ) != jMapValueNotFoundErrorResult )
 		printf( eraseMapReturnedOther , result , jMapValueNotFoundErrorResult , __FILE__ , __LINE__ ) ;
 		return -1 ;
 	}
-return 0 ;
+if( jagryDebugEraseByteMap != eraseByteMapReturnEmpty )
+	{
+		printf( debugMustBe , jagryDebugEraseByteMap , eraseByteMapReturnEmpty , __FILE__ , __LINE__ ) ;
+		return -1 ;
+	}
+printf( "done" jNewLine ) ;
+return jSuccesResult ;
 }
 
-JResult emptyValue() {
+JResult noValueValue() {
 JIMap map ;
 JResult result ;
 JBuffer
@@ -39,7 +43,7 @@ JBuffer
 printf( "test '" stringify( eraseByteMapPointEmpty ) "' with return value: " ) ;
 if( jResultIsError( result = jagryByteMap( &map ) ) )
 	{
-		printf( factoryReturnedError , "jagryByteMap" , result , __FILE__ , __LINE__ ) ;
+		printf(factoryReturnedError , "jagryByteMap" , result , __FILE__ , __LINE__ ) ;
 		return -1 ;
 	}
 if( ( result = jEraseMap( map , jEmptyBuffer , &value ) ) != jMapValueNotFoundErrorResult )

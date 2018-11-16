@@ -1,21 +1,36 @@
 #include <jagry/lbase.h>
 #include <jagry/lmap.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <jagry/buffer.h>
 
 #include <byteMapNode.h>
 
 #include <byteMap.h>
 
-#define indent "   "
+#include "eraseByteMap.h"
 
-#define jStringify( argument ) #argument
+typedef  JResult sss() ;
 
 JResult emptyNull() ;
 JResult emptyValue() ;
 
 JResult main() {
-emptyNull() ;
-emptyValue() ;
+JResult error ;
+JResult result = 0 ;
+const struct {
+	JResult( *function )() ;
+	JUnsignedInteger8 debug ;
+} tests = {
+	{ .function = emptyNull , .debug = eraseByteMapReturnEmpty } ,
+	{ .function = emptyValue , .debug = eraseByteMapReturnEmpty } ,
+	{ .function = noValueNull , .debug = eraseByteMapReturnNoValue } } ;
+for( JSignedInteger1 counter = 0 ; ( sizeof( tests ) / sizeof( *tests ) ) > counter ; ++counter )
+	{
+		error = tests[ counter ].function() ;
+		if( jagryDebugEraseByteMap != tests[ counter ].debug )
+			printf( debugMustBe , jagryDebugEraseByteMap , eraseByteMapReturnEmpty , __FILE__ , __LINE__ ) ,
+			result = -1 ;
+		else
+			printf( "done" jNewLine ) ;
+	}
+return result ;
 }
