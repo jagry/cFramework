@@ -1,4 +1,5 @@
 Ru ![Ru](https://github.com/jagry/cFramework/blob/master/images/ru.png)
+[Ru ![Ru](https://github.com/jagry/cFramework/blob/master/images/ru.png)](https://github.com/jagry/cFramework/blob/master/readme.en.md "Заголовок ссылки")
 тест
 
 | Header | Русский | Right  |
