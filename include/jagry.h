@@ -42,6 +42,7 @@
 #define jUnsignedInteger8Specifier "%llu"
 
 #define jPointerSpecifier "%p"
+#define jStringSpecifier "%s"
 
 #define jByteSpecifier jUnsignedInteger1Specifier
 #define jCounterSpecifier jSignedIntegerSpecifier
@@ -98,6 +99,8 @@ typedef JPVoid const JCPVoid ;
 typedef JCByte * JPCByte ;
 typedef JCCharacter1 * JPCCharacter1 ;
 typedef JCVoid * JPCVoid ;
+
+typedef JPCharacter1 * JPPCharacter1 ;
 
 typedef JPCByte const JCPCByte ;
 typedef JPCCharacter1 const JCPCCharacter1 ;

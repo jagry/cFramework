@@ -3,6 +3,7 @@
 
 #define jEmptyBuffer jBuffer( 0 , 0 )
 #define jBuffer( bytesIn , sizeIn ) ( ( JBuffer ){ .bytes = bytesIn , .size = sizeIn } )
+#define jStringBuffer( in ) ( ( JBuffer ){ .bytes = in , .size = strlen( in ) } )
 
 typedef struct JBuffer JBuffer ;
 
@@ -22,7 +23,7 @@ JPVoid bytes ;
 JSize size ;
 } ;
 
-#include "idump.h"
+//#include "idump.h"
 
 JResult jagryAddBufferByte( JPBuffer , JByte ) ;
 JVoid jagryClearBuffer( JPBuffer ) ;

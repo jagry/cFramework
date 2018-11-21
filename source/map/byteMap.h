@@ -1,16 +1,47 @@
 #ifdef DEBUG
-	#define eraseByteMapReturn( bit , value ) \
+	#define byteMapReturn( point , value , variable ) \
 		{ \
-			jagryDebugEraseByteMap |= bit ; \
+			variable.exit = point ; \
 			return value ; \
 		}
-	#define eraseByteMapPointMapEmpty ( 1 << 0 )
-	#define eraseByteMapPointOther ( 1 << 1 )
+	#define byteMapPoint( member , action ) \
+		{ \
+			++jagryDebugEraseByteMap.member ; \
+			action ; \
+		}
+	#define eraseByteMapReturn( point , value ) byteMapReturn( point , value , jagryDebugEraseByteMap )
+	#define eraseByteMapPoint( member , action ) \
+		{ \
+			++jagryDebugEraseByteMap.member ; \
+			action ; \
+		}
+	#define eraseByteMapPointReturnEmpty   ( 1 << 0 ) /* Нет узлов, возвращаем "элемент не нейден" */
+	#define eraseByteMapPointReturnEndIn   ( 1 << 1 ) /* Входящий буфер короче буфера ноды, возвращаем "элемент не нейден" */
+	#define eraseByteMapPointReturnNoValue ( 1 << 2 ) /* Узел существует, но не имеет значения, возвращаем "элемент не нейден" */
 	#define eraseByteMapAllPoint ( \
-		eraseByteMapPointMapEmpty | \
-		eraseByteMapPointOther )
+		eraseByteMapPointByte | \
+		eraseByteMapPointNode | \
+		eraseByteMapPointReturnEmpty | \
+		eraseByteMapPointReturnEndIn | \
+		eraseByteMapPointReturnNoValue )
 
-	extern JUnsignedInteger8 jagryDebugEraseByteMap ;
+	typedef struct JDebugEraseByteMap {
+	JUnsignedInteger1 byte ;
+	JUnsignedInteger1 node ;
+	JUnsignedInteger1 exit ;
+	} JDebugEraseByteMap ;
+
+	extern JDebugEraseByteMap jagryDebugEraseByteMap ;
+#else
+	#define eraseByteMapReturn( bit , value ) \
+		{ \
+			return value ; \
+		}
+	#define eraseByteMapBreak( bit , value ) \
+		{ \
+			break ; \
+		}
+
 #endif
 
 typedef struct ByteMap ByteMap ;

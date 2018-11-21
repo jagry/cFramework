@@ -26,7 +26,7 @@
 #include "byteMap.h"
 
 #ifdef DEBUG
-	JUnsignedInteger8 jagryDebugEraseByteMap = 0 ;
+	JDebugEraseByteMap jagryDebugEraseByteMap ;
 #endif
 
 	static JResult setByteMapOut( JPCBuffer in , JPBuffer out ) {
@@ -119,93 +119,87 @@ printf( " ] }" ) ;
 }
 
 static JResult eraseByteMap( PByteMap self , JBuffer in , JPBuffer out ) {
-PByteMapNode owner ;
 PByteMapNode current = self->node ;
-printf( "Enter = " ) ;
+/*printf( "Enter = " ) ;
 drawByteMapBuffer( in ) ;
-printf( jNewLine ) ;
+printf( jNewLine ) ;*/
 if( !current )
-	{
-		// Map пустой, возвращаем "элемент не нейден"
-		eraseByteMapReturn( eraseByteMapPointMapEmpty , jMapValueNotFoundErrorResult )
-	}
+	eraseByteMapReturn( eraseByteMapPointReturnEmpty , jMapValueNotFoundErrorResult )
 //owner = current->owner ;
 for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 	{
-		printf( "Itertion" jNewLine "   current key = " ) ;
+		// start debug
+		JPCharacter1 inChar = in.bytes ;
+		JPCharacter1 currentChar = currentKey.bytes ;
+		// finish debug
+		/*printf( "Itertion" jNewLine "   current key = " ) ;
 		drawByteMapBuffer( currentKey ) ;
 		printf( jNewLine "   in = " ) ;
 		drawByteMapBuffer( in ) ;
-		printf( jNewLine ) ;
+		printf( jNewLine ) ;*/
 		if( in.size == 0 )
 			if( currentKey.size == 0 )
 				if( current->value )
-					{
-						JPBuffer value = current->value ;
-						//current->value = 0 ;
-						if( current->count == 0 )
-							if( owner )
-								if( owner->value )
-									{
-										owner->subs[ ( ( JPByte )in.bytes )[ -1 - current->key.size ] ] = 0 ;
-										freeByteMapNode( current ) ;
-										// Установить буффер
-										printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-										exit( -1 ) ;
-										return jSuccesResult ;
-									}
-								else
-									if( owner->count > 2 )
-										{
-											printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-											exit( -1 ) ;
-										}
-									else
-										{
-											printf( "break " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-											break ;
-										}
-							else
-								{
-									freeByteMapNode( current ) ;
-									self->node = 0 ;
-									self->count = 0 ;
-									printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-									exit( -1 ) ;
-									return jSuccesResult ;
-								}
-						else
-							if( current->count == 1 )
-								{
-									printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-									exit( -1 ) ;
-								}
-							else
-								{
-									printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-									exit( -1 ) ;
-								}
-						printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-						exit( -1 ) ;
-						return jSuccesResult ;
-					}
+					break ;
 				else
-					return jMapValueNotFoundErrorResult ;
+					eraseByteMapReturn( eraseByteMapPointReturnNoValue , jMapValueNotFoundErrorResult )
 			else
-				return jMapValueNotFoundErrorResult ;
+				eraseByteMapReturn( eraseByteMapPointReturnEndIn , jMapValueNotFoundErrorResult )
 		else
 			if( currentKey.size == 0 )
-				currentKey = ( current = current->subs[ *( JPByte )in.bytes ] )->key ;
-			else
-				if( *( JPByte )in.bytes != *( JPByte )currentKey.bytes )
-					return jMapValueNotFoundErrorResult ;
+				if( ( current = current->subs[ *( JPByte )in.bytes ] ) )
+					++jagryDebugEraseByteMap.byte ,
+					currentKey = current->key ;
 				else
+					return jMapValueNotFoundErrorResult ;
+			else
+				if( *( JPByte )in.bytes == *( JPByte )currentKey.bytes )
+					++jagryDebugEraseByteMap.node ,
 					++currentKey.bytes ,
 					--currentKey.size ;
+				else
+					return jMapValueNotFoundErrorResult ;
 	}
-for( ; ; )
-	if( owner->value )
-		if( owner->count == 2 )
+{
+	PByteMapNode owner = current->owner ;
+	JPBuffer value = current->value ;
+	//current->value = 0 ;
+	if( current->count == 0 )
+		if( owner )
+			if( owner->value )
+				{
+					JPByte debugBytes = ( JPByte )in.bytes ;
+					owner->subs[ ( ( JPByte )in.bytes )[ -1 - current->key.size ] ] = 0 ;
+					freeByteMapNode( current ) ;
+					// Установить буффер
+					printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+					exit( -1 ) ;
+					return jSuccesResult ;
+				}
+			else
+				if( owner->count > 2 )
+					{
+						printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+						exit( -1 ) ;
+					}
+				else
+					{
+						// Элемент найден, 
+						//eraseByteMapBreak( eraseByteMapBreakFounded )
+						printf( "break " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+						//break ;
+					}
+		else
+			{
+				freeByteMapNode( current ) ;
+				self->node = 0 ;
+				self->count = 0 ;
+				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+				exit( -1 ) ;
+				return jSuccesResult ;
+			}
+	else
+		if( current->count == 1 )
 			{
 				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
 				exit( -1 ) ;
@@ -215,15 +209,50 @@ for( ; ; )
 				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
 				exit( -1 ) ;
 			}
+	printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+	exit( -1 ) ;
+	return jSuccesResult ;
+}
+/*for( ; ; )
+	if( owner )
+		if( owner->value )
+			if( owner->count == 2 )
+				{
+					printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+					exit( -1 ) ;
+				}
+			else
+				{
+					printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+					exit( -1 ) ;
+				}
+		else
+			if( owner->count == 2 )
+				{
+					printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+					exit( -1 ) ;
+				}
+			else
+				{
+					printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+					exit( -1 ) ;
+				}
 	else
 		{
 			printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
 			exit( -1 ) ;
-		}
+		}*/
+return jSuccesResult ;
+}
+
+static JResult releaseByteMap( PByteMap self ) {
+if( --self->count )
+	return self->count ;
+return self->count ;
 }
 
 static ByteMapMethods byteMapMethods = {
-	/* base */ .aqcuire = 0 , .dump = 0 , .getInterface = 0 , .release = 0 ,
+	/* base */ .aqcuire = 0 , .dump = 0 , .getInterface = 0 , .release = releaseByteMap ,
 	/* map */ .add = addByteMap , .erase = eraseByteMap } ;
 
 JResult jagryByteMap( ByteMap** out ) {
