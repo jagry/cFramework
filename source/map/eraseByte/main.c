@@ -40,14 +40,14 @@ JUnsignedInteger1 exit ;
 JUnsignedInteger1 mainDebug = 0 ;
 
 JResult main() {
-JResult error ;
+JResult callResult ;
 JResult result = 0 ;
 printf( "start test 'eraseByteMap'" jNewLine ) ;
 for( JSignedInteger1 counter = 0 ; ( sizeof( mainTests ) / sizeof( *mainTests ) ) > counter ; ++counter )
 	{
 		printf( "call '" jStringSpecifier "': " , mainTests[ counter ].text ) ;
 		jagryDebugEraseByteMap = ( JDebugEraseByteMap ){ .byte = 0 , .node =0 , .exit = 0 } ;
-		if( !( error = mainTests[ counter ].method() ) )
+		if( !( callResult = mainTests[ counter ].method() ) )
 			{
 				if( jagryDebugEraseByteMap.exit == mainTests[ counter ].exit )
 					mainDebug |= jagryDebugEraseByteMap.exit ,

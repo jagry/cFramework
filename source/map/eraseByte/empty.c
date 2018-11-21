@@ -20,7 +20,7 @@ if( jResultIsError( result = jagryByteMap( &map ) ) )
 	}
 if( ( result = jEraseMap( map , key , 0 ) ) != jMapValueNotFoundErrorResult )
 	{
-		printf( eraseMapReturnedOther , result , jMapValueNotFoundErrorResult , __FILE__ , __LINE__ ) ;
+		printf( eraseMapReturnedOther , __FILE__ , __LINE__ , result , jMapValueNotFoundErrorResult ) ;
 		jReleaseMap( map ) ;
 		return -1 ;
 	}
@@ -36,19 +36,19 @@ JBuffer
 	value = jEmptyBuffer ;
 if( jResultIsError( result = jagryByteMap( &map ) ) )
 	{
-		printf( callReturnedError , "jagryByteMap" , result , __FILE__ , __LINE__ ) ;
+		printf( callReturnedError , __FILE__ , __LINE__ , "jagryByteMap" , result ) ;
 		return -1 ;
 	}
 if( ( result = jEraseMap( map , jEmptyBuffer , &value ) ) != jMapValueNotFoundErrorResult )
 	{
-		printf( eraseMapReturnedOther , result , jMapValueNotFoundErrorResult , __FILE__ , __LINE__ ) ;
+		printf( eraseMapReturnedOther , __FILE__ , __LINE__ , result , jMapValueNotFoundErrorResult ) ;
 		jReleaseMap( map ) ;
 		return -1 ;
 	}
 jReleaseMap( map ) ;
 if( value.bytes != 0 || value.size != 0 )
 	{
-		printf( valueHasChanged , value.bytes , value.size , __FILE__ , __LINE__ ) ;
+		printf( valueHasChanged , __FILE__ , __LINE__ , value.bytes , value.size ) ;
 		return -1 ;
 	}
 return 0 ;

@@ -1,7 +1,7 @@
-#define fileLine jNewLine "\t" jStringSpecifier ":" jSignedIntegerSpecifier jNewLine
+#define error "error: " jNewLine "\t" jStringSpecifier ":" jSignedIntegerSpecifier jNewLine "\t"
 #define stringify( argument ) #argument
 
-#define callReturnedError jStringSpecifier " returned error " jResultSpecifier fileLine
-#define eraseMapReturnedOther "jEraseMap returned " jResultSpecifier ", must be " jResultSpecifier fileLine
-#define debugMustBe "jagryDebugEraseByteMap = " jUnsignedIntegerSpecifier ", must be " jUnsignedIntegerSpecifier fileLine
-#define valueHasChanged "value has changed to { bytes = " jPointerSpecifier ", size = " jSignedIntegerSpecifier "}" fileLine
+#define callReturnedError error jStringSpecifier " returned error " jResultSpecifier
+#define eraseMapReturnedOther error "jEraseMap returned " jResultSpecifier ", must be " jResultSpecifier
+#define debugMustBe error "jagryDebugEraseByteMap = " jUnsignedIntegerSpecifier ", must be " jUnsignedIntegerSpecifier
+#define valueHasChanged error "value has changed to { bytes = " jPointerSpecifier ", size = " jSignedIntegerSpecifier "}"
