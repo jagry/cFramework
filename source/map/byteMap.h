@@ -26,8 +26,8 @@
 		eraseByteMapPointReturnNoValue )
 
 	typedef struct JDebugEraseByteMap {
-	JUnsignedInteger1 byte ;
-	JUnsignedInteger1 node ;
+	JUnsignedInteger8 byte ;
+	JUnsignedInteger8 node ;
 	JUnsignedInteger1 exit ;
 	} JDebugEraseByteMap ;
 

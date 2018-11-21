@@ -37,12 +37,12 @@ result = jEraseMap( map , *key , value ) ;
 jReleaseMap( map ) ;
 if( ( result ) != jMapValueNotFoundErrorResult )
 	{
-		printf( eraseMapReturnedOther , result , jMapValueNotFoundErrorResult , __FILE__ , __LINE__ ) ;
+		printf( eraseMapReturnedOther , __FILE__ , __LINE__ , result , jMapValueNotFoundErrorResult ) ;
 		return result ;
 	}
 if( !value || ( value->bytes == 0 && value->size == 0 ) )
 	return jSuccesResult ;
-printf( valueHasChanged , value->bytes , value->size , __FILE__ , __LINE__ ) ;
+printf( valueHasChanged , __FILE__ , __LINE__ , value->bytes , value->size ) ;
 return -1 ;
 }
 
@@ -56,7 +56,7 @@ noValue( noValueCurrentRootItems , jEmptyBuffer , &value )
 }
 
 JResult noValueCurrentSubNull() {
-noValue( noValueCurrentSubItems , jStringBuffer( "2" ) , 0 )
+noValue( noValueCurrentSubItems , jStringBuffer( "02" ) , 0 )
 }
 
 JResult noValueCurrentSubValue() {

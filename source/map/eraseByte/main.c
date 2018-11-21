@@ -40,23 +40,40 @@ JUnsignedInteger1 exit ;
 JUnsignedInteger1 mainDebug = 0 ;
 
 JResult main() {
-JResult callResult ;
-JResult result = 0 ;
+JResult result ;
+JCounter errors = 0 ;
 printf( "start test 'eraseByteMap'" jNewLine ) ;
 for( JSignedInteger1 counter = 0 ; ( sizeof( mainTests ) / sizeof( *mainTests ) ) > counter ; ++counter )
 	{
 		printf( "call '" jStringSpecifier "': " , mainTests[ counter ].text ) ;
 		jagryDebugEraseByteMap = ( JDebugEraseByteMap ){ .byte = 0 , .node =0 , .exit = 0 } ;
-		if( !( callResult = mainTests[ counter ].method() ) )
+		if( !( result = mainTests[ counter ].method() ) )
 			{
 				if( jagryDebugEraseByteMap.exit == mainTests[ counter ].exit )
-					mainDebug |= jagryDebugEraseByteMap.exit ,
-					printf( "done" jNewLine ) ;
+					if( jagryDebugEraseByteMap.byte == mainTests[ counter ].byte )
+						if( jagryDebugEraseByteMap.node == mainTests[ counter ].node )
+							mainDebug |= jagryDebugEraseByteMap.exit ,
+							printf( "done" jNewLine ) ;
+						else
+							++errors ,
+							printf( pointValueMustBe , __FILE__ , __LINE__ , "node" , jagryDebugEraseByteMap.node , mainTests[ counter ].node ) ;
+					else
+						++errors ,
+						printf( pointValueMustBe , __FILE__ , __LINE__ , "byte" , jagryDebugEraseByteMap.byte , mainTests[ counter ].byte ) ;
 				else
-					printf( debugMustBe , mainTests[ counter ].exit , jagryDebugEraseByteMap.exit , __FILE__ , __LINE__ ) ,
-					result = -1 ;
+					++errors ;
+					printf( returnPointMustBe , __FILE__ , __LINE__ , jagryDebugEraseByteMap.exit , mainTests[ counter ].exit ) ;
 			}
 	}
 printf( "finish test 'eraseByteMap': " jResultSpecifier jNewLine , result ) ;
-return result ;
+if( error == 0 )
+	{
+		printf( "succesfully" ) ;
+		return 0 ;
+	}
+if( error == 1 )
+	printf( "with error" ) ;
+else
+	printf( "with errors(" JCounter ")" , errors ) ;
+return -1 ;
 }
