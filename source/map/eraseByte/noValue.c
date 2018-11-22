@@ -13,7 +13,7 @@
 
 static JPCharacter1 noValueCurrentRootItems[] = { "0" , "1" } ;
 static JPCharacter1 noValueTransitRootItems[] = { "001" , "002" } ;
-static JPCharacter1 noValueCurrentSubItems[] = { "022" , "122" } ;
+static JPCharacter1 noValueCurrentSubItems[] = { "0112" , "0113" , "1" } ;
 static JPCharacter1 items[] = { "01" , "02" } ;
 
 static JResult noValueImplementation( JPCharacter1 items[] , JSignedInteger count, JPCBuffer key , JPBuffer value ) {

@@ -127,39 +127,39 @@ if( !current )
 	eraseByteMapReturn( eraseByteMapPointReturnEmpty , jMapValueNotFoundErrorResult )
 //owner = current->owner ;
 for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
-	{
-		// start debug
-		JPCharacter1 inChar = in.bytes ;
-		JPCharacter1 currentChar = currentKey.bytes ;
-		// finish debug
-		/*printf( "Itertion" jNewLine "   current key = " ) ;
-		drawByteMapBuffer( currentKey ) ;
-		printf( jNewLine "   in = " ) ;
-		drawByteMapBuffer( in ) ;
-		printf( jNewLine ) ;*/
-		if( in.size == 0 )
-			if( currentKey.size == 0 )
-				if( current->value )
-					break ;
-				else
-					eraseByteMapReturn( eraseByteMapPointReturnNoValue , jMapValueNotFoundErrorResult )
+{
+	// start debug
+	JPCharacter1 inChar = in.bytes ;
+	JPCharacter1 currentChar = currentKey.bytes ;
+	// finish debug
+	/*printf( "Itertion" jNewLine "   current key = " ) ;
+	drawByteMapBuffer( currentKey ) ;
+	printf( jNewLine "   in = " ) ;
+	drawByteMapBuffer( in ) ;
+	printf( jNewLine ) ;*/
+	if( in.size == 0 )
+		if( currentKey.size == 0 )
+			if( current->value )
+				break ;
 			else
-				eraseByteMapReturn( eraseByteMapPointReturnEndIn , jMapValueNotFoundErrorResult )
+				eraseByteMapReturn( eraseByteMapPointReturnNoValue , jMapValueNotFoundErrorResult )
 		else
-			if( currentKey.size == 0 )
-				if( ( current = current->subs[ *( JPByte )in.bytes ] ) )
-					++jagryDebugEraseByteMap.byte ,
-					currentKey = current->key ;
-				else
-					return jMapValueNotFoundErrorResult ;
+			eraseByteMapReturn( eraseByteMapPointReturnEndIn , jMapValueNotFoundErrorResult )
+	else
+		if( currentKey.size == 0 )
+			if( ( current = current->subs[ *( JPByte )in.bytes ] ) )
+				++jagryDebugEraseByteMap.node ,
+				currentKey = current->key ;
 			else
-				if( *( JPByte )in.bytes == *( JPByte )currentKey.bytes )
-					++jagryDebugEraseByteMap.node ,
-					++currentKey.bytes ,
-					--currentKey.size ;
-				else
-					return jMapValueNotFoundErrorResult ;
-	}
+				return jMapValueNotFoundErrorResult ;
+		else
+			if( *( JPByte )in.bytes == *( JPByte )currentKey.bytes )
+				++jagryDebugEraseByteMap.byte ,
+				++currentKey.bytes ,
+				--currentKey.size ;
+			else
+				return jMapValueNotFoundErrorResult ;
+}
 {
 	PByteMapNode owner = current->owner ;
 	JPBuffer value = current->value ;

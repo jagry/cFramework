@@ -26,16 +26,16 @@ JUnsignedInteger8 byte ;
 JUnsignedInteger8 node ;
 JUnsignedInteger1 exit ;
 } mainTests[] = {
-	initializeTest( 0 , 0 , eraseByteMapPointReturnEmpty , emptyNull ) ,
-	initializeTest( 0 , 0 , eraseByteMapPointReturnEmpty , emptyValue ) ,
-	initializeTest( 0 , 0 , eraseByteMapPointReturnNoValue , noValueCurrentRootNull ) ,
-	initializeTest( 0 , 0 , eraseByteMapPointReturnNoValue , noValueCurrentRootValue ) ,
-	initializeTest( 0 , 0 , eraseByteMapPointReturnNoValue , noValueCurrentSubNull ) ,
-	initializeTest( 0 , 0 , eraseByteMapPointReturnNoValue , noValueCurrentSubValue ) ,
-	initializeTest( 0 , 0 , eraseByteMapPointReturnNoValue , noValueTransitRootNull ) ,
-	initializeTest( 0 , 0 , eraseByteMapPointReturnNoValue , noValueTransitRootValue ) /*,
-	initializeTest( 0 , 0 , eraseByteMapPointReturnNoValue , noValueTransitSubNull ) ,
-	initializeTest( 0 , 0 , eraseByteMapPointReturnNoValue , noValueTransitSubValue ) */ } ;
+	initializeTest( eraseByteMapPointReturnEmpty , 0 , 0 , emptyNull ) ,
+	initializeTest( eraseByteMapPointReturnEmpty , 0 , 0 , emptyValue ) ,
+	initializeTest( eraseByteMapPointReturnNoValue , 0 , 0 , noValueCurrentRootNull ) ,
+	initializeTest( eraseByteMapPointReturnNoValue , 0 , 0 , noValueCurrentRootValue ) ,
+	initializeTest( eraseByteMapPointReturnNoValue , 2 , 1 , noValueCurrentSubNull ) ,
+	initializeTest( eraseByteMapPointReturnNoValue , 2 , 1 , noValueCurrentSubValue ) ,
+	initializeTest( eraseByteMapPointReturnNoValue , 0 , 0 , noValueTransitRootNull ) ,
+	initializeTest( eraseByteMapPointReturnNoValue , 0 , 0 , noValueTransitRootValue ) /*,
+	initializeTest( eraseByteMapPointReturnNoValue , 0 , 0 , noValueTransitSubNull ) ,
+	initializeTest( eraseByteMapPointReturnNoValue , 0 , 0 , noValueTransitSubValue ) */ } ;
 
 JUnsignedInteger1 mainDebug = 0 ;
 
@@ -61,19 +61,19 @@ for( JSignedInteger1 counter = 0 ; ( sizeof( mainTests ) / sizeof( *mainTests ) 
 						++errors ,
 						printf( pointValueMustBe , __FILE__ , __LINE__ , "byte" , jagryDebugEraseByteMap.byte , mainTests[ counter ].byte ) ;
 				else
-					++errors ;
+					++errors ,
 					printf( returnPointMustBe , __FILE__ , __LINE__ , jagryDebugEraseByteMap.exit , mainTests[ counter ].exit ) ;
 			}
 	}
-printf( "finish test 'eraseByteMap': " jResultSpecifier jNewLine , result ) ;
-if( error == 0 )
+printf( "finish test 'eraseByteMap' " ) ;
+if( errors == 0 )
 	{
 		printf( "succesfully" ) ;
 		return 0 ;
 	}
-if( error == 1 )
+if( errors == 1 )
 	printf( "with error" ) ;
 else
-	printf( "with errors(" JCounter ")" , errors ) ;
+	printf( "with errors(" jCounterSpecifier ")" , errors ) ;
 return -1 ;
 }
