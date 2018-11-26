@@ -84,6 +84,9 @@ enum JBoolean {
 
 typedef JSignedInteger JCounter , JSize ;
 
+typedef JByte JAByte[] ;
+typedef JCharacter1 JACharacter1[] ;
+
 typedef JByte const JCByte ;
 typedef JCharacter1 const JCCharacter1 ;
 typedef JVoid const JCVoid ;
@@ -92,9 +95,13 @@ typedef JByte * JPByte ;
 typedef JCharacter1 * JPCharacter1 ;
 typedef JVoid * JPVoid ;
 
+typedef JPCharacter1 JAPCharacter1[] ;
+
 typedef JPByte const JCPByte ;
 typedef JPCharacter1 const JCPCharacter1 ;
 typedef JPVoid const JCPVoid ;
+
+typedef JACharacter1 * JPACharacter1 ;
 
 typedef JCByte * JPCByte ;
 typedef JCCharacter1 * JPCCharacter1 ;

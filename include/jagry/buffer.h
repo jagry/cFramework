@@ -16,6 +16,7 @@ typedef JPBuffer * JPPBuffer ;
 
 typedef JPCBuffer const JCPCBuffer ;
 
+#include <string.h>
 #include "result.h"
 
 struct JBuffer {

@@ -1,4 +1,5 @@
 #define error "error: " jStringSpecifier ":" jSignedIntegerSpecifier ": "
+#define space "   "
 #define stringify( argument ) #argument
 
 #define callReturnedError error jStringSpecifier " returned error " jResultSpecifier jNewLine
