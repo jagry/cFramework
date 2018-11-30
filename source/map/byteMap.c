@@ -124,8 +124,7 @@ PByteMapNode current = self->node ;
 drawByteMapBuffer( in ) ;
 printf( jNewLine ) ;*/
 if( !current )
-	eraseByteMapReturn( eraseByteMapPointReturnEmpty , jMapValueNotFoundErrorResult )
-//owner = current->owner ;
+	eraseByteMapReturn( eraseByteMapEmpty , jMapValueNotFoundErrorResult )
 for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 {
 	// start debug
@@ -142,16 +141,16 @@ for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 			if( current->value )
 				break ;
 			else
-				eraseByteMapReturn( eraseByteMapPointReturnNoValue , jMapValueNotFoundErrorResult )
+				eraseByteMapReturn( eraseByteMapNoValue , jMapValueNotFoundErrorResult )
 		else
-			eraseByteMapReturn( eraseByteMapPointReturnEndIn , jMapValueNotFoundErrorResult )
+			eraseByteMapReturn( eraseByteMapEndIn , jMapValueNotFoundErrorResult )
 	else
 		if( currentKey.size == 0 )
 			if( ( current = current->subs[ *( JPByte )in.bytes ] ) )
 				++jagryDebugEraseByteMap.node ,
 				currentKey = current->key ;
 			else
-				return jMapValueNotFoundErrorResult ;
+				eraseByteMapReturn( eraseByteMapMissingChild , jMapValueNotFoundErrorResult )
 		else
 			if( *( JPByte )in.bytes == *( JPByte )currentKey.bytes )
 				++jagryDebugEraseByteMap.byte ,

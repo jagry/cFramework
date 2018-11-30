@@ -15,15 +15,14 @@
 			++jagryDebugEraseByteMap.member ; \
 			action ; \
 		}
-	#define eraseByteMapPointReturnEmpty   ( 1 << 0 ) /* Нет узлов, возвращаем "элемент не нейден" */
-	#define eraseByteMapPointReturnEndIn   ( 1 << 1 ) /* Входящий буфер короче буфера ноды, возвращаем "элемент не нейден" */
-	#define eraseByteMapPointReturnNoValue ( 1 << 2 ) /* Узел существует, но не имеет значения, возвращаем "элемент не нейден" */
-	#define eraseByteMapAllPoint ( \
-		eraseByteMapPointByte | \
-		eraseByteMapPointNode | \
-		eraseByteMapPointReturnEmpty | \
-		eraseByteMapPointReturnEndIn | \
-		eraseByteMapPointReturnNoValue )
+	#define eraseByteMapEmpty        ( 1 << 0 ) /* Нет узлов, возвращаем "элемент не нейден" */
+	#define eraseByteMapEndIn        ( 1 << 1 ) /* Входящий буфер короче буфера ноды, возвращаем "элемент не нейден" */
+	#define eraseByteMapNoValue      ( 1 << 2 ) /* Узел существует, но не имеет значения, возвращаем "элемент не нейден" */
+	#define eraseByteMapMissingChild ( 1 << 3 ) /* Отсутсвует необходимый дочерний узел */
+	#define eraseByteMapAll ( \
+		eraseByteMapEmpty | \
+		eraseByteMapEndIn | \
+		eraseByteMapNoValue )
 
 	typedef struct JDebugEraseByteMap {
 	JUnsignedInteger8 byte ;
