@@ -29,7 +29,15 @@
 	JDebugEraseByteMap jagryDebugEraseByteMap ;
 #endif
 
-	static JResult setByteMapOut( JPCBuffer in , JPBuffer out ) {
+typedef struct Stack Stack ;
+typedef Stack * PStack ;
+
+struct Stack {
+	PByteMapNode value ;
+	PStack next ;
+} ;
+
+static JResult setByteMapOut( JPCBuffer in , JPBuffer out ) {
 //return out ? jagrySetBuffer( out , in->bytes , in->size ) : jSuccesResult ;
 if( out )
 	return jagrySetBuffer( out , in->bytes , in->size ) ;
@@ -119,99 +127,113 @@ printf( " ] }" ) ;
 }
 
 static JResult eraseByteMap( PByteMap self , JBuffer in , JPBuffer out ) {
-PByteMapNode current = self->node ;
-/*printf( "Enter = " ) ;
-drawByteMapBuffer( in ) ;
-printf( jNewLine ) ;*/
-if( !current )
-	eraseByteMapReturn( eraseByteMapEmpty , jMapValueNotFoundErrorResult )
-for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
+JResult result ;
+//PStack stack = 0 ;
 {
-	// start debug
-	JPCharacter1 inChar = in.bytes ;
-	JPCharacter1 currentChar = currentKey.bytes ;
-	// finish debug
-	/*printf( "Itertion" jNewLine "   current key = " ) ;
-	drawByteMapBuffer( currentKey ) ;
-	printf( jNewLine "   in = " ) ;
-	drawByteMapBuffer( in ) ;
-	printf( jNewLine ) ;*/
-	if( in.size == 0 )
-		if( currentKey.size == 0 )
-			if( current->value )
-				break ;
-			else
-				eraseByteMapReturn( eraseByteMapNoValue , jMapValueNotFoundErrorResult )
-		else
-			eraseByteMapReturn( eraseByteMapEndIn , jMapValueNotFoundErrorResult )
-	else
-		if( currentKey.size == 0 )
-			if( ( current = current->subs[ *( JPByte )in.bytes ] ) )
-				++jagryDebugEraseByteMap.node ,
-				currentKey = current->key ;
-			else
-				eraseByteMapReturn( eraseByteMapMissingChild , jMapValueNotFoundErrorResult )
-		else
-			if( *( JPByte )in.bytes == *( JPByte )currentKey.bytes )
-				++jagryDebugEraseByteMap.byte ,
-				++currentKey.bytes ,
-				--currentKey.size ;
-			else
-				return jMapValueNotFoundErrorResult ;
-}
-{
-	PByteMapNode owner = current->owner ;
-	JPBuffer value = current->value ;
-	//current->value = 0 ;
-	if( current->count == 0 )
-		if( owner )
-			if( owner->value )
-				{
-					JPByte debugBytes = ( JPByte )in.bytes ;
-					owner->subs[ ( ( JPByte )in.bytes )[ -1 - current->key.size ] ] = 0 ;
-					freeByteMapNode( current ) ;
-					// Установить буффер
-					printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-					exit( -1 ) ;
-					return jSuccesResult ;
-				}
-			else
-				if( owner->count > 2 )
+	PByteMapNode current = self->node ;
+	PByteMapNode owner = 0 ;
+	if( !current )
+		{
+			jagryDebugEraseByteMap.exit = eraseByteMapEmpty ;
+			return jMapValueNotFoundErrorResult ;
+		}
+	for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
+		if( in.size == 0 )
+			if( currentKey.size == 0 )
+				if( current->value )
 					{
-						printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-						exit( -1 ) ;
+					
 					}
 				else
+					eraseByteMapReturn( eraseByteMapNoValue , jMapValueNotFoundErrorResult )
+			else
+				eraseByteMapReturn( eraseByteMapEndIn , jMapValueNotFoundErrorResult )
+		else
+			if( currentKey.size == 0 )
+				if( current->subs[ *( JPByte )in.bytes ] )
 					{
-						// Элемент найден, 
-						//eraseByteMapBreak( eraseByteMapBreakFounded )
-						printf( "break " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-						//break ;
+						//PStack temp = malloc( sizeof( Stack ) ) ;
+						//if( temp == 0 )
+						//	{
+						//		result = jNotEnoughtMemoryErrorResult ;
+						//		break ;
+						//	}
+						//*temp = ( Stack ){ .next = stack , .value = current } ;
+						//stack = temp ;
+						owner = current ;
+						currentKey = ( current = current->subs[ *( JPByte )in.bytes ] )->key ;
+						#ifdef DEBUG
+							++jagryDebugEraseByteMap.node ;
+						#endif
 					}
-		else
-			{
-				freeByteMapNode( current ) ;
-				self->node = 0 ;
-				self->count = 0 ;
-				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-				exit( -1 ) ;
-				return jSuccesResult ;
-			}
-	else
-		if( current->count == 1 )
-			{
-				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-				exit( -1 ) ;
-			}
-		else
-			{
-				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-				exit( -1 ) ;
-			}
-	printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-	exit( -1 ) ;
-	return jSuccesResult ;
+				else
+					eraseByteMapReturn( eraseByteMapMissingChild , jMapValueNotFoundErrorResult )
+			else
+				if( *( JPByte )in.bytes == *( JPByte )currentKey.bytes )
+					eraseByteMapPoint( byte , ++currentKey.bytes ; --currentKey.size )
+				else
+					eraseByteMapReturn( eraseByteMapNotEqual , jMapValueNotFoundErrorResult )
 }
+/*while( stack )
+	{
+		PStack next = stack->next ;
+		free( stack ) ;
+		stack = next ;
+	}*/
+return result ;
+//{
+//	PByteMapNode owner = current->owner ;
+//	JPBuffer value = current->value ;
+//	//current->value = 0 ;
+//	if( current->count == 0 )
+//		if( owner )
+//			if( owner->value )
+//				{
+//					JPByte debugBytes = ( JPByte )in.bytes ;
+//					owner->subs[ ( ( JPByte )in.bytes )[ -1 - current->key.size ] ] = 0 ;
+//					freeByteMapNode( current ) ;
+//					// Установить буффер
+//					printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+//					exit( -1 ) ;
+//					return jSuccesResult ;
+//				}
+//			else
+//				if( owner->count > 2 )
+//					{
+//						printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+//						exit( -1 ) ;
+//					}
+//				else
+//					{
+//						// Элемент найден, 
+//						//eraseByteMapBreak( eraseByteMapBreakFounded )
+//						printf( "break " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+//						//break ;
+//					}
+//		else
+//			{
+//				freeByteMapNode( current ) ;
+//				self->node = 0 ;
+//				self->count = 0 ;
+//				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+//				exit( -1 ) ;
+//				return jSuccesResult ;
+//			}
+//	else
+//		if( current->count == 1 )
+//			{
+//				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+//				exit( -1 ) ;
+//			}
+//		else
+//			{
+//				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+//				exit( -1 ) ;
+//			}
+//	printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
+//	exit( -1 ) ;
+//	return jSuccesResult ;
+//}
 /*for( ; ; )
 	if( owner )
 		if( owner->value )
