@@ -20,7 +20,7 @@ typedef JPCBuffer const JCPCBuffer ;
 #include "result.h"
 
 struct JBuffer {
-JPVoid bytes ;
+JPByte bytes ;
 JSize size ;
 } ;
 

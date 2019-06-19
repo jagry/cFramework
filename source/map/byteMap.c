@@ -25,9 +25,7 @@
 
 #include "byteMap.h"
 
-#ifdef DEBUG
-	JDebugEraseByteMap jagryDebugEraseByteMap ;
-#endif
+jDebug( JDebugEraseByteMap jagryDebugEraseByteMap ; )
 
 typedef struct Stack Stack ;
 typedef Stack * PStack ;
@@ -37,15 +35,19 @@ struct Stack {
 	PStack next ;
 } ;
 
-static JResult setByteMapOut( JPCBuffer in , JPBuffer out ) {
+/*jStatic( JResult )setByteMapOut( JPCBuffer in , JPBuffer out ) {
 //return out ? jagrySetBuffer( out , in->bytes , in->size ) : jSuccesResult ;
 if( out )
 	return jagrySetBuffer( out , in->bytes , in->size ) ;
 else
 	return jSuccesResult ;
-}
+}*/
 
-static JResult addByteMap( PByteMap self , JCBuffer keyIn , JCBuffer valueIn , JPBuffer out ) {
+jStatic( JResult )addByteMap(
+	PByteMap self ,
+	JCBuffer keyIn ,
+	JCBuffer valueIn ,
+	JPBuffer out ) {
 JResult result ;
 PByteMapNode node ;
 PPByteMapNode pointer = &self->node ;
@@ -54,8 +56,7 @@ if( self->node == 0 )
 		if( jResultIsError( result = createByteMapNode( &keyIn , &valueIn , 0 , &self->node ) ) )
 			return result ;
 		if( jResultIsError( result = out ? jagrySetBuffer( out , valueIn.bytes , valueIn.size ) : jSuccesResult ) )
-			freeByteMapNode( self->node ) ,
-			self->node = 0 ;
+			freeByteMapNode( self->node ) , self->node = 0 ;
 		else
 			++self->count ;
 		return result ;
@@ -174,10 +175,8 @@ JResult result ;
 	PByteMapNode current = self->node ;
 	PByteMapNode owner = 0 ;
 	if( !current )
-		{
-			jagryDebugEraseByteMap.exit = eraseByteMapEmpty ;
-			return jMapValueNotFoundErrorResult ;
-		}
+		eraseByteMapReturn( eraseByteMapEmpty , jMapValueNotFoundErrorResult )
+		//return jDebug( ( jagryDebugEraseByteMap.exit = eraseByteMapEmpty , ) ) jMapValueNotFoundErrorResult ;
 	for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 		if( in.size == 0 )
 			if( currentKey.size == 0 )
@@ -209,7 +208,7 @@ JResult result ;
 									self->count = 0 , self->node = 0 ;
 								if( out )
 									*out = *current->value , current->value = 0 ;
-								freeByteMapNode( &current ) ;
+								freeByteMapNode( current ) ;
 								// Заполнить out
 								return jSuccesResult ;
 							}

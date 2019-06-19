@@ -1,11 +1,17 @@
 #ifndef Jagry
 #define Jagry
 
-#ifdef NDEBUG
-	#define jDebug( argument )
-	#define jRelease( argument ) { argument }
+#define jStatic( type ) static type
+
+#ifdef DEBUG
+	#define jDebug( argument ) argument
 #else
-	#define jDebug( argument ) { argument }
+	#define jDebug( argument )
+#endif
+
+#ifdef RELEASE
+	#define jRelease( argument ) argument
+#else
 	#define jRelease( argument )
 #endif
 
@@ -76,11 +82,9 @@ typedef void JVoid ;
 	typedef JUnsignedInteger4 jPointerInteger ;
 #endif
 
-typedef enum JBoolean JBoolean ;
-
-enum JBoolean {
+typedef enum JBoolean {
 	jFalse ,
-	jTrue } ;
+	jTrue } JBoolean ;
 
 typedef JSignedInteger JCounter , JSize ;
 
@@ -113,6 +117,6 @@ typedef JPCByte const JCPCByte ;
 typedef JPCCharacter1 const JCPCCharacter1 ;
 typedef JPCVoid const JCPCVoid ;
 
-// !!! Расставить все типы JC, JCP, JCPC, JP, JPC
+// !!! 
 
 #endif

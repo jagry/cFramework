@@ -14,5 +14,9 @@ JResult createByteMapNode(
 	JPCBuffer /* in value buffer */ ,
 	PByteMapNode /* in owner node */ ,
 	PPByteMapNode /* out !!! created node */ ) ;
-JResult createEmptyByteMapNode( JCPCByte , JSize , PPByteMapNode ) ;
-JVoid freeByteMapNode( PByteMapNode self ) ;
+/*JResult createEmptyByteMapNode(
+	JCPCByte ,
+	JSize ,
+	PPByteMapNode ) ;*/
+JVoid freeByteMapNode(
+	PByteMapNode self ) ;
