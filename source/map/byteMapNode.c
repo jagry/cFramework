@@ -6,11 +6,12 @@
 #include "byteMapNode.h"
 #include "jagry.h"
 
-JResult createByteMapNode( JCPCByte bytes , JSize size , JPCBuffer value , PByteMapNode owner , PPByteMapNode object ) {
+JResult createByteMapNode(
+	JPCBuffer key , JPCBuffer value , PByteMapNode owner , PPByteMapNode object ) {
 JResult result ;
 if( ( *object = malloc( sizeof( ByteMapNode ) ) ) == 0 )
 	return jNotEnoughtMemoryErrorResult ;
-if( jResultIsNotError( result = jagryInitializeBuffer( &( *object )->key , bytes , size ) ) )
+if( jResultIsNotError( result = jagryInitializeBuffer( &( *object )->key , key->bytes , key->size ) ) )
 	{
 		if( jResultIsNotError( result = jagryCreatePBuffer( value , &( *object )->value ) ) )
 			{

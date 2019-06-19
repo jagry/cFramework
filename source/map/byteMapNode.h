@@ -9,6 +9,10 @@ struct ByteMapNode {
 	PByteMapNode subs[ jMaxUnsignedInteger1 + 1 ] ;
 	JSignedInteger2 count ; } ;
 
-JResult createByteMapNode( JCPCByte , JSize , JPCBuffer , PByteMapNode , PPByteMapNode ) ;
+JResult createByteMapNode(
+	JPCBuffer /* in key buffer */ ,
+	JPCBuffer /* in value buffer */ ,
+	PByteMapNode /* in owner node */ ,
+	PPByteMapNode /* out !!! created node */ ) ;
 JResult createEmptyByteMapNode( JCPCByte , JSize , PPByteMapNode ) ;
 JVoid freeByteMapNode( PByteMapNode self ) ;

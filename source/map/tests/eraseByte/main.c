@@ -36,7 +36,14 @@ static JPCharacter1
 	noValueItemsN[] = { "01" , "02" , "3" } ,
 	noValueItemsNB[] = { "0112" , "0113" , "4" } ;
 
-static const callTest tests[] = {
+JResult callNull( callTest ) ;
+JResult callValue( callTest , JPCBuffer ) ;
+
+JResult main() {
+JResult result ;
+JCounter errors = 0 ;
+const callTest tests[] = {
+	initializeTest( eraseByteMapEmpty , 0 , 0 , "empty node" , ( JAPCharacter1 ){ "" } , jStringBuffer( "" ) , jSuccesResult ) ,
 	initializeTest( eraseByteMapEmpty , 0 , 0 , "empty node" , ( JAPCharacter1 ){} , jEmptyBuffer , jMapValueNotFoundErrorResult ) ,
 	initializeTest( eraseByteMapEndIn , 0 , 0 , "end argument buffer root node(no byte)" , endInItems , jStringBuffer( "" ) , jMapValueNotFoundErrorResult ) ,
 	initializeTest( eraseByteMapEndIn , 1 , 0 , "end argument buffer root node(byte)" , endInItemsB , jStringBuffer( "0" ) , jMapValueNotFoundErrorResult ) ,
@@ -58,13 +65,6 @@ static const callTest tests[] = {
 	initializeTest( eraseByteMapNoValue , 0 , 1 , "no value sub node(no byte)" , noValueItemsN , jStringBuffer( "0" ) , jMapValueNotFoundErrorResult ) ,
 	initializeTest( eraseByteMapNoValue , 2 , 1 , "no value sub node(root byte)" , noValueItemsBN , jStringBuffer( "001" ) , jMapValueNotFoundErrorResult ) ,
 	initializeTest( eraseByteMapNoValue , 2 , 1 , "no value sub node(sub byte)" , noValueItemsNB , jStringBuffer( "011" ) , jMapValueNotFoundErrorResult ) } ;
-
-JResult callNull( callTest ) ;
-JResult callValue( callTest , JPCBuffer ) ;
-
-JResult main() {
-JResult result ;
-JCounter errors = 0 ;
 printf( "> start test 'eraseByteMap'" jNewLine ) ;
 for( JSignedInteger1 counter = 0 ; ( sizeof( tests ) / sizeof( *tests ) ) > counter ; ++counter )
 	{
