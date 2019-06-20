@@ -1,7 +1,7 @@
 #ifndef JagryResult
 #define JagryResult
 
-#define jSuccesResult 0
+#define jSuccessResult 0
 #define jNotEnoughtMemoryErrorResult ( -1 )
 #define jPointerIsNilWarningResult 1
 

@@ -9,7 +9,7 @@ if( bytes == 0 ) return jNotEnoughtMemoryErrorResult ;
 bytes[ self->size ] = byte ;
 self->bytes = bytes ;
 self->size = size ;
-return jSuccesResult ;
+return jSuccessResult ;
 }
 
 JVoid jagryClearBuffer( JPBuffer self ) {
@@ -27,7 +27,7 @@ if( ( local.bytes = malloc( local.size = in1->size + in2->size ) ) == 0 )
 *out = local ;
 memcpy( local.bytes , in1->bytes , in1->size ) ;
 memcpy( local.bytes + in1->size , in2->bytes , in2->size ) ;
-return jSuccesResult ;
+return jSuccessResult ;
 }
 
 JResult jagryCreatePBuffer( JPCBuffer in , JPPBuffer out ) {
@@ -56,12 +56,12 @@ if( size == 0 )
 	{
 		self->bytes = 0 ;
 		self->size = 0 ;
-		return jSuccesResult ;
+		return jSuccessResult ;
 	}
 if( ( self->bytes = malloc( size ) ) == 0 )
 	return jNotEnoughtMemoryErrorResult ;
 memcpy( self->bytes , bytes , self->size = size ) ;
-return jSuccesResult ;
+return jSuccessResult ;
 }
 
 JResult jagrySetBuffer( JPBuffer self , JPVoid bytes , JSize size ) {
@@ -78,5 +78,5 @@ if( self->bytes )
 	free( self->bytes ) ;
 self->bytes = local ;
 self->size = size ;
-return jSuccesResult ;
+return jSuccessResult ;
 }

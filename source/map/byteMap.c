@@ -11,7 +11,7 @@
 				freeByteMapNode( *pointer ) ; \
 				*pointer = node ; \
 				++self->count ; \
-				return jSuccesResult ; \
+				return jSuccessResult ; \
 			} \
 	}
 
@@ -25,7 +25,7 @@
 
 #include "byteMap.h"
 
-jDebug( JDebugEraseByteMap jagryDebugEraseByteMap ; )
+jDebug( DebugEraseByteMap jagryDebugEraseByteMap ; )
 
 typedef struct Stack Stack ;
 typedef Stack * PStack ;
@@ -55,7 +55,7 @@ if( self->node == 0 )
 	{
 		if( jResultIsError( result = createByteMapNode( &keyIn , &valueIn , 0 , &self->node ) ) )
 			return result ;
-		if( jResultIsError( result = out ? jagrySetBuffer( out , valueIn.bytes , valueIn.size ) : jSuccesResult ) )
+		if( jResultIsError( result = out ? jagrySetBuffer( out , valueIn.bytes , valueIn.size ) : jSuccessResult ) )
 			freeByteMapNode( self->node ) , self->node = 0 ;
 		else
 			++self->count ;
@@ -108,7 +108,7 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 							&valueIn,
 							*pointer ,
 							&( *pointer )->subs [ *( JPByte )argument.bytes ] ) ;
-					if( result == jSuccesResult )
+					if( result == jSuccessResult )
 						++self->count ;
 					return result ;
 				}
@@ -147,7 +147,7 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 													freeByteMapNode( *pointer ) ;
 													*pointer = node ;
 													++self->count ;
-													return jSuccesResult ;
+													return jSuccessResult ;
 												}
 										}
 									freeByteMapNode( node->subs[ *( JPByte )argument.bytes ] ) ;
@@ -161,29 +161,33 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 				--local.size ;
 }
 
-void drawByteMapBuffer( JBuffer buffer ) {
+void drawByteMapBuffer(
+	JBuffer buffer ) {
 printf( "buffer{ size = " jSizeSpecifier " , bytes = %p [" , buffer.size , buffer.bytes ) ;
 for( ; buffer.size ; ++buffer.bytes , --buffer.size )
 	printf( " " jUnsignedInteger1Specifier , *( JPByte )buffer.bytes ) ;
 printf( " ] }" ) ;
 }
 
-static JResult eraseByteMap( PByteMap self , JBuffer in , JPBuffer out ) {
+jStatic( JResult )eraseByteMap( // Удаление элемента словаря
+	PByteMap self , // Указатель на словарь
+	JBuffer in , // Ключ элемента  !!! сделать const?
+	JPBuffer out ) { // Значение элемента
 JResult result ;
 //PStack stack = 0 ;
 {
 	PByteMapNode current = self->node ;
 	PByteMapNode owner = 0 ;
 	if( !current )
-		eraseByteMapReturn( eraseByteMapEmpty , jMapValueNotFoundErrorResult )
+		eraseByteMapReturn( eraseByteMapEmptyPoint , jMapValueNotFoundErrorResult )
 		//return jDebug( ( jagryDebugEraseByteMap.exit = eraseByteMapEmpty , ) ) jMapValueNotFoundErrorResult ;
 	for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 		if( in.size == 0 )
 			if( currentKey.size == 0 )
 				if( current->value )
 					{
-						JPBuffer value = current->value ;
-						current->value = 0 ;
+						//JPBuffer value = current->value ;
+						//current->value = 0 ;
 						// !!! Надо вернуть value
 						// 1. Если current->count = 0 , то:
 						//  а. удалить узел
@@ -207,41 +211,27 @@ JResult result ;
 								else
 									self->count = 0 , self->node = 0 ;
 								if( out )
-									*out = *current->value , current->value = 0 ;
+									eraseByteMapPoint( eraseByteMapLastNodePoint ) , *out = *current->value , current->value = 0 ;
+								// Может стоить продублировать функцию freeByteMapNode  без удаления .value. чтобы не делать current->value = 0
 								freeByteMapNode( current ) ;
-								// Заполнить out
-								return jSuccesResult ;
+								return jSuccessResult ;
 							}
 					}
 				else
-					eraseByteMapReturn( eraseByteMapNoValue , jMapValueNotFoundErrorResult )
+					eraseByteMapReturn( eraseByteMapNoValuePoint , jMapValueNotFoundErrorResult )
 			else
-				eraseByteMapReturn( eraseByteMapEndIn , jMapValueNotFoundErrorResult )
+				eraseByteMapReturn( eraseByteMapEndInPoint , jMapValueNotFoundErrorResult )
 		else
 			if( currentKey.size == 0 )
 				if( current->subs[ *( JPByte )in.bytes ] )
-					{
-						//PStack temp = malloc( sizeof( Stack ) ) ;
-						//if( temp == 0 )
-						//	{
-						//		result = jNotEnoughtMemoryErrorResult ;
-						//		break ;
-						//	}
-						//*temp = ( Stack ){ .next = stack , .value = current } ;
-						//stack = temp ;
-						owner = current ;
-						currentKey = ( current = current->subs[ *( JPByte )in.bytes ] )->key ;
-						#ifdef DEBUG
-							++jagryDebugEraseByteMap.node ;
-						#endif
-					}
+					eraseByteMapIncrement( node , owner = current ; currentKey = ( current = current->subs[ *( JPByte )in.bytes ] )->key )
 				else
-					eraseByteMapReturn( eraseByteMapMissingChild , jMapValueNotFoundErrorResult )
+					eraseByteMapReturn( eraseByteMapMissingChildPoint , jMapValueNotFoundErrorResult )
 			else
 				if( *( JPByte )in.bytes == *( JPByte )currentKey.bytes )
-					eraseByteMapPoint( byte , ++currentKey.bytes ; --currentKey.size )
+					eraseByteMapIncrement( byte , ++currentKey.bytes ; --currentKey.size )
 				else
-					eraseByteMapReturn( eraseByteMapNotEqual , jMapValueNotFoundErrorResult )
+					eraseByteMapReturn( eraseByteMapNotEqualPoint , jMapValueNotFoundErrorResult )
 }
 /*while( stack )
 	{
@@ -332,7 +322,7 @@ return result ;
 			printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
 			exit( -1 ) ;
 		}*/
-return jSuccesResult ;
+return jSuccessResult ;
 }
 
 static JResult releaseByteMap( PByteMap self ) {
@@ -350,7 +340,7 @@ if( ( *out = malloc( sizeof( ByteMap ) ) ) == 0 )
 	return jNotEnoughtMemoryErrorResult ;
 jInitializeMinimal( *out , byteMapMethods , 0 , 1 )
 ( *out )->count = 0 , ( *out )->node = 0 ;
-return jSuccesResult ;
+return jSuccessResult ;
 }
 
 JResult jagryByteMapBase( JBase* in , JBase** out ) {
@@ -358,5 +348,5 @@ if( ( *out = malloc( sizeof( ByteMap ) ) ) == 0 )
 	return jNotEnoughtMemoryErrorResult ;
 jInitializeMinimal( ( ByteMap* )*out , byteMapMethods , in , 1 ) ;
 ( ( ByteMap* )*out )->count = 0 , ( ( ByteMap* )*out )->node = 0 ;
-return jSuccesResult ;
+return jSuccessResult ;
 }

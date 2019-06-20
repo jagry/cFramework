@@ -1,8 +1,11 @@
 #ifndef JagryMapInterfece
 #define JagryMapInterfece
 
-#define jMapValueAlreadyExistsWarningResult 10
-#define jMapValueNotFoundErrorResult -10
+
+#define jMapSuccessResult jSuccessResult
+
+#define jMapValueAlreadyExistsWarningResult 20
+#define jMapValueNotFoundErrorResult -20
 
 #define jAddMapPointer( type ) JResult( *add )( type* , JBuffer , JBuffer , JPBuffer ) ;
 #define jEraseMapPointer( type ) JResult( *erase )( type* , JBuffer , JPBuffer ) ;

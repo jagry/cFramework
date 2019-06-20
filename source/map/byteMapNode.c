@@ -21,7 +21,7 @@ if( jResultIsNotError( result = jagryInitializeBuffer( &( *object )->key , key->
 					++owner->count ;
 				memset( ( *object )->subs , 0 , sizeof( ( *object )->subs ) ) ;
 				( *object )->count = 0 ;
-				return jSuccesResult ;
+				return jSuccessResult ;
 			}
 		jagryFreeBuffer( ( *object )->value ) ;
 	}
