@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 199309L
+
 #include <jagry/lbase.h>
 #include <jagry/lmap.h>
 #include <stdio.h>
@@ -21,7 +23,7 @@ clock_gettime( CLOCK_REALTIME , &time ) ;
 if( jResultIsError( result = jagryByteMap( &map ) ) )
 	return printf( callReturnedErrorMessage , "jagryByteMap", result , __FILE__ , __LINE__ ) , result ;
 for( JSignedInteger counter = 0 ; counter < testIn.itemCount ; ++counter )
-	if( ( result = jAddMap( map , jStringBuffer( testIn.items[ counter ] ) , jStringBuffer( testIn.items[ counter ] ) , 0 ) ) != jSuccesResult )
+	if( ( result = jAddMap( map , jStringBuffer( testIn.items[ counter ] ) , jStringBuffer( testIn.items[ counter ] ) , 0 ) ) != jMapSuccessResult )
 		return printf( callReturnedErrorMessage , "jAddMap" , result , __FILE__ , __LINE__ ) , result ;
 result = jEraseMap( map , testIn.key , value ) ;
 jReleaseMap( map ) ;

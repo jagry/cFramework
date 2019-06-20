@@ -209,9 +209,9 @@ JResult result ;
 										//if( owner->c )
 									}
 								else
-									self->count = 0 , self->node = 0 ;
+									eraseByteMapPoint( eraseByteMapLastNodePoint ) , self->count = 0 , self->node = 0 ;
 								if( out )
-									eraseByteMapPoint( eraseByteMapLastNodePoint ) , *out = *current->value , current->value = 0 ;
+									eraseByteMapPoint( eraseByteMapSetValuePoint ) , *out = *current->value , current->value = 0 ;
 								// Может стоить продублировать функцию freeByteMapNode  без удаления .value. чтобы не делать current->value = 0
 								freeByteMapNode( current ) ;
 								return jSuccessResult ;

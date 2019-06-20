@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 199309L
+
 #include <jagry/lbase.h>
 #include <jagry/lmap.h>
 #include <stdio.h>
@@ -36,18 +38,90 @@ printf( "> start test 'eraseByteMap'" jNewLine ) ;
 		noValueItemsN[] = { "01" , "02" , "3" } ,
 		noValueItemsNB[] = { "0112" , "0113" , "4" } ;
 	const IterationDescription description[] = {
-		initializeIterationDescription( eraseByteMapEmptyPoint , 0 , 0 , "empty node" , ( JAPCharacter1 ){ } , jEmptyBuffer ) ,
-		initializeIterationDescription( eraseByteMapEndInPoint , 0 , 0 , "end argument buffer root node(no byte)" , endInItems , jStringBuffer( "" ) ) ,
-		initializeIterationDescription( eraseByteMapEndInPoint , 1 , 0 , "end argument buffer root node(byte)" , endInItemsB , jStringBuffer( "0" ) ) ,
-		initializeIterationDescription( eraseByteMapEndInPoint , 0 , 1 , "end argument buffer sub node(no byte)" , endInItemsN , jStringBuffer( "0" ) ) ,
-		initializeIterationDescription( eraseByteMapEndInPoint , 2 , 1 , "end argument buffer sub node(root byte)" , endInItemsBN , jStringBuffer( "001" ) ) ,
-		initializeIterationDescription( eraseByteMapEndInPoint , 1 , 1 , "end argument buffer sub node(sub byte)" , endInItemsNB , jStringBuffer( "01" ) ) ,
-		initializeIterationDescription( eraseByteMapMissingChildPoint , 0 , 0 , "missing child root(no byte)" , missingChildItems , jStringBuffer( "2" ) ) ,
-		initializeIterationDescription( eraseByteMapMissingChildPoint , 2 , 0 , "missing child root(byte)" , missingChildItemsB , jStringBuffer( "003" ) ) ,
-		initializeIterationDescription( eraseByteMapMissingChildPoint , 0 , 1 , "missing child sub(no byte)" , missingChildItemsN , jStringBuffer( "03" ) ) ,
-		initializeIterationDescription( eraseByteMapMissingChildPoint , 2 , 1 , "missing child sub(root byte)" , missingChildItemsBN , jStringBuffer( "0014" ) ) ,
-		initializeIterationDescription( eraseByteMapMissingChildPoint , 2 , 1 , "missing child sub(sub byte)" , missingChildItemsNB , jStringBuffer( "0114" ) ) ,
-		initializeIterationDescription( eraseByteMapNotEqualPoint , 0 , 0 , "not equal root node(no byte)" , ( ( JAPCharacter1 ){ "00" } ) , jStringBuffer( "1" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapEmptyPoint ,
+			0 ,
+			0 ,
+			"empty node" ,
+			( JAPCharacter1 ){ } ,
+			jEmptyBuffer ) ,
+		initializeIterationDescription(
+			eraseByteMapEndInPoint ,
+			0 ,
+			0 ,
+			"end argument buffer root node(no byte)" ,
+			endInItems ,
+			jStringBuffer( "" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapEndInPoint ,
+			1 ,
+			0 ,
+			"end argument buffer root node(byte)" ,
+			endInItemsB ,
+			jStringBuffer( "0" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapEndInPoint ,
+			0 ,
+			1 ,
+			"end argument buffer sub node(no byte)" ,
+			endInItemsN ,
+			jStringBuffer( "0" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapEndInPoint ,
+			2 ,
+			1 ,
+			"end argument buffer sub node(root byte)" ,
+			endInItemsBN ,
+			jStringBuffer( "001" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapEndInPoint ,
+			1 ,
+			1 ,
+			"end argument buffer sub node(sub byte)" ,
+			endInItemsNB ,
+			jStringBuffer( "01" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapMissingChildPoint ,
+			0 ,
+			0 ,
+			"missing child root(no byte)" ,
+			missingChildItems ,
+			jStringBuffer( "2" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapMissingChildPoint ,
+			2 ,
+			0 ,
+			"missing child root(byte)" ,
+			missingChildItemsB ,
+			jStringBuffer( "003" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapMissingChildPoint ,
+			0 ,
+			1 ,
+			"missing child sub(no byte)" ,
+			missingChildItemsN ,
+			jStringBuffer( "03" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapMissingChildPoint ,
+			2 ,
+			1 ,
+			"missing child sub(root byte)" ,
+			missingChildItemsBN ,
+			jStringBuffer( "0014" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapMissingChildPoint ,
+			2 ,
+			1 ,
+			"missing child sub(sub byte)" ,
+			missingChildItemsNB ,
+			jStringBuffer( "0114" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapNotEqualPoint ,
+			0 ,
+			0 ,
+			"not equal root node(no byte)" ,
+			( ( JAPCharacter1 ){ "00" } ) ,
+			jStringBuffer( "1" ) ) ,
 		initializeIterationDescription( eraseByteMapNotEqualPoint , 1 , 0 , "not equal root node(no byte)" , ( ( JAPCharacter1 ){ "00" } ) , jStringBuffer( "01" ) ) ,
 		initializeIterationDescription( eraseByteMapNotEqualPoint , 0 , 1 , "not equal sub node(no byte)" , ( ( JAPCharacter1 ){ "011" , "2"} ) , jStringBuffer( "02" ) ) ,
 		initializeIterationDescription( eraseByteMapNotEqualPoint , 2 , 1 , "not equal sub node(root byte)" , ( ( JAPCharacter1 ){ "00122" , "002"} ) , jStringBuffer( "0013" ) ) ,
@@ -80,17 +154,30 @@ printf( "> start test 'eraseByteMap'" jNewLine ) ;
 		noValueItemsBN[] = { "0012" , "0013" , "004" } ,
 		noValueItemsN[] = { "01" , "02" , "3" } ,
 		noValueItemsNB[] = { "0112" , "0113" , "4" } ;
-	const IterationDescription description[] = {
-		initializeIterationDescription( eraseByteMapLastNodePoint , 0 , 0 , "last node" , ( JAPCharacter1 ){ "0" } , jStringBuffer( "0" ) ) ,
-		initializeIterationDescription( eraseByteMapEndInPoint , 0 , 0 , "end argument buffer root node(no byte)" , endInItems , jStringBuffer( "" ) ) } ;
+	IterationDescription description[] = {
+		initializeIterationDescription(
+			eraseByteMapLastNodePoint ,
+			0 ,
+			0 ,
+			"last node(no byte)" ,
+			( JAPCharacter1 ){ "" } ,
+			jStringBuffer( "" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapLastNodePoint ,
+			2 ,
+			0 ,
+			"last node(byte)" ,
+			( JAPCharacter1 ){ "00" } ,
+			jStringBuffer( "00" ) ) } ;
 	for( JSignedInteger1 counter = 0 ; ( sizeof( description ) / sizeof( *description ) ) > counter ; ++counter )
 		{
-			JBuffer value = jBuffer( 0 , 0 ) ;
+			JBuffer value ;
 			printf( messageIndent "call " jStringSpecifier " with value: " , description[ counter ].text ) ;
 			if( iteration( description[ counter ] , 0 , nilCallback , jMapSuccessResult ) )
 				++errors ;
 			printf( messageIndent "call " jStringSpecifier " without value: " , description[ counter ].text ) ;
-			if( iteration( description[ counter ] , 0 , nilCallback , jMapSuccessResult ) )
+			description[ counter ].point |= eraseByteMapSetValuePoint ;
+			if( iteration( description[ counter ] , &value , nilCallback , jMapSuccessResult ) )
 				++errors ;
 		}
 }

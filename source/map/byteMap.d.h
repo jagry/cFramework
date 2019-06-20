@@ -13,6 +13,7 @@
 	#define eraseByteMapMissingChildPoint ( 1 << 3 ) /* Отсутсвует необходимый дочерний узел, возвращаем "элемент не нейден" */
 	#define eraseByteMapNotEqualPoint     ( 1 << 4 ) /* Соответствующие байты аргумента и ноды различаются, возвращаем "элемент не нейден" */
 	#define eraseByteMapNoValuePoint      ( 1 << 5 ) /* Узел существует, но не имеет значения, возвращаем "элемент не нейден" */
+	#define eraseByteMapSetValuePoint     ( 1 << 6 ) /* Заполнение результатов */
 	#define eraseByteMapPointMask ( eraseByteMapEmpty | eraseByteMapEndIn | eraseByteMapLastNodePoint | eraseByteMapMissingChild | eraseByteMapNotEqual | \
 		eraseByteMapNoValue )
 
