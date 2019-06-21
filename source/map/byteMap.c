@@ -25,7 +25,7 @@
 
 #include "byteMap.h"
 
-jDebug( DebugEraseByteMap jagryDebugEraseByteMap ; )
+jIfDebug( DebugEraseByteMap jagryDebugEraseByteMap ; )
 
 typedef struct Stack Stack ;
 typedef Stack * PStack ;
@@ -88,7 +88,7 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 								( *pointer )->owner ,
 								&node ) ;
 						if( jResultIsNotError( result ) )
-							addByteMapReturn()
+							addByteMapReturn( )
 						freeByteMapNode( node ) ;
 					}
 				return result ;
@@ -174,13 +174,11 @@ jStatic( JResult )eraseByteMap( // Удаление элемента слова�
 	JBuffer in , // Ключ элемента  !!! сделать const?
 	JPBuffer out ) { // Значение элемента
 JResult result ;
-//PStack stack = 0 ;
 {
 	PByteMapNode current = self->node ;
 	PByteMapNode owner = 0 ;
 	if( !current )
 		eraseByteMapReturn( eraseByteMapEmptyPoint , jMapValueNotFoundErrorResult )
-		//return jDebug( ( jagryDebugEraseByteMap.exit = eraseByteMapEmpty , ) ) jMapValueNotFoundErrorResult ;
 	for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 		if( in.size == 0 )
 			if( currentKey.size == 0 )
@@ -205,8 +203,19 @@ JResult result ;
 							{
 								if( owner )
 									{
-										//owner->subs
-										//if( owner->c )
+										jAssert( owner->count == 1 && owner->value == 0 )
+										if( owner->count == 2 && !owner->value )
+											{
+												JBuffer buffer = { .size = owner->key.size + current->key.size } ;
+												if( !( buffer.bytes = realloc( owner->key.bytes , buffer.size ) ) )
+													return jNotEnoughtMemoryMapErrorResult ;
+												memcpy( buffer.bytes + owner->key.size , current->key.bytes , current->key.size ) ;
+												owner->key = buffer ;
+											}
+										else
+											eraseByteMapPoint( eraseByteMapNotModifyOwnerPoint ) ;
+										owner->subs[ *( in.bytes - current->key.size ) ] = 0 ;
+										--owner->count ;
 									}
 								else
 									eraseByteMapPoint( eraseByteMapLastNodePoint ) , self->count = 0 , self->node = 0 ;
@@ -216,6 +225,8 @@ JResult result ;
 								freeByteMapNode( current ) ;
 								return jSuccessResult ;
 							}
+						printf( "not implement %s:%i" jNewLine , __FILE__ , __LINE__ ) ;
+						exit( 2 ) ;
 					}
 				else
 					eraseByteMapReturn( eraseByteMapNoValuePoint , jMapValueNotFoundErrorResult )
@@ -332,10 +343,10 @@ return self->count ;
 }
 
 static ByteMapMethods byteMapMethods = {
-	/* base */ .aqcuire = 0 , .dump = 0 , .getInterface = 0 , .release = releaseByteMap ,
+	/* base */ .acquire = 0 , .dump = 0 , .getInterface = 0 , .release = releaseByteMap ,
 	/* map */ .add = addByteMap , .erase = eraseByteMap } ;
 
-JResult jagryByteMap( ByteMap** out ) {
+jExport( JResult )jagryCreateByteMap( ByteMap** out ) {
 if( ( *out = malloc( sizeof( ByteMap ) ) ) == 0 )
 	return jNotEnoughtMemoryErrorResult ;
 jInitializeMinimal( *out , byteMapMethods , 0 , 1 )
@@ -343,7 +354,7 @@ jInitializeMinimal( *out , byteMapMethods , 0 , 1 )
 return jSuccessResult ;
 }
 
-JResult jagryByteMapBase( JBase* in , JBase** out ) {
+jExport( JResult )jagryCreateByteMapBase( JBase* in , ByteMap** out ) {
 if( ( *out = malloc( sizeof( ByteMap ) ) ) == 0 )
 	return jNotEnoughtMemoryErrorResult ;
 jInitializeMinimal( ( ByteMap* )*out , byteMapMethods , in , 1 ) ;

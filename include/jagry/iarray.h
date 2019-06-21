@@ -1,15 +1,12 @@
-#ifndef JagryMapInterfece
-#define JagryMapInterfece
+#ifndef JagryArrayInterfece
+#define JagryArrayInterfece
 
 
-#define jMapSuccessResult jSuccessResult
-#define jNotEnoughtMemoryMapErrorResult jNotEnoughtMemoryErrorResult
+#define jArraySuccessResult jSuccessResult
+#define jNotEnoughtMemoryArrayErrorResult jNotEnoughtMemoryErrorResult
 
-#define jMapValueAlreadyExistsWarningResult 20
-#define jMapValueNotFoundErrorResult -20
-
-#define jAddMapPointer( type ) JResult( *add )( type* , JBuffer , JBuffer , JPBuffer ) ;
-#define jEraseMapPointer( type ) JResult( *erase )( type* , JBuffer , JPBuffer ) ;
+#define jAddArrayPointer( type ) JResult( *add )( type* , JPCBuffer ) ;
+#define jEraseArrayPointer( type ) JResult( *erase )( type* , JBuffer , JPBuffer ) ;
 
 #define jMapSupers JMap map ; jBaseSupers
 #define jMapMethodsSupers JMapMethods map ; jBaseMethodsSupers

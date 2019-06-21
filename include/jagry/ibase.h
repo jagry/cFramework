@@ -14,7 +14,7 @@
 		struct { supersUnion } supers ; \
 	} ;
 
-#define jAqcuireBasePointer( type ) JCounter( *aqcuire )( type* ) ;
+#define jAcquireBasePointer( type ) JCounter( *acquire )( type* ) ;
 #define jDumpBasePointer( type ) void( *dump )( type* ) ;
 #define jGetBaseInterfacePointer( type ) JResult( *getInterface )( type* ) ;
 #define jReleaseBasePointer( type ) JCounter( *release )( type* ) ;
@@ -22,8 +22,8 @@
 #define jBaseSupers JBase base ;
 #define jBaseMethodsSupers JBaseMethods base ;
 
-#define jBaseEach( aqcuire , dump , getInterface , release ) \
-	jAqcuireBasePointer( aqcuire ) \
+#define jBaseEach( acquire , dump , getInterface , release ) \
+	jAcquireBasePointer( acquire ) \
 	jDumpBasePointer( dump ) \
 	jGetBaseInterfacePointer( getInterface ) \
 	jReleaseBasePointer( release )
@@ -37,7 +37,7 @@ typedef struct JBaseMethods JBaseMethods ;
 struct JBase { JBaseMethods* methods ; } ;
 struct JBaseMethods { jBaseAll( JBase ) } ;
 
-#define jAqcuireBase( argument ) ( ( argument )->methods->aqcuire( argument ) )
+#define jAcquireBase( argument ) ( ( argument )->methods->acquire( argument ) )
 #define jDumpBase( argument ) ( ( argument )->methods->dump( argument ) )
 #define jGetBaseInterface( self , identifier , out ) ( ( self )->methods->getInterface( self , identifier , out ) )
 #define jReleaseBase( argument ) ( ( argument )->methods->release( argument ) )

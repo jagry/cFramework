@@ -3,6 +3,7 @@
 
 #include "imap.h"
 
-JResult jagryByteMap( JMap** ) ;
+jImport( JResult )jagryCreateByteMap( JMap** ) ;
+jImport( JResult )jagryCreateByteMapBase( JBase* , JBase** ) ;
 
 #endif

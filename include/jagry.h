@@ -1,12 +1,42 @@
 #ifndef Jagry
 #define Jagry
 
+/*
+__linux__       Defined on Linux
+__sun           Defined on Solaris
+__FreeBSD__     Defined on FreeBSD
+__NetBSD__      Defined on NetBSD
+__OpenBSD__     Defined on OpenBSD
+__APPLE__       Defined on Mac OS X
+__hpux          Defined on HP-UX
+__osf__         Defined on Tru64 UNIX (formerly DEC OSF1)
+__sgi           Defined on Irix
+_AIX            Defined on AIX
+*/
+
+#ifdef __linux__
+	#define jLinux( argument ) argument
+#else
+	#define jLinux( argument )
+#endif
+
+#define jExport( type ) type
+#define jHidden( type ) type
+#define jImport( type ) type
 #define jStatic( type ) static type
 
 #ifdef DEBUG
-	#define jDebug( argument ) argument
+	#define jAssert( condition ) \
+		{ \
+			if( condition ) \
+				printf( "assert %s:%i" jNewLine , __FILE__ , __LINE__ ) ; \
+		}
+	#define jIfDebug( argument ) argument
+	#define jIfNotDebug( argument )
 #else
-	#define jDebug( argument )
+	#define jAssert( condition )
+	#define jIfDebug( argument )
+	#define jIfNotDebug( argument ) argument
 #endif
 
 #ifdef RELEASE

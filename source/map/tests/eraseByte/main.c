@@ -139,21 +139,6 @@ printf( "> start test 'eraseByteMap'" jNewLine ) ;
 		}
 }
 {
-	JPCharacter1
-		endInItems[] = { "00" } ,
-		endInItemsB[] = { "00" } ,
-		endInItemsBN[] = { "00122" , "003" } ,
-		endInItemsN[] = { "011" , "2" } ,
-		endInItemsNB[] = { "011" , "2" } ,
-		missingChildItems[] = { "0" , "1" } ,
-		missingChildItemsB[] = { "001" , "002" } ,
-		missingChildItemsBN[] = { "0012" , "0013" , "004"} ,
-		missingChildItemsN[] = { "01" , "02" , "3"} ,
-		missingChildItemsNB[] = { "0112" , "0113" , "4" } ,
-		noValueItemsB[] = { "001" , "002" } ,
-		noValueItemsBN[] = { "0012" , "0013" , "004" } ,
-		noValueItemsN[] = { "01" , "02" , "3" } ,
-		noValueItemsNB[] = { "0112" , "0113" , "4" } ;
 	IterationDescription description[] = {
 		initializeIterationDescription(
 			eraseByteMapLastNodePoint ,
@@ -168,14 +153,35 @@ printf( "> start test 'eraseByteMap'" jNewLine ) ;
 			0 ,
 			"last node(byte)" ,
 			( JAPCharacter1 ){ "00" } ,
-			jStringBuffer( "00" ) ) } ;
+			jStringBuffer( "00" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapNotModifyOwnerPoint ,
+			0 ,
+			1 ,
+			"has value(no byte)" ,
+			( ( JAPCharacter1 ){ "" , "0" } ) ,
+			jStringBuffer( "0" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapNotModifyOwnerPoint ,
+			2 ,
+			1 ,
+			"has value(byte)" ,
+			( ( JAPCharacter1 ){ "" , "011" } ) ,
+			jStringBuffer( "011" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapNotModifyOwnerPoint ,
+			2 ,
+			1 ,
+			"sub node(byte)" ,
+			( ( JAPCharacter1 ){ "00" , "001" } ) ,
+			jStringBuffer( "001" ) ) } ;
 	for( JSignedInteger1 counter = 0 ; ( sizeof( description ) / sizeof( *description ) ) > counter ; ++counter )
 		{
 			JBuffer value ;
-			printf( messageIndent "call " jStringSpecifier " with value: " , description[ counter ].text ) ;
+			printf( messageIndent "call " jStringSpecifier " with null: " , description[ counter ].text ) ;
 			if( iteration( description[ counter ] , 0 , nilCallback , jMapSuccessResult ) )
 				++errors ;
-			printf( messageIndent "call " jStringSpecifier " without value: " , description[ counter ].text ) ;
+			printf( messageIndent "call " jStringSpecifier " with value: " , description[ counter ].text ) ;
 			description[ counter ].point |= eraseByteMapSetValuePoint ;
 			if( iteration( description[ counter ] , &value , nilCallback , jMapSuccessResult ) )
 				++errors ;
