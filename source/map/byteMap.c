@@ -173,167 +173,79 @@ jStatic( JResult )eraseByteMap( // Удаление элемента слова�
 	PByteMap self , // Указатель на словарь
 	JBuffer in , // Ключ элемента  !!! сделать const?
 	JPBuffer out ) { // Значение элемента
-JResult result ;
-{
-	PByteMapNode current = self->node ;
-	PByteMapNode owner = 0 ;
-	if( !current )
-		eraseByteMapReturn( eraseByteMapEmptyPoint , jMapValueNotFoundErrorResult )
-	for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
-		if( in.size == 0 )
-			if( currentKey.size == 0 )
-				if( current->value )
-					{
-						//JPBuffer value = current->value ;
-						//current->value = 0 ;
-						// !!! Надо вернуть value
-						// 1. Если current->count = 0 , то:
-						//  а. удалить узел
-						//  б. проверить родителя
-						// 2. Если current->count = 1 , то объединить узел с единственным ДУ
-						// Проверка родителя:
-						// А. Очистить указатель на дочерний узел(ДУ)
-						// Б. Уменьшить счетчик дочерних узлов(СДУ)
-						// В. Если СДУ = 0, то у узла должно быть значение.
-						//   Проверить в отладочной сборке и ничего не делать
-						// Г. Если СДУ = 1, то:
-						//  1. Если у узла есть значение, то ничего не делать
-						//  2. Если у узла нет значения, объединить узел с единственным ДУ
-						if( current->count == 0 )
-							{
-								if( owner )
-									{
-										jAssert( owner->count == 1 && owner->value == 0 )
-										if( owner->count == 2 && !owner->value )
-											{
-												JBuffer buffer = { .size = owner->key.size + current->key.size } ;
-												if( !( buffer.bytes = realloc( owner->key.bytes , buffer.size ) ) )
-													return jNotEnoughtMemoryMapErrorResult ;
-												memcpy( buffer.bytes + owner->key.size , current->key.bytes , current->key.size ) ;
-												owner->key = buffer ;
-											}
-										else
+PByteMapNode current = self->node ;
+PByteMapNode owner = 0 ;
+if( !current )
+	eraseByteMapReturn( eraseByteMapEmptyPoint , jMapValueNotFoundErrorResult )
+for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
+	if( in.size == 0 )
+		if( currentKey.size == 0 )
+			if( current->value )
+				{
+					//JPBuffer value = current->value ;
+					//current->value = 0 ;
+					// !!! Надо вернуть value
+					// 1. Если current->count = 0 , то:
+					//  а. удалить узел
+					//  б. проверить родителя
+					// 2. Если current->count = 1 , то объединить узел с единственным ДУ
+					// Проверка родителя:
+					// А. Очистить указатель на дочерний узел(ДУ)
+					// Б. Уменьшить счетчик дочерних узлов(СДУ)
+					// В. Если СДУ = 0, то у узла должно быть значение.
+					//   Проверить в отладочной сборке и ничего не делать
+					// Г. Если СДУ = 1, то:
+					//  1. Если у узла есть значение, то ничего не делать
+					//  2. Если у узла нет значения, объединить узел с единственным ДУ
+					if( current->count == 0 )
+						{
+							if( owner )
+								{
+									jAssert( owner->count == 1 && owner->value == 0 )
+									if( owner->count == 2 && !owner->value )
+										{
+											JBuffer buffer = { .size = owner->key.size + current->key.size } ;
+											if( !( buffer.bytes = realloc( owner->key.bytes , buffer.size ) ) )
+												return jNotEnoughtMemoryMapErrorResult ;
+											memcpy( buffer.bytes + owner->key.size , current->key.bytes , current->key.size ) ;
+											owner->key = buffer ;
 											eraseByteMapPoint( eraseByteMapNotModifyOwnerPoint ) ;
-										owner->subs[ *( in.bytes - current->key.size ) ] = 0 ;
-										--owner->count ;
-									}
-								else
-									eraseByteMapPoint( eraseByteMapLastNodePoint ) , self->count = 0 , self->node = 0 ;
-								if( out )
-									eraseByteMapPoint( eraseByteMapSetValuePoint ) , *out = *current->value , current->value = 0 ;
-								// Может стоить продублировать функцию freeByteMapNode  без удаления .value. чтобы не делать current->value = 0
-								freeByteMapNode( current ) ;
-								return jSuccessResult ;
-							}
-						printf( "not implement %s:%i" jNewLine , __FILE__ , __LINE__ ) ;
-						exit( 2 ) ;
-					}
-				else
-					eraseByteMapReturn( eraseByteMapNoValuePoint , jMapValueNotFoundErrorResult )
+										}
+									else
+										eraseByteMapPoint( eraseByteMapNotModifyOwnerPoint ) ;
+									owner->subs[ *( in.bytes - current->key.size ) ] = 0 ;
+									--owner->count ;
+								}
+							else
+								eraseByteMapPoint( eraseByteMapLastNodePoint ) , self->count = 0 , self->node = 0 ;
+							if( out )
+								eraseByteMapPoint( eraseByteMapSetValuePoint ) , *out = *current->value , current->value = 0 ;
+							// Может стоить продублировать функцию freeByteMapNode без удаления .value. чтобы не делать
+							// current->value = 0
+							freeByteMapNode( current ) ;
+							return jSuccessResult ;
+						}
+					printf( "not implement %s:%i" jNewLine , __FILE__ , __LINE__ ) ;
+					exit( 2 ) ;
+				}
 			else
-				eraseByteMapReturn( eraseByteMapEndInPoint , jMapValueNotFoundErrorResult )
+				eraseByteMapReturn( eraseByteMapNoValuePoint , jMapValueNotFoundErrorResult )
 		else
-			if( currentKey.size == 0 )
-				if( current->subs[ *( JPByte )in.bytes ] )
-					eraseByteMapIncrement( node , owner = current ; currentKey = ( current = current->subs[ *( JPByte )in.bytes ] )->key )
-				else
-					eraseByteMapReturn( eraseByteMapMissingChildPoint , jMapValueNotFoundErrorResult )
-			else
-				if( *( JPByte )in.bytes == *( JPByte )currentKey.bytes )
-					eraseByteMapIncrement( byte , ++currentKey.bytes ; --currentKey.size )
-				else
-					eraseByteMapReturn( eraseByteMapNotEqualPoint , jMapValueNotFoundErrorResult )
-}
-/*while( stack )
-	{
-		PStack next = stack->next ;
-		free( stack ) ;
-		stack = next ;
-	}*/
-return result ;
-//{
-//	PByteMapNode owner = current->owner ;
-//	JPBuffer value = current->value ;
-//	//current->value = 0 ;
-//	if( current->count == 0 )
-//		if( owner )
-//			if( owner->value )
-//				{
-//					JPByte debugBytes = ( JPByte )in.bytes ;
-//					owner->subs[ ( ( JPByte )in.bytes )[ -1 - current->key.size ] ] = 0 ;
-//					freeByteMapNode( current ) ;
-//					// Установить буффер
-//					printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-//					exit( -1 ) ;
-//					return jSuccesResult ;
-//				}
-//			else
-//				if( owner->count > 2 )
-//					{
-//						printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-//						exit( -1 ) ;
-//					}
-//				else
-//					{
-//						// Элемент найден, 
-//						//eraseByteMapBreak( eraseByteMapBreakFounded )
-//						printf( "break " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-//						//break ;
-//					}
-//		else
-//			{
-//				freeByteMapNode( current ) ;
-//				self->node = 0 ;
-//				self->count = 0 ;
-//				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-//				exit( -1 ) ;
-//				return jSuccesResult ;
-//			}
-//	else
-//		if( current->count == 1 )
-//			{
-//				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-//				exit( -1 ) ;
-//			}
-//		else
-//			{
-//				printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-//				exit( -1 ) ;
-//			}
-//	printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-//	exit( -1 ) ;
-//	return jSuccesResult ;
-//}
-/*for( ; ; )
-	if( owner )
-		if( owner->value )
-			if( owner->count == 2 )
-				{
-					printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-					exit( -1 ) ;
-				}
-			else
-				{
-					printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-					exit( -1 ) ;
-				}
-		else
-			if( owner->count == 2 )
-				{
-					printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-					exit( -1 ) ;
-				}
-			else
-				{
-					printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-					exit( -1 ) ;
-				}
+			eraseByteMapReturn( eraseByteMapEndInPoint , jMapValueNotFoundErrorResult )
 	else
-		{
-			printf( "exit " __FILE__ ":" __LINE_STRING__ jNewLine ) ;
-			exit( -1 ) ;
-		}*/
-return jSuccessResult ;
+		if( currentKey.size == 0 )
+			if( current->subs[ *( JPByte )in.bytes ] )
+				eraseByteMapIncrement(
+					node ,
+					owner = current ; currentKey = ( current = current->subs[ *( JPByte )in.bytes ] )->key )
+			else
+				eraseByteMapReturn( eraseByteMapMissingChildPoint , jMapValueNotFoundErrorResult )
+		else
+			if( *( JPByte )in.bytes == *( JPByte )currentKey.bytes )
+				eraseByteMapIncrement( byte , ++currentKey.bytes ; --currentKey.size )
+			else
+				eraseByteMapReturn( eraseByteMapNotEqualPoint , jMapValueNotFoundErrorResult )
+//return jSuccessResult ;
 }
 
 static JResult releaseByteMap( PByteMap self ) {
