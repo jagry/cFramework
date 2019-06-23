@@ -5,7 +5,7 @@
 #define addByteMapReturn() \
 	{ \
 		if( out && jResultIsError( result = jagrySetBuffer( out , valueIn.bytes , valueIn.size ) ) ) \
-			freeByteMapNode( node->subs[ *( JPByte )local.bytes ] ) ; \
+			freeByteMapNode( node->subs[ *local.bytes ] ) ; \
 		else \
 			{ \
 				freeByteMapNode( *pointer ) ; \
@@ -43,17 +43,13 @@ else
 	return jSuccesResult ;
 }*/
 
-jStatic( JResult )addByteMap(
-	PByteMap self ,
-	JCBuffer keyIn ,
-	JCBuffer valueIn ,
-	JPBuffer out ) {
+jStatic( JResult )addByteMap( PByteMap self , JCBuffer keyIn , JCBuffer valueIn , JPBuffer out ) {
 JResult result ;
 PByteMapNode node ;
 PPByteMapNode pointer = &self->node ;
 if( self->node == 0 )
 	{
-		if( jResultIsError( result = createByteMapNode( &keyIn , &valueIn , 0 , &self->node ) ) )
+		if( jResultIsError( result = createByteMapNode( &keyIn , &valueIn , 0 , 0 , &self->node ) ) )
 			return result ;
 		if( jResultIsError( result = out ? jagrySetBuffer( out , valueIn.bytes , valueIn.size ) : jSuccessResult ) )
 			freeByteMapNode( self->node ) , self->node = 0 ;
@@ -78,6 +74,7 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 						&jBuffer( ( *pointer )->key.bytes , ( *pointer )->key.size - local.size ) ,
 						&valueIn ,
 						( *pointer )->owner ,
+						( *pointer )->key.bytes[ -1 ] ,
 						&node ) ;
 				if( jResultIsNotError( result ) )
 					{
@@ -86,6 +83,7 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 								&jBuffer( ( *pointer )->key.bytes , ( *pointer )->key.size - local.size ) ,
 								&valueIn ,
 								( *pointer )->owner ,
+								( *pointer )->key.bytes[ -1 ] ,
 								&node ) ;
 						if( jResultIsNotError( result ) )
 							addByteMapReturn( )
@@ -95,40 +93,43 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 			}
 	else
 		if( local.size == 0 )
-			if( ( *pointer )->subs [ *( JPByte )argument.bytes ] )
+			if( ( *pointer )->subs [ *argument.bytes ] )
 				{
-					local = ( *( pointer = &( *pointer )->subs [ *( JPByte )argument.bytes ] ) )->key ;
+					local = ( *( pointer = &( *pointer )->subs [ *argument.bytes ] ) )->key ;
 					continue ;
 				}
 			else
 				{
 					result =
 						createByteMapNode(
-							&jBuffer( ( JPByte )argument.bytes + 1 , argument.size - 1 ) ,
+							&jBuffer( argument.bytes + 1 , argument.size - 1 ) ,
 							&valueIn,
 							*pointer ,
-							&( *pointer )->subs [ *( JPByte )argument.bytes ] ) ;
+							*argument.bytes ,
+							&( *pointer )->subs [ *argument.bytes ] ) ;
 					if( result == jSuccessResult )
 						++self->count ;
 					return result ;
 				}
 		else
-			if( *( JPByte )argument.bytes != *( JPByte )local.bytes )
+			if( *argument.bytes != *local.bytes )
 				{
 					result =
 						createByteMapNode(
 							&jBuffer( keyIn.bytes , keyIn.size - argument.size ) ,
 							0 ,
 							( *pointer )->owner ,
+							keyIn.bytes[ -1 ] ,
 							&node ) ;
 					if( jResultIsNotError( result ) )
 						{
 							result =
 								createByteMapNode(
-									&jBuffer( ( JPByte )argument.bytes + 1 , argument.size - 1 ) ,
+									&jBuffer( argument.bytes + 1 , argument.size - 1 ) ,
 									&valueIn ,
 									node ,
-									&node->subs[ *( JPByte )argument.bytes ] ) ;
+									*argument.bytes ,
+									&node->subs[ *argument.bytes ] ) ;
 							if( jResultIsNotError( result ) )
 								{
 									result =
@@ -136,12 +137,13 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 											&jBuffer( local.bytes + 1 , local.size - 1 ) ,
 											( *pointer )->value ,
 											node ,
-											&node->subs[ *( JPByte )local.bytes ] ) ;
+											*local.bytes ,
+											&node->subs[ *local.bytes ] ) ;
 									if( jResultIsNotError( result ) )
 										{
 											if( out &&
 													jResultIsError( result = jagrySetBuffer( out , valueIn.bytes , valueIn.size ) ) )
-												freeByteMapNode( node->subs[ *( JPByte )local.bytes ] ) ;
+												freeByteMapNode( node->subs[ *local.bytes ] ) ;
 											else
 												{
 													freeByteMapNode( *pointer ) ;
@@ -150,7 +152,7 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 													return jSuccessResult ;
 												}
 										}
-									freeByteMapNode( node->subs[ *( JPByte )argument.bytes ] ) ;
+									freeByteMapNode( node->subs[ *argument.bytes ] ) ;
 								}
 							freeByteMapNode( node ) ;
 						}
@@ -165,7 +167,7 @@ void drawByteMapBuffer(
 	JBuffer buffer ) {
 printf( "buffer{ size = " jSizeSpecifier " , bytes = %p [" , buffer.size , buffer.bytes ) ;
 for( ; buffer.size ; ++buffer.bytes , --buffer.size )
-	printf( " " jUnsignedInteger1Specifier , *( JPByte )buffer.bytes ) ;
+	printf( " " jUnsignedInteger1Specifier , *buffer.bytes ) ;
 printf( " ] }" ) ;
 }
 
@@ -173,6 +175,7 @@ jStatic( JResult )eraseByteMap( // Удаление элемента слова�
 	PByteMap self , // Указатель на словарь
 	JBuffer in , // Ключ элемента  !!! сделать const?
 	JPBuffer out ) { // Значение элемента
+printf( "!!! in = %s\n" , in.bytes ) ; 
 PByteMapNode current = self->node ;
 PByteMapNode owner = 0 ;
 if( !current )
@@ -207,18 +210,19 @@ for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 										{
 											PByteMapNode other = owner->last == current ? owner->first : owner->last ;
 											JBuffer buffer = { .size = other->key.size + owner->key.size + 1 } ;
-											printf(
-												"!!! sizes other = %i , owner = %i , buffer = %i" jNewLine ,
-												other->key.size ,
-												owner->key.size ,
-												buffer.size ) ;
 											if( !( buffer.bytes = realloc( owner->key.bytes , buffer.size ) ) )
 												return jNotEnoughtMemoryErrorMapResult ;
 											memcpy( buffer.bytes + owner->key.size + 1 , other->key.bytes , other->key.size ) ;
 											memcpy( buffer.bytes , owner->key.bytes , owner->key.size ) ;
 											buffer.bytes[ owner->key.size ] = index ;
-											owner->key = buffer ;
+											owner->first = other->first ;
 											owner->value = other->value ;
+											owner->last = other->last ;
+											owner->subs = other->subs ;
+											owner->key = buffer ;
+											printf(
+												"!!! sizes other = %i " jNewLine ,
+												buffer.bytes[ owner->key.size ] ) ;
 											
 											eraseByteMapPoint( eraseByteMapNotModifyOwnerPoint ) ;
 										}
@@ -245,14 +249,14 @@ for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 			eraseByteMapReturn( eraseByteMapEndInPoint , jValueNotFoundErrorMapResult )
 	else
 		if( currentKey.size == 0 )
-			if( current->subs[ *( JPByte )in.bytes ] )
+			if( current->subs[ *in.bytes ] )
 				eraseByteMapIncrement(
 					node ,
-					owner = current ; currentKey = ( current = current->subs[ *( JPByte )in.bytes ] )->key )
+					owner = current ; currentKey = ( current = current->subs[ *in.bytes ] )->key )
 			else
 				eraseByteMapReturn( eraseByteMapMissingChildPoint , jValueNotFoundErrorMapResult )
 		else
-			if( *( JPByte )in.bytes == *( JPByte )currentKey.bytes )
+			if( *in.bytes == *currentKey.bytes )
 				eraseByteMapIncrement( byte , ++currentKey.bytes ; --currentKey.size )
 			else
 				eraseByteMapReturn( eraseByteMapNotEqualPoint , jValueNotFoundErrorMapResult )

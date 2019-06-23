@@ -7,12 +7,15 @@ struct ByteMapNode {
 	JPBuffer value ;
 	PByteMapNode first , last, next , owner , previous ;
 	PByteMapNode subs[ jMaxUnsignedInteger1 + 1 ] ;
-	JSignedInteger2 count ; } ;
+	JSignedInteger2 count ;
+	JUnsignedInteger1 index ;
+} ;
 
 JResult createByteMapNode(
 	JPCBuffer /* in key buffer */ ,
 	JPCBuffer /* in value buffer */ ,
 	PByteMapNode /* in owner node */ ,
+	JUnsignedInteger1 /* in index to owner */ ,
 	PPByteMapNode /* out !!! created node */ ) ;
 JResult createByteMapNode2(
 	JPCBuffer /* in key1 buffer */ ,

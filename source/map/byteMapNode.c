@@ -6,7 +6,8 @@
 
 #include "byteMapNode.h"
 
-JResult createByteMapNode( JPCBuffer keyIn , JPCBuffer valueIn ,PByteMapNode ownerIn , PPByteMapNode out ) {
+JResult createByteMapNode( JPCBuffer keyIn , JPCBuffer valueIn ,
+	PByteMapNode ownerIn , JUnsignedInteger1 indexIn , PPByteMapNode out ) {
 JResult result ;
 if( ( *out = malloc( sizeof( ByteMapNode ) ) ) == 0 )
 	return jNotEnoughtMemoryErrorMapResult ;
@@ -27,6 +28,7 @@ if( jResultIsNotError( result = jagryInitializeBuffer( &( *out )->key , keyIn->b
 					( *out )->next = ( *out )->previous = 0 ;
 				memset( ( *out )->subs , 0 , sizeof( ( *out )->subs ) ) ;
 				( *out )->first = ( *out )->last = ( *out )->next = 0 ;
+				( *out )->index = indexIn ;
 				( *out )->count = 0 ;
 				return jSuccessMapResult ;
 			}
