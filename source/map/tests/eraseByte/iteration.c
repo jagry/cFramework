@@ -29,7 +29,7 @@ for( JSignedInteger counter = 0 ; counter < testIn.itemCount ; ++counter )
 			jStringBuffer( testIn.items[ counter ] ) ,
 			jStringBuffer( testIn.items[ counter ] ) ,
 			0 ) ;
-		if( result != jMapSuccessResult )
+		if( result != jSuccessMapResult )
 			return printf( callReturnedErrorMessage , "jAddMap" , result , __FILE__ , __LINE__ ) , result ;
 	}
 result = jEraseMap( map , testIn.key , value ) ;

@@ -3,19 +3,19 @@
 
 
 #define jArraySuccessResult jSuccessResult
-#define jNotEnoughtMemoryArrayErrorResult jNotEnoughtMemoryErrorResult
+// !!! #define jNotEnoughtMemoryArrayErrorResult jNotEnoughtMemoryErrorResult
 
-#define jAddArrayPointer( type ) JResult( *add )( type* , JPCBuffer ) ;
-#define jEraseArrayPointer( type ) JResult( *erase )( type* , JBuffer , JPBuffer ) ;
+#define jArrayFirstPointer( type ) JResult( *first )( type* , JPCBuffer ) ;
+#define jArrayLastPointer( type ) JResult( *last )( type* , JBuffer , JPBuffer ) ;
 
-#define jMapSupers JMap map ; jBaseSupers
-#define jMapMethodsSupers JMapMethods map ; jBaseMethodsSupers
+#define jArraySupers JArray array ; jBaseSupers
+#define jMapMethodsSupers JArrayMethods Array ; jBaseMethodsSupers
 
-#define jMapSelf( add , erase ) \
-	jAddMapPointer( add ) \
-	jEraseMapPointer( erase )
+#define jArraySelf( getFirst , getLast ) \
+	jGetArrayFirstPointer( getFirst ) \
+	jGetArrayLastPointer( getLast )
 
-#define jMapEach( acquire , dump , getInterface , release , add , erase ) \
+#define jArrayEach( acquire , getInterface , release , getFirst , getLast ) \
 	jBaseEach( acquire , dump , getInterface , release ) \
 	jMapSelf( add , erase )
 

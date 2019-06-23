@@ -2,11 +2,11 @@
 #define JagryMapInterfece
 
 
-#define jMapSuccessResult jSuccessResult
-#define jNotEnoughtMemoryMapErrorResult jNotEnoughtMemoryErrorResult
+#define jSuccessMapResult jSuccessResult
+#define jNotEnoughtMemoryErrorMapResult jNotEnoughtMemoryErrorResult
 
-#define jMapValueAlreadyExistsWarningResult 20
-#define jMapValueNotFoundErrorResult -20
+#define jValueAlreadyExistsWarningMapResult 20
+#define jValueNotFoundErrorMapResult -20
 
 #define jAddMapPointer( type ) JResult( *add )( type* , JBuffer , JBuffer , JPBuffer ) ;
 #define jEraseMapPointer( type ) JResult( *erase )( type* , JBuffer , JPBuffer ) ;

@@ -51,7 +51,7 @@ if( self->bytes )
 free( self ) ;
 }
 
-	JResult jagryInitializeBuffer( JPBuffer self , JCPCVoid bytes , JSize size ) {
+JResult jagryInitializeBuffer( JPBuffer self , JCPCVoid bytes , JSize size ) {
 if( size == 0 )
 	{
 		self->bytes = 0 ;

@@ -63,23 +63,22 @@ printf( "> start test 'eraseByteMap'" jNewLine ) ;
 			0 ,
 			1 ,
 			"sub node(byte)" ,
-			( ( JAPCharacter1 ){ "1" , "2" } ) ,
-			jStringBuffer( "1" ) ) } ;
+			( ( JAPCharacter1 ){ "0" , "1" } ) ,
+			jStringBuffer( "0" ) ) } ;
 	for( JSignedInteger1 counter = 0 ; ( sizeof( description ) / sizeof( *description ) ) > counter ; ++counter )
 		{
 			JBuffer value ;
 			printf( messageIndent "call " jStringSpecifier " with null: " , description[ counter ].text ) ;
-			if( iteration( description[ counter ] , 0 , nilCallback , jMapSuccessResult ) )
+			if( iteration( description[ counter ] , 0 , nilCallback , jSuccessMapResult ) )
 				++errors ;
 			printf( messageIndent "call " jStringSpecifier " with value: " , description[ counter ].text ) ;
 			description[ counter ].point |= eraseByteMapSetValuePoint ;
-			if( iteration( description[ counter ] , &value , nilCallback , jMapSuccessResult ) )
+			if( iteration( description[ counter ] , &value , nilCallback , jSuccessMapResult ) )
 				++errors ;
 		}
 }
 {
 	JPCharacter1
-		endInItems[] = { "00" } ,
 		endInItemsB[] = { "00" } ,
 		endInItemsBN[] = { "00122" , "003" } ,
 		endInItemsN[] = { "011" , "2" } ,
@@ -106,7 +105,7 @@ printf( "> start test 'eraseByteMap'" jNewLine ) ;
 			0 ,
 			0 ,
 			"end argument buffer root node(no byte)" ,
-			endInItems ,
+			( JAPCharacter1 ){ "00" } ,
 			jStringBuffer( "" ) ) ,
 		initializeIterationDescription(
 			eraseByteMapEndInPoint ,
@@ -207,15 +206,27 @@ printf( "> start test 'eraseByteMap'" jNewLine ) ;
 			"not equal sub node(sub byte)" ,
 			( ( JAPCharacter1 ){ "011" , "2"} ) ,
 			jStringBuffer( "012" ) ) ,
-		initializeIterationDescription( eraseByteMapNoValuePoint , 0 , 0 , "no value root node(no byte)" , ( ( JAPCharacter1 ){ "011" , "233" } ) , jStringBuffer( "" ) ) ,
-		initializeIterationDescription( eraseByteMapNoValuePoint , 2 , 0 , "no value root node(byte)" , noValueItemsB , jStringBuffer( "00" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapNoValuePoint ,
+			0 ,
+			0 ,
+			"no value root node(no byte)" ,
+			( ( JAPCharacter1 ){ "011" , "233" } ) ,
+			jStringBuffer( "" ) ) ,
+		initializeIterationDescription(
+			eraseByteMapNoValuePoint ,
+			2 ,
+			0 ,
+			"no value root node(byte)" ,
+			noValueItemsB ,
+			jStringBuffer( "00" ) ) ,
 		initializeIterationDescription( eraseByteMapNoValuePoint , 0 , 1 , "no value sub node(no byte)" , noValueItemsN , jStringBuffer( "0" ) ) ,
 		initializeIterationDescription( eraseByteMapNoValuePoint , 2 , 1 , "no value sub node(root byte)" , noValueItemsBN , jStringBuffer( "001" ) ) ,
 		initializeIterationDescription( eraseByteMapNoValuePoint , 2 , 1 , "no value sub node(sub byte)" , noValueItemsNB , jStringBuffer( "011" ) ) } ;
 	for( JSignedInteger1 counter = 0 ; ( sizeof( description ) / sizeof( *description ) ) > counter ; ++counter )
 		{
 			printf( messageIndent "call " jStringSpecifier ": " , description[ counter ].text ) ;
-			if( iteration( description[ counter ] , 0 , nilCallback , jMapValueNotFoundErrorResult ) )
+			if( iteration( description[ counter ] , 0 , nilCallback , jValueNotFoundErrorMapResult ) )
 				++errors ;
 		}
 }

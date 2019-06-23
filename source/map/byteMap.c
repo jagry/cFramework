@@ -68,9 +68,9 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 				out ?
 					jResultIsError( result = jagrySetBuffer( out , valueIn.bytes , valueIn.size ) ) ?
 						result :
-						jMapValueAlreadyExistsWarningResult :
-					jMapValueAlreadyExistsWarningResult :
-				jMapValueNotFoundErrorResult ;
+						jValueAlreadyExistsWarningMapResult :
+					jValueAlreadyExistsWarningMapResult :
+				jValueNotFoundErrorMapResult ;
 		else
 			{
 				result =
@@ -176,7 +176,7 @@ jStatic( JResult )eraseByteMap( // Удаление элемента слова�
 PByteMapNode current = self->node ;
 PByteMapNode owner = 0 ;
 if( !current )
-	eraseByteMapReturn( eraseByteMapEmptyPoint , jMapValueNotFoundErrorResult )
+	eraseByteMapReturn( eraseByteMapEmptyPoint , jValueNotFoundErrorMapResult )
 for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 	if( in.size == 0 )
 		if( currentKey.size == 0 )
@@ -201,19 +201,30 @@ for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 						{
 							if( owner )
 								{
+									JUnsignedInteger1 index = *( in.bytes - current->key.size - 1 ) ;
 									jAssert( owner->count == 1 && owner->value == 0 )
 									if( owner->count == 2 && !owner->value )
 										{
-											JBuffer buffer = { .size = owner->key.size + current->key.size } ;
+											PByteMapNode other = owner->last == current ? owner->first : owner->last ;
+											JBuffer buffer = { .size = other->key.size + owner->key.size + 1 } ;
+											printf(
+												"!!! sizes other = %i , owner = %i , buffer = %i" jNewLine ,
+												other->key.size ,
+												owner->key.size ,
+												buffer.size ) ;
 											if( !( buffer.bytes = realloc( owner->key.bytes , buffer.size ) ) )
-												return jNotEnoughtMemoryMapErrorResult ;
-											memcpy( buffer.bytes + owner->key.size , current->key.bytes , current->key.size ) ;
+												return jNotEnoughtMemoryErrorMapResult ;
+											memcpy( buffer.bytes + owner->key.size + 1 , other->key.bytes , other->key.size ) ;
+											memcpy( buffer.bytes , owner->key.bytes , owner->key.size ) ;
+											buffer.bytes[ owner->key.size ] = index ;
 											owner->key = buffer ;
+											owner->value = other->value ;
+											
 											eraseByteMapPoint( eraseByteMapNotModifyOwnerPoint ) ;
 										}
 									else
 										eraseByteMapPoint( eraseByteMapNotModifyOwnerPoint ) ;
-									owner->subs[ *( in.bytes - current->key.size ) ] = 0 ;
+									owner->subs[ index ] = 0 ;
 									--owner->count ;
 								}
 							else
@@ -229,9 +240,9 @@ for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 					exit( 2 ) ;
 				}
 			else
-				eraseByteMapReturn( eraseByteMapNoValuePoint , jMapValueNotFoundErrorResult )
+				eraseByteMapReturn( eraseByteMapNoValuePoint , jValueNotFoundErrorMapResult )
 		else
-			eraseByteMapReturn( eraseByteMapEndInPoint , jMapValueNotFoundErrorResult )
+			eraseByteMapReturn( eraseByteMapEndInPoint , jValueNotFoundErrorMapResult )
 	else
 		if( currentKey.size == 0 )
 			if( current->subs[ *( JPByte )in.bytes ] )
@@ -239,12 +250,12 @@ for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 					node ,
 					owner = current ; currentKey = ( current = current->subs[ *( JPByte )in.bytes ] )->key )
 			else
-				eraseByteMapReturn( eraseByteMapMissingChildPoint , jMapValueNotFoundErrorResult )
+				eraseByteMapReturn( eraseByteMapMissingChildPoint , jValueNotFoundErrorMapResult )
 		else
 			if( *( JPByte )in.bytes == *( JPByte )currentKey.bytes )
 				eraseByteMapIncrement( byte , ++currentKey.bytes ; --currentKey.size )
 			else
-				eraseByteMapReturn( eraseByteMapNotEqualPoint , jMapValueNotFoundErrorResult )
+				eraseByteMapReturn( eraseByteMapNotEqualPoint , jValueNotFoundErrorMapResult )
 //return jSuccessResult ;
 }
 
