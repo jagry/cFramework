@@ -13,7 +13,8 @@
 #define jAddMapItemPointer( type ) JResult( *addItem )( type* , JBuffer , JBuffer , JPBuffer ) ;
 #define jClearMapPointer( type ) JResult( *clear )( type* ) ;
 #define jEraseMapItemPointer( type ) JResult( *eraseItem )( type* , JBuffer , JPBuffer ) ;
-#define jGetMapLastItemPointer( type ) JResult( *getLastItem )( type* , JMapItem** ) ;
+#define jGetLastMapItemPointer( type ) JResult( *getLastItem )( type* , JMapItem** ) ;
+#define jGetMapItemPointer( type ) JResult( *getLastItem )( type* , JCBuffer , JMapItem** ) ;
 
 #define jGetMapItemNextPointer( type ) JResult( *eraseItem )( type* , JBuffer , JPBuffer ) ;
 #define jGetMapItemPreviousPointer( type ) JResult( *getLastItem )( type* , JMapItem** ) ;
@@ -21,15 +22,16 @@
 #define jMapSupers JMap map ; jBaseSupers
 #define jMapMethodsSupers JMapMethods map ; jBaseMethodsSupers
 
-#define jMapSelf( addItem , clear , eraseItem , getLastItem ) \
+#define jMapSelf( addItem , clear , eraseItem , getLastItem , getItem ) \
 	jAddMapItemPointer( addItem ) \
 	jClearMapPointer( clear ) \
 	jEraseMapItemPointer( eraseItem ) \
-	jGetMapLastItemPointer( getLastItem )
+	jGetLastMapItemPointer( getLastItem )
+	jGetMapItemPointer( getItem )
 
-#define jMapEach( acquire , getInterface , release , addItem , clear , eraseItem , getLastItem ) \
+#define jMapEach( acquire , getInterface , release , addItem , clear , eraseItem , getLastItem , getItem) \
 	jBaseEach( acquire , getInterface , release ) \
-	jMapSelf( addItem , clear , eraseItem , getLastItem )
+	jMapSelf( addItem , clear , eraseItem , getLastItem , getItem )
 
 #define jMapAll( type ) jMapEach( type , type , type , type , type , type , type )
 
@@ -61,9 +63,10 @@ jInterface( JMapIten , JBase , jBaseSupers , methods , jMapItemAll( JMapItem ) ,
 #define jGetMapInterface( self , in , out ) jGetBaseInterface( self , in , out )
 #define jReleaseMap( argument ) jReleaseBase( argument )
 
-#define jAddMapItem( self , keyIn , valueIn , out ) ( self )->methods->addItem( self , keyIn , valueIn , out )
+#define jAddMapItem( self , key , value , out ) ( self )->methods->addItem( self , key , value , out )
 #define jClearMap( self ) ( self )->methods->clear( self )
 #define jEraseMapItem( self , in , out ) ( self )->methods->eraseItem( self , in , out )
-#define jGetMapLastItem( self , out ) ( self )->methods->getLastItem( self , out )
+#define jGetLastMapItem( self , out ) ( self )->methods->getLastItem( self , out )
+#define jGetMapItem( self , in , out ) ( self )->methods->getItem( self , in , out )
 
 #endif
