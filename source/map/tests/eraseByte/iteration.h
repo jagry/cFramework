@@ -14,8 +14,8 @@ JPCCharacter1 text ;
 JPPCharacter1 items ;
 JSize itemCount ;
 JBuffer key ;
+JUnsignedInteger2 point ;
 JUnsignedInteger1 byte ;
-JUnsignedInteger1 point ;
 JUnsignedInteger1 node ;
 } IterationDescription ;
 

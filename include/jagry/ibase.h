@@ -15,19 +15,17 @@
 	} ;
 
 #define jAcquireBasePointer( type ) JCounter( *acquire )( type* ) ;
-#define jDumpBasePointer( type ) void( *dump )( type* ) ;
 #define jGetBaseInterfacePointer( type ) JResult( *getInterface )( type* ) ;
 #define jReleaseBasePointer( type ) JCounter( *release )( type* ) ;
 
 #define jBaseSupers JBase base ;
 #define jBaseMethodsSupers JBaseMethods base ;
 
-#define jBaseEach( acquire , dump , getInterface , release ) \
+#define jBaseEach( acquire , getInterface , release ) \
 	jAcquireBasePointer( acquire ) \
-	jDumpBasePointer( dump ) \
 	jGetBaseInterfacePointer( getInterface ) \
 	jReleaseBasePointer( release )
-#define jBaseAll( type ) jBaseEach( type , type , type , type )
+#define jBaseAll( type ) jBaseEach( type , type , type )
 
 typedef struct JBase JBase ;
 typedef struct JBaseMethods JBaseMethods ;
@@ -38,7 +36,6 @@ struct JBase { JBaseMethods* methods ; } ;
 struct JBaseMethods { jBaseAll( JBase ) } ;
 
 #define jAcquireBase( argument ) ( ( argument )->methods->acquire( argument ) )
-#define jDumpBase( argument ) ( ( argument )->methods->dump( argument ) )
 #define jGetBaseInterface( self , identifier , out ) ( ( self )->methods->getInterface( self , identifier , out ) )
 #define jReleaseBase( argument ) ( ( argument )->methods->release( argument ) )
 

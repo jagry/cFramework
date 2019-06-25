@@ -1,31 +1,54 @@
+// 0 define
+#define subCount ( jMaxUnsignedInteger1 + 1 )
+#define ByteMapNodeMembers \
+	PByteMapNodeMethods methods ; \
+	JBuffer key ; \
+	JPBuffer value ; \
+	PByteMapNode owner ; \
+	PByteMapNode next , previous ;
+
+// 0 typedef
+typedef struct ByteMapArrayNode ByteMapArrayNode ;
+typedef struct ByteMapEndNode ByteMapEndNode ;
 typedef struct ByteMapNode ByteMapNode ;
+typedef struct ByteMapNodeMethods ByteMapNodeMethods ;
+typedef ByteMapArrayNode * PByteMapArrayNode ;
+typedef ByteMapEndNode * PByteMapEndNode ;
 typedef ByteMapNode * PByteMapNode ;
+typedef ByteMapNodeMethods * PByteMapNodeMethods ;
+typedef PByteMapArrayNode * PPByteMapArrayNode ;
+//typedef PByteMapEndNode * PPByteMapEndNode ;
 typedef PByteMapNode * PPByteMapNode ;
 
-struct ByteMapNode {
-	JBuffer key ;
-	JPBuffer value ;
-	PByteMapNode first , last, next , owner , previous ;
-	PByteMapNode subs[ jMaxUnsignedInteger1 + 1 ] ;
-	JSignedInteger2 count ;
-	JUnsignedInteger1 index ;
-} ;
-
-JResult createByteMapNode(
+// 1 method
+jHidden( JResult )createByteMapNode(
 	JPCBuffer /* in key buffer */ ,
 	JPCBuffer /* in value buffer */ ,
 	PByteMapNode /* in owner node */ ,
 	JUnsignedInteger1 /* in index to owner */ ,
 	PPByteMapNode /* out !!! created node */ ) ;
-JResult createByteMapNode2(
-	JPCBuffer /* in key1 buffer */ ,
-	JPCBuffer /* in key2 buffer */ ,
+jHidden( JResult )createByteMapEndNode(
+	JPCBuffer /* in key buffer */ ,
 	JPCBuffer /* in value buffer */ ,
 	PByteMapNode /* in owner node */ ,
+	JUnsignedInteger1 /* in index to owner */ ,
 	PPByteMapNode /* out !!! created node */ ) ;
-/*JResult createEmptyByteMapNode(
-	JCPCByte ,
-	JSize ,
-	PPByteMapNode ) ;*/
-JVoid freeByteMapNode(
+jHidden( JVoid )freeByteMapNode(
 	PByteMapNode self ) ;
+
+// 1 struct
+struct ByteMapArrayNode {
+	ByteMapNodeMembers
+	PByteMapNode first , last ;
+	PByteMapNode subs[ subCount ] ;
+	JSignedInteger2 count ;
+	JUnsignedInteger1 index ; } ;
+struct ByteMapEndNode {
+	ByteMapNodeMembers } ;
+struct ByteMapNode {
+	JBuffer key ;
+	JPBuffer value ;
+	PByteMapNode first , last , next , owner , previous ;
+	PByteMapNode subs[ subCount ] ;
+	JSignedInteger2 count ;
+	JUnsignedInteger1 index ; } ;

@@ -3,7 +3,7 @@
 
 #define jEmptyBuffer jBuffer( 0 , 0 )
 #define jBuffer( bytesIn , sizeIn ) ( ( JBuffer ){ .bytes = bytesIn , .size = sizeIn } )
-#define jStringBuffer( in ) ( ( JBuffer ){ .bytes = in , .size = strlen( in ) } )
+#define jStringBuffer( in ) ( ( JCBuffer ){ .bytes = in , .size = strlen( in ) } )
 
 typedef struct JBuffer JBuffer ;
 

@@ -1,19 +1,24 @@
+// 0 define
 #define _POSIX_C_SOURCE 199309L
 
+// 0 include
 #include <jagry/lbase.h>
 #include <jagry/lmap.h>
 #include <stdio.h>
-#include <time.h>
-#include "message.h"
 #include "time.h"
+#include "message.h"
 
-#include <byteMapNode.h>
+// 1
+#include <time.h>
+#include "../../byteMapNode.h"
+
+// 2
+#include "../../byteMap.h"
+
+// 3
 #include "iteration.h"
 
-#include <byteMap.d.h>
-
-extern JUnsignedInteger1 mainDebug ;
-
+// 4
 JResult iteration( IterationDescription testIn , JPBuffer value , PCallback callbackIn , JResult resultIn ) {
 struct timespec time ;
 JIMap map ;
@@ -24,15 +29,12 @@ if( jResultIsError( result = jagryCreateByteMap( &map ) ) )
 	return printf( callReturnedErrorMessage , "jagryCreateByteMap", result , __FILE__ , __LINE__ ) , result ;
 for( JSignedInteger counter = 0 ; counter < testIn.itemCount ; ++counter )
 	{
-		result = jAddMap(
-			map ,
-			jStringBuffer( testIn.items[ counter ] ) ,
-			jStringBuffer( testIn.items[ counter ] ) ,
-			0 ) ;
+		JBuffer buffer = jStringBuffer( testIn.items[ counter ] ) ;
+		result = jAddMapItem( map , buffer , buffer , 0 ) ;
 		if( result != jSuccessMapResult )
 			return printf( callReturnedErrorMessage , "jAddMap" , result , __FILE__ , __LINE__ ) , result ;
 	}
-result = jEraseMap( map , testIn.key , value ) ;
+result = jEraseMapItem( map , testIn.key , value ) ;
 jReleaseMap( map ) ;
 if( result != resultIn )
 	return printf( eraseMapReturnedOtherMessage , __FILE__ , __LINE__ , result , resultIn ) , -1 ;

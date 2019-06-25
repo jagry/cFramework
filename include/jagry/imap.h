@@ -5,58 +5,65 @@
 #define jSuccessMapResult jSuccessResult
 #define jNotEnoughtMemoryErrorMapResult jNotEnoughtMemoryErrorResult
 
-#define jValueAlreadyExistsWarningMapResult 20
-#define jValueNotFoundErrorMapResult -20
+#define jEmptyErrorMapResult -20
+#define jValueNotFoundErrorMapResult -21
+#define jEmptyWarningMapResult 20
+#define jValueAlreadyExistsWarningMapResult 21
 
-#define jAddMapPointer( type ) JResult( *add )( type* , JBuffer , JBuffer , JPBuffer ) ;
-#define jEraseMapPointer( type ) JResult( *erase )( type* , JBuffer , JPBuffer ) ;
+#define jAddMapItemPointer( type ) JResult( *addItem )( type* , JBuffer , JBuffer , JPBuffer ) ;
+#define jClearMapPointer( type ) JResult( *clear )( type* ) ;
+#define jEraseMapItemPointer( type ) JResult( *eraseItem )( type* , JBuffer , JPBuffer ) ;
+#define jGetMapLastItemPointer( type ) JResult( *getLastItem )( type* , JMapItem** ) ;
+
+#define jGetMapItemNextPointer( type ) JResult( *eraseItem )( type* , JBuffer , JPBuffer ) ;
+#define jGetMapItemPreviousPointer( type ) JResult( *getLastItem )( type* , JMapItem** ) ;
 
 #define jMapSupers JMap map ; jBaseSupers
 #define jMapMethodsSupers JMapMethods map ; jBaseMethodsSupers
 
-#define jMapSelf( add , erase ) \
-	jAddMapPointer( add ) \
-	jEraseMapPointer( erase )
+#define jMapSelf( addItem , clear , eraseItem , getLastItem ) \
+	jAddMapItemPointer( addItem ) \
+	jClearMapPointer( clear ) \
+	jEraseMapItemPointer( eraseItem ) \
+	jGetMapLastItemPointer( getLastItem )
 
-#define jMapEach( acquire , dump , getInterface , release , add , erase ) \
-	jBaseEach( acquire , dump , getInterface , release ) \
-	jMapSelf( add , erase )
+#define jMapEach( acquire , getInterface , release , addItem , clear , eraseItem , getLastItem ) \
+	jBaseEach( acquire , getInterface , release ) \
+	jMapSelf( addItem , clear , eraseItem , getLastItem )
 
-#define jMapAll( type ) jMapEach( type , type , type , type , type , type )
+#define jMapAll( type ) jMapEach( type , type , type , type , type , type , type )
 
-typedef union JMap JMap ;
-typedef union JMapMethods JMapMethods ;
+#define jMapItemSelf( getNext , getPrevious ) \
+	jGetMapItemNextPointer( getNext ) \
+	jGetMapItemPreviousPointer( getPrevious )
+
+#define jMapItemEach( acquire , getInterface , release , getNext , getPrevious ) \
+	jBaseEach( acquire , getInterface , release ) \
+	jMapItemSelf( getNext , getPrevious )
+
+#define jMapItemAll( type ) jMapItemEach( type , type , type , type , type )
 
 typedef union JMap *JIMap ;
+typedef union JMapItem *JIMapItem ;
+typedef union JMap JMap ;
+typedef union JMapItem JMapItem ;
+typedef union JMapMethods JMapMethods ;
+typedef union JMapItemMethods JMapItemMethods ;
+
 
 #include "buffer.h"
 #include "ibase.h"
 
-/*typedef union jMap jMap ;
-typedef union jMapMethods jMapMethods ;
-
-union jMap {
-	jMapMethods* methods ;
-	jBase super ;
-	struct { jBaseSupers } supers ;
-} ;
-
-union jMapMethods {
-	struct {
-		jMapAllMethods( jMap ) ;
-	} ;
-	struct { jBaseMethodsSupers } supers ;
-	jBaseMethods super ;
-} ;*/
-
 jInterface( JMap , JBase , jBaseSupers , methods , jMapAll( JMap ) , JMapMethods , JBaseMethods , jBaseMethodsSupers )
+jInterface( JMapIten , JBase , jBaseSupers , methods , jMapItemAll( JMapItem ) , JMapItemMethods , JBaseMethods , jBaseMethodsSupers )
 
 #define jAcquireMap( argument ) jAcquireBase( argument )
-#define jDumpMap( argument ) jDumpBase( argument )
 #define jGetMapInterface( self , in , out ) jGetBaseInterface( self , in , out )
 #define jReleaseMap( argument ) jReleaseBase( argument )
 
-#define jAddMap( self , keyIn , valueIn , out ) ( self )->methods->add( ( self ) , ( keyIn ) , ( valueIn ) , ( out ) )
-#define jEraseMap( self , in , out ) ( self )->methods->erase( ( self ) , ( in ) , ( out ) )
+#define jAddMapItem( self , keyIn , valueIn , out ) ( self )->methods->addItem( self , keyIn , valueIn , out )
+#define jClearMap( self ) ( self )->methods->clear( self )
+#define jEraseMapItem( self , in , out ) ( self )->methods->eraseItem( self , in , out )
+#define jGetMapLastItem( self , out ) ( self )->methods->getLastItem( self , out )
 
 #endif

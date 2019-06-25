@@ -1,19 +1,24 @@
+// 0 define
 #define _POSIX_C_SOURCE 199309L
 
+// 0 include
 #include <jagry/lbase.h>
 #include <jagry/lmap.h>
 #include <stdio.h>
-#include <stdio.h>
-#include <time.h>
 #include "message.h"
 #include "time.h"
 
+// 1
+#include <time.h>
 #include <byteMapNode.h>
-#include "iteration.h"
 
+// 2
 #include <byteMap.h>
 
-JUnsignedInteger1 mainDebug = 0 ;
+// 3
+#include "iteration.h"
+
+// JUnsignedInteger1 mainDebug = 0 ;
 
 JResult main() {
 JResult result ;
@@ -71,14 +76,14 @@ printf( "> start test 'eraseByteMap'" jNewLine ) ;
 			printf( messageIndent "call " jStringSpecifier " with null: " , description[ counter ].text ) ;
 			if( iteration( description[ counter ] , 0 , nilCallback , jSuccessMapResult ) )
 				++errors ;
-			printf( messageIndent "call " jStringSpecifier " with value: " , description[ counter ].text ) ;
 			description[ counter ].point |= eraseByteMapSetValuePoint ;
+			printf( messageIndent "call " jStringSpecifier " with value: " , description[ counter ].text ) ;
 			if( iteration( description[ counter ] , &value , nilCallback , jSuccessMapResult ) )
 				++errors ;
 		}
 }
 {
-	JPCharacter1
+	/*JPCharacter1
 		endInItemsB[] = { "00" } ,
 		endInItemsBN[] = { "00122" , "003" } ,
 		endInItemsN[] = { "011" , "2" } ,
@@ -228,7 +233,7 @@ printf( "> start test 'eraseByteMap'" jNewLine ) ;
 			printf( messageIndent "call " jStringSpecifier ": " , description[ counter ].text ) ;
 			if( iteration( description[ counter ] , 0 , nilCallback , jValueNotFoundErrorMapResult ) )
 				++errors ;
-		}
+		} */
 }
 printf( "< finish test 'eraseByteMap' " ) ;
 time = GetDuration( &time ) ;

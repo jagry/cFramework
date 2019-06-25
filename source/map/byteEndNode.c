@@ -6,10 +6,19 @@
 
 #include "byteMapNode.h"
 
+// 1 method declare
+jStatic( JResult )initializeByteMapNode(
+	PByteMapNode ,
+	JPCBuffer ,
+	JPCBuffer ,
+	PByteMapArrayNode ,
+	JUnsignedInteger1 ) ;
+
+// 
 JResult createByteMapNode( JPCBuffer keyIn , JPCBuffer valueIn ,
 	PByteMapNode ownerIn , JUnsignedInteger1 indexIn , PPByteMapNode out ) {
 JResult result ;
-if( ( *out = malloc( sizeof( ByteMapNode ) ) ) == 0 )
+if( ( *out = malloc( sizeof( ByteMapArrayNode ) ) ) == 0 )
 	return jNotEnoughtMemoryErrorMapResult ;
 if( jResultIsNotError( result = jagryInitializeBuffer( &( *out )->key , keyIn->bytes , keyIn->size ) ) )
 	{
@@ -26,10 +35,10 @@ if( jResultIsNotError( result = jagryInitializeBuffer( &( *out )->key , keyIn->b
 					}
 				else
 					( *out )->next = ( *out )->previous = 0 ;
-				memset( ( *out )->subs , 0 , sizeof( ( *out )->subs ) ) ;
-				( *out )->first = ( *out )->last = ( *out )->next = 0 ;
-				( *out )->index = indexIn ;
-				( *out )->count = 0 ;
+				memset( ( ( PByteMapArrayNode )*out )->subs , 0 , sizeof( ( ( PByteMapArrayNode )*out )->subs ) ) ;
+				( ( PByteMapArrayNode )*out )->first = ( ( PByteMapArrayNode )*out )->last = ( ( PByteMapArrayNode )*out )->next = 0 ;
+				// !!! ( *out )->index = indexIn ;
+				( ( PByteMapArrayNode )*out )->count = 0 ;
 				return jSuccessMapResult ;
 			}
 		jagryFreeBuffer( ( *out )->value ) ;
@@ -39,7 +48,18 @@ free( *out ) ;
 return result ;
 }
 
-JResult createByteMapNode2( JPCBuffer key1 , JPCBuffer key2 ,
+/*JResult createByteMapEndNode( JPCBuffer keyIn , JPCBuffer valueIn ,
+	PByteMapArrayNode ownerIn , JUnsignedInteger1 indexIn , PPByteMapNode out ) {
+JResult status ;
+if( ( *out = malloc( sizeof( ByteMapEndNode ) ) ) == 0 )
+	return jNotEnoughtMemoryErrorMapResult ;
+if( jResultIsNotError( status = initializeByteMapNode( *out , keyIn, valueIn , ownerIn , indexIn ) ) )
+	return status ;
+free( *out ) ;
+return status ;
+}*/
+
+/*JResult createByteMapNode2( JPCBuffer key1 , JPCBuffer key2 ,
 	JPCBuffer value , PByteMapNode owner , PPByteMapNode object ) {
 JResult result ;
 if( ( *object = malloc( sizeof( ByteMapNode ) ) ) == 0 )
@@ -77,11 +97,37 @@ return result ;
 
 JVoid freeByteMapNode( PByteMapNode self ) {
 //printf( "=== free self = %p , owner = %p\r\n" , self , self->owner ) ;
-if( self->owner )
+/*if( self->owner )
 	//printf( "\t" jSignedInteger2Specifier "->" jSignedIntegerSpecifier "\r\n" , self->owner->count , self->owner->count - 1 ) ,
 	--self->owner->count ;
 if( self->value )
 	jagryFreeBuffer( self->value ) ;
 jagryClearBuffer( &self->key ) ;
-free( self ) ;
+free( self ) ;*/
 }
+
+/*JResult initializeByteMapNode( PByteMapNode self , JPCBuffer keyIn ,
+	JPCBuffer valueIn , PByteMapArrayNode ownerIn , JUnsignedInteger1 indexIn ) {
+JResult status = jagryInitializeBuffer( &self->key , keyIn->bytes , keyIn->size ) ;
+if( jResultIsError( status ) )
+	return status ;
+if( jResultIsNotError( status = jagryCreatePBuffer( valueIn , &self->value ) ) )
+	{
+		if( ( self->owner = ownerIn ) )
+			{
+				if( ( self->previous = ownerIn->last ) )
+					ownerIn->last->next = self ;
+				else
+					ownerIn->first = self ;
+				ownerIn->last = self ;
+				++ownerIn->count ;
+			}
+		else
+			self->previous = 0 ;
+		self->next = 0 ;
+		// !!! ( *out )->index = indexIn ;
+		return jSuccessMapResult ;
+	}
+jagryFreeBuffer( &self->key ) ;
+return status ;
+}*/

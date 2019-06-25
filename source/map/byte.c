@@ -1,19 +1,19 @@
-#define STRINGIFY2( x ) #x
-#define STRINGIFY( x ) STRINGIFY2( x )
-#define __LINE_STRING__ STRINGIFY( __LINE__ )
-
-#define addByteMapReturn() \
-	{ \
-		if( out && jResultIsError( result = jagrySetBuffer( out , valueIn.bytes , valueIn.size ) ) ) \
-			freeByteMapNode( node->subs[ *local.bytes ] ) ; \
-		else \
-			{ \
-				freeByteMapNode( *pointer ) ; \
-				*pointer = node ; \
-				++self->count ; \
-				return jSuccessResult ; \
-			} \
-	}
+//#define STRINGIFY2( x ) #x
+//#define STRINGIFY( x ) STRINGIFY2( x )
+//#define __LINE_STRING__ STRINGIFY( __LINE__ )
+//
+//#define addByteMapReturn() \
+//	{ \
+//		if( out && jResultIsError( result = jagrySetBuffer( out , valueIn.bytes , valueIn.size ) ) ) \
+//			freeByteMapNode( node->subs[ *local.bytes ] ) ; \
+//		else \
+//			{ \
+//				freeByteMapNode( *pointer ) ; \
+//				*pointer = node ; \
+//				++self->count ; \
+//				return jSuccessResult ; \
+//			} \
+//	}
 
 #include <jagry/imap.h>
 #include <jagry/lbase.h>
@@ -25,6 +25,7 @@
 
 #include "byteMap.h"
 
+jIfDebug( DebugAddByteMapItem jagryDebugAddByteMapItem ; )
 jIfDebug( DebugEraseByteMap jagryDebugEraseByteMap ; )
 
 typedef struct Stack Stack ;
@@ -43,7 +44,7 @@ else
 	return jSuccesResult ;
 }*/
 
-jStatic( JResult )addByteMap( PByteMap self , JCBuffer keyIn , JCBuffer valueIn , JPBuffer out ) {
+jStatic( JResult )addByteMapItem( PByteMap self , JCBuffer keyIn , JCBuffer valueIn , JPBuffer out ) {
 JResult result ;
 PByteMapNode node ;
 PPByteMapNode pointer = &self->node ;
@@ -55,7 +56,7 @@ if( self->node == 0 )
 			freeByteMapNode( self->node ) , self->node = 0 ;
 		else
 			++self->count ;
-		return result ;
+		addByteMapItemReturn( addByteMapItemFirstNode , result )
 	}
 for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes , --argument.size )
 	if( argument.size == 0 )
@@ -86,14 +87,14 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 								( *pointer )->key.bytes[ -1 ] ,
 								&node ) ;
 						if( jResultIsNotError( result ) )
-							addByteMapReturn( )
+							return result ;
 						freeByteMapNode( node ) ;
 					}
 				return result ;
 			}
 	else
 		if( local.size == 0 )
-			if( ( *pointer )->subs [ *argument.bytes ] )
+			if( ( *pointer )->subs[ *argument.bytes ] )
 				{
 					local = ( *( pointer = &( *pointer )->subs [ *argument.bytes ] ) )->key ;
 					continue ;
@@ -114,7 +115,7 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 		else
 			if( *argument.bytes != *local.bytes )
 				{
-					result =
+					/*result =
 						createByteMapNode(
 							&jBuffer( keyIn.bytes , keyIn.size - argument.size ) ,
 							0 ,
@@ -156,26 +157,33 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 								}
 							freeByteMapNode( node ) ;
 						}
-					return result ;
+					return result ;*/
 				}
 			else
 				++local.bytes ,
 				--local.size ;
 }
 
-void drawByteMapBuffer(
-	JBuffer buffer ) {
-printf( "buffer{ size = " jSizeSpecifier " , bytes = %p [" , buffer.size , buffer.bytes ) ;
-for( ; buffer.size ; ++buffer.bytes , --buffer.size )
-	printf( " " jUnsignedInteger1Specifier , *buffer.bytes ) ;
+jStatic( JResult )clearByteMap( PByteMap self ) {
+JIMapItem item ;
+JResult status ;
+if( jResultIsNotError( status = jGetMapLastItem( self , &item ) ) )
+	for( ; ; )
+		{
+		}
+else
+	return status == jEmptyErrorMapResult ? jEmptyWarningMapResult : status ;
+}
+
+void drawByteMapBuffer( JBuffer bufferIn ) {
+printf( "buffer{ size = " jSizeSpecifier " , bytes = %p [" , bufferIn.size , bufferIn.bytes ) ;
+for( ; bufferIn.size ; ++bufferIn.bytes , --bufferIn.size )
+	printf( " " jUnsignedInteger1Specifier , *bufferIn.bytes ) ;
 printf( " ] }" ) ;
 }
 
-jStatic( JResult )eraseByteMap( // Удаление элемента словаря
-	PByteMap self , // Указатель на словарь
-	JBuffer in , // Ключ элемента  !!! сделать const?
-	JPBuffer out ) { // Значение элемента
-printf( "!!! in = %s\n" , in.bytes ) ; 
+jStatic( JResult )eraseByteMapItem( PByteMap self , JBuffer in , JPBuffer out ) {
+drawByteMapBuffer( in ) ;
 PByteMapNode current = self->node ;
 PByteMapNode owner = 0 ;
 if( !current )
@@ -200,36 +208,37 @@ for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 					// Г. Если СДУ = 1, то:
 					//  1. Если у узла есть значение, то ничего не делать
 					//  2. Если у узла нет значения, объединить узел с единственным ДУ
-					if( current->count == 0 )
+					/*if( current->count == 0 )
 						{
 							if( owner )
 								{
+									drawByteMapBuffer( in ) ;
 									JUnsignedInteger1 index = *( in.bytes - current->key.size - 1 ) ;
+									printf( "dddd %i" jNewLine , index ) ;
 									jAssert( owner->count == 1 && owner->value == 0 )
-									if( owner->count == 2 && !owner->value )
+									if( owner->count < 3 && !owner->value )
 										{
 											PByteMapNode other = owner->last == current ? owner->first : owner->last ;
 											JBuffer buffer = { .size = other->key.size + owner->key.size + 1 } ;
 											if( !( buffer.bytes = realloc( owner->key.bytes , buffer.size ) ) )
 												return jNotEnoughtMemoryErrorMapResult ;
+											memcpy( &owner->subs , &other->subs , sizeof( PByteMapNode ) * subCount );
 											memcpy( buffer.bytes + owner->key.size + 1 , other->key.bytes , other->key.size ) ;
 											memcpy( buffer.bytes , owner->key.bytes , owner->key.size ) ;
 											buffer.bytes[ owner->key.size ] = index ;
 											owner->first = other->first ;
 											owner->value = other->value ;
 											owner->last = other->last ;
-											owner->subs = other->subs ;
 											owner->key = buffer ;
 											printf(
 												"!!! sizes other = %i " jNewLine ,
-												buffer.bytes[ owner->key.size ] ) ;
-											
-											eraseByteMapPoint( eraseByteMapNotModifyOwnerPoint ) ;
+												buffer.bytes[ index ] ) ;
+											eraseByteMapPoint( eraseByteMapConcateParentPoint ) ;
 										}
 									else
-										eraseByteMapPoint( eraseByteMapNotModifyOwnerPoint ) ;
-									owner->subs[ index ] = 0 ;
-									--owner->count ;
+										eraseByteMapPoint( eraseByteMapNotModifyOwnerPoint ) ,
+										owner->subs[ index ] = 0 ,
+										--owner->count ;
 								}
 							else
 								eraseByteMapPoint( eraseByteMapLastNodePoint ) , self->count = 0 , self->node = 0 ;
@@ -238,10 +247,13 @@ for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 							// Может стоить продублировать функцию freeByteMapNode без удаления .value. чтобы не делать
 							// current->value = 0
 							freeByteMapNode( current ) ;
-							return jSuccessResult ;
+							return jSuccessMapResult ;
 						}
-					printf( "not implement %s:%i" jNewLine , __FILE__ , __LINE__ ) ;
-					exit( 2 ) ;
+					else
+						if( current->count == 1 )
+							{
+								PByteMapNode other = owner->last == current ? owner->first : owner->last ;
+							}*/
 				}
 			else
 				eraseByteMapReturn( eraseByteMapNoValuePoint , jValueNotFoundErrorMapResult )
@@ -249,12 +261,12 @@ for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 			eraseByteMapReturn( eraseByteMapEndInPoint , jValueNotFoundErrorMapResult )
 	else
 		if( currentKey.size == 0 )
-			if( current->subs[ *in.bytes ] )
+			/*if( current->subs[ *in.bytes ] )
 				eraseByteMapIncrement(
 					node ,
 					owner = current ; currentKey = ( current = current->subs[ *in.bytes ] )->key )
 			else
-				eraseByteMapReturn( eraseByteMapMissingChildPoint , jValueNotFoundErrorMapResult )
+				eraseByteMapReturn( eraseByteMapMissingChildPoint , jValueNotFoundErrorMapResult )*/ ;
 		else
 			if( *in.bytes == *currentKey.bytes )
 				eraseByteMapIncrement( byte , ++currentKey.bytes ; --currentKey.size )
@@ -263,15 +275,16 @@ for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
 //return jSuccessResult ;
 }
 
-static JResult releaseByteMap( PByteMap self ) {
-if( --self->count )
-	return self->count ;
-return self->count ;
+static JCounter releaseByteMap( PByteMap self ) {
+if( --self->references )
+	return self->references ;
+
+return 0 ;
 }
 
 static ByteMapMethods byteMapMethods = {
-	/* base */ .acquire = 0 , .dump = 0 , .getInterface = 0 , .release = releaseByteMap ,
-	/* map */ .add = addByteMap , .erase = eraseByteMap } ;
+	/* base */ .acquire = 0 , .getInterface = 0 , .release = releaseByteMap ,
+	/* map */ .addItem = addByteMapItem , .clear = clearByteMap , .eraseItem = eraseByteMapItem , .getLastItem = 0 } ;
 
 jExport( JResult )jagryCreateByteMap( ByteMap** out ) {
 if( ( *out = malloc( sizeof( ByteMap ) ) ) == 0 )
