@@ -8,11 +8,6 @@ typedef ByteMap * PByteMap ;
 struct ByteMapMethods { jAllMap( ByteMap ) ; } ;
 
 struct ByteMap {
-//JMap* interface ;
-//struct
-//	{
-		jMinimalMembers( ByteMapMethods , methods )
-		ByteMapNode* node ;
-		JUnsignedInteger count ;
-//	} ;
-} ;
+	jMinimalMembers( ByteMapMethods , methods )
+	ByteMapNode* node ;
+	JUnsignedInteger count ; } ;

@@ -3,6 +3,6 @@
 #include "byteMap.d.h"
 
 #ifdef DEBUG
-	DebugAddByteMapItem jagryDebugAddByteMapItem ;
+	DebugByteMapAddItem jagryDebugByteMapAddItem ;
 	DebugEraseByteMap jagryDebugEraseByteMap ;
 #endif

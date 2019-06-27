@@ -1,4 +1,4 @@
-// 0 define
+// define
 #define subCount ( jMaxUnsignedInteger1 + 1 )
 #define ByteMapNodeMembers \
 	PByteMapNodeMethods methods ; \
@@ -7,11 +7,16 @@
 	PByteMapNode owner ; \
 	PByteMapNode next , previous ;
 
+// 0 include
+//#include "byteMap.h"
+
 // 0 typedef
 typedef struct ByteMapArrayNode ByteMapArrayNode ;
 typedef struct ByteMapEndNode ByteMapEndNode ;
 typedef struct ByteMapNode ByteMapNode ;
 typedef struct ByteMapNodeMethods ByteMapNodeMethods ;
+
+// 1 typedef
 typedef ByteMapArrayNode * PByteMapArrayNode ;
 typedef ByteMapEndNode * PByteMapEndNode ;
 typedef ByteMapNode * PByteMapNode ;
@@ -46,6 +51,7 @@ struct ByteMapArrayNode {
 struct ByteMapEndNode {
 	ByteMapNodeMembers } ;
 struct ByteMapNode {
+	PByteMapNodeMethods methods ;
 	JBuffer key ;
 	JPBuffer value ;
 	PByteMapNode first , last , next , owner , previous ;

@@ -5,7 +5,7 @@
 #include <jagry/lbase.h>
 #include <jagry/lmap.h>
 #include <stdio.h>
-#include "message.h"
+#include "../message.h"
 #include "time.h"
 
 // 1

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "iteration.h"
+#include "../message.h"
 
 #include "../../byteMapNode.h"
 
@@ -67,6 +68,7 @@ printf( " }" jNewLine ) ;
 JResult main() {
 JIMap map ;
 //Iteration iterations[] = { "AbbbCdddEfff" , "AbbbGhhh" , "AbbbCddd" } ;
+DebugByteMapAddItemPoint debugAddByteMapItemPoint = 0 ;
 Iteration iterations[] = {
 	initializeIteration( "first node", "AbbbCdddEfff" , addByteMapItemFirstNode ) } ;
 JResult status = jagryCreateByteMap( &map ) ;
@@ -76,13 +78,15 @@ if( map == 0 )
 	exit( -2 ) ;
 for( JSize counter = 0 ; ( sizeof( iterations ) / sizeof( *iterations ) ) > counter ; ++counter )
 	{
-		printf( "%s" jNewLine , iterations[ counter ].name ) ;
-		status = jAddMapItem( map , iterations[ counter ].key , iterations[ counter ].value , 0 ) ;
+		printf( "%s:" , iterations[ counter ].name ) ;
+		jagryDebugByteMapAddItem = ( DebugByteMapAddItem ){ .byte = 0 , .points = 0 , .node = 0 } ;
+		status = jMapAddItem( map , iterations[ counter ].key , iterations[ counter ].value , 0 ) ;
 		if( status != jSuccessMapResult )
 			{
-				
+				printf( callReturnedErrorMessage , __FILE__ , __LINE__ , "jMapAddItem" , status ) ;
 			}
+		//if( iterations[ counter ].points != jagryDebugByteMapAddItem.points )
 	}
-jReleaseMap( map ) ;
+jMapRelease( map ) ;
 return 0 ;
 }

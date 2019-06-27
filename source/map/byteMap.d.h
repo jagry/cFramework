@@ -1,18 +1,19 @@
 #ifdef DEBUG
-	#define byteMapReturn( variableArg , pointArg , valueArg ) return variableArg.point |= pointArg , valueArg ;
+	#define byteMapReturn( variableArg , pointsArg , valueArg ) \
+		return variableArg.points |= pointsArg , valueArg ;
 
-	#define addByteMapItemReturn( pointArg , valueArg ) \
-		byteMapReturn( jagryDebugAddByteMapItem , pointArg , valueArg )
+	//#define addByteMapItemReturn( pointArg , valueArg ) \
+	//	byteMapReturn( jagryDebugByteMapAddItem , pointArg , valueArg )
 
 	#define addByteMapItemFirstNode  ( 1 << 0 ) // Создание первого узла
 
-	typedef JUnsignedInteger1 DebugAddByteMapItemPoint ;
-	typedef struct DebugAddByteMapItem {
-		DebugAddByteMapItemPoint point ;
+	typedef JUnsignedInteger1 DebugByteMapAddItemPoint ;
+	typedef struct DebugByteMapAddItem {
+		DebugByteMapAddItemPoint points ;
 		JUnsignedInteger1 byte ;
-		JUnsignedInteger1 node ; } DebugAddByteMapItem ;
+		JUnsignedInteger1 node ; } DebugByteMapAddItem ;
 
-	extern DebugAddByteMapItem jagryDebugAddByteMapItem ;
+	extern DebugByteMapAddItem jagryDebugByteMapAddItem ;
 
 	#define eraseByteMapIncrement( memberArg , actionArg ) \
 		{ \
@@ -39,10 +40,13 @@
 		eraseByteMapLastNodePoint | eraseByteMapMissingChild | eraseByteMapNotModifyOwnerPoint | \
 		eraseByteMapNotEqual | eraseByteMapNoValue | eraseByteMapSetValuePoint )
 
-	typedef struct DebugEraseByteMap {
-		JUnsignedInteger2 point ;
+	typedef JUnsignedInteger2 DebugEraseByteMapPoints ;
+	typedef struct DebugEraseByteMap DebugEraseByteMap ;
+
+	struct DebugEraseByteMap {
+		DebugEraseByteMapPoints points ;
 		JUnsignedInteger1 byte ;
-		JUnsignedInteger1 node ; } DebugEraseByteMap ;
+		JUnsignedInteger1 node ; } ;
 
 	extern DebugEraseByteMap jagryDebugEraseByteMap ;
 #else
@@ -54,7 +58,7 @@
 
 // !!! вынести отсюда
 #define addByteMapItemReturn( pointArg , valueArg ) \
-	byteMapReturn( jagryDebugAddByteMapItem , pointArg , valueArg )
+	byteMapReturn( jagryDebugByteMapAddItem , pointArg , valueArg )
 #define eraseByteMapReturn( pointArg , valueArg ) \
 	byteMapReturn( jagryDebugEraseByteMap , pointArg , valueArg )
 

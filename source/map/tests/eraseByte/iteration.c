@@ -6,7 +6,7 @@
 #include <jagry/lmap.h>
 #include <stdio.h>
 #include "time.h"
-#include "message.h"
+#include "../message.h"
 
 // 1
 #include <time.h>
@@ -23,24 +23,24 @@ JResult iteration( IterationDescription testIn , JPBuffer value , PCallback call
 struct timespec time ;
 JIMap map ;
 JResult result ;
-jagryDebugEraseByteMap = ( DebugEraseByteMap ){ .byte = 0 , .point = 0 , .node = 0 } ;
+jagryDebugEraseByteMap = ( DebugEraseByteMap ){ .byte = 0 , .points = 0 , .node = 0 } ;
 clock_gettime( CLOCK_REALTIME , &time ) ;
 if( jResultIsError( result = jagryCreateByteMap( &map ) ) )
 	return printf( callReturnedErrorMessage , "jagryCreateByteMap", result , __FILE__ , __LINE__ ) , result ;
 for( JSignedInteger counter = 0 ; counter < testIn.itemCount ; ++counter )
 	{
 		JBuffer buffer = jStringBuffer( testIn.items[ counter ] ) ;
-		result = jAddMapItem( map , buffer , buffer , 0 ) ;
+		result = jMapAddItem( map , buffer , buffer , 0 ) ;
 		if( result != jSuccessMapResult )
 			return printf( callReturnedErrorMessage , "jAddMap" , result , __FILE__ , __LINE__ ) , result ;
 	}
-result = jEraseMapItem( map , testIn.key , value ) ;
-jReleaseMap( map ) ;
+result = jMapEraseItem( map , testIn.key ) ;
+jMapRelease( map ) ;
 if( result != resultIn )
 	return printf( eraseMapReturnedOtherMessage , __FILE__ , __LINE__ , result , resultIn ) , -1 ;
-if( jagryDebugEraseByteMap.point != testIn.point )
+if( jagryDebugEraseByteMap.points != testIn.points )
 	return
-		printf( returnPointMustBeMessage , __FILE__ , __LINE__ , jagryDebugEraseByteMap.point , testIn.point ) ,
+		printf( returnPointMustBeMessage , __FILE__ , __LINE__ , jagryDebugEraseByteMap.points , testIn.points ) ,
 		-1 ;
 if( jagryDebugEraseByteMap.byte != testIn.byte )
 	return

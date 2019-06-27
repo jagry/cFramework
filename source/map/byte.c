@@ -11,8 +11,8 @@
 // 2 include
 #include "byteMap.h"
 
-typedef struct Stack Stack ;
-typedef Stack * PStack ;
+// !!! typedef struct Stack Stack ;
+// !!! typedef Stack * PStack ;
 
 jStatic( JResult )addByteMapItem(
 	PByteMap ,
@@ -33,7 +33,11 @@ jStatic( JCounter )releaseByteMap(
 
 jStatic( ByteMapMethods )byteMapMethods = {
 	/* base */ .acquire = 0 , .getInterface = 0 , .release = releaseByteMap ,
-	/* map */ .addItem = addByteMapItem , .clear = clearByteMap , .eraseItem = eraseByteMapItem , .getLastItem = 0 } ;
+	/* map */
+		.addItem = addByteMapItem ,
+		.clear = clearByteMap ,
+		.eraseItem = eraseByteMapItem ,
+		.getLastItem = 0 } ;
 
 JResult addByteMapItem( PByteMap self , JCBuffer keyIn , JCBuffer valueIn , JPBuffer out ) {
 JResult result ;
@@ -157,8 +161,8 @@ for( JBuffer argument = keyIn , local = ( *pointer )->key ; ; ++argument.bytes ,
 
 JResult clearByteMap( PByteMap self ) {
 JPMapItem item ;
-JResult status ;
-if( jResultIsNotError( status = jMapGetFirstItem( self , &item ) ) )
+JResult status = jMapGetFirstItem( self , &item ) ;
+if( jResultIsNotError( status ) )
 	for( ; ; )
 		{
 		}
