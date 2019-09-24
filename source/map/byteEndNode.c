@@ -1,5 +1,5 @@
 #include <jagry/buffer.h>
-#include <jagry/imap.h>
+#include <jagry/map.i.h>
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>

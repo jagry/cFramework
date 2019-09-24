@@ -1,7 +1,7 @@
 #include <memory.h>
 #include "buffer.h"
 
-int AddBufferCharacter( JBufferS* self , char character ) {
+/*int AddBufferCharacter( JBufferS* self , char character ) {
     int size = self->size + 1 ;
     char* pointer = realloc( self->pointer , size ) ;
     if( pointer = 0 )
@@ -10,9 +10,9 @@ int AddBufferCharacter( JBufferS* self , char character ) {
     self->pointer = pointer ;
     self->size = size ;
     return 0 ;
-}
+}*/
 
-void freeBuffer( JBufferS* self ) {
+/*void freeBuffer( JBufferS* self ) {
     free( self->pointer ) ;
 }
 
@@ -31,4 +31,4 @@ int setBuffer( JBufferS* self , char* pointer , int size ) {
     memcpy( local , pointer , self->size = size ) ;
     self->pointer = local ;
     return 0 ;
-}
+}*/

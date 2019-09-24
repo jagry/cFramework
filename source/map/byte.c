@@ -1,6 +1,6 @@
 // 0 include
-#include <jagry/imap.h>
-#include <jagry/lbase.h>
+#include <jagry/base.l.h>
+#include <jagry/map.i.h>
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>

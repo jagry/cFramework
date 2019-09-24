@@ -1,15 +1,20 @@
+#include <jagry/buffer.h>
 #include <stdio.h>
 #include <string.h>
 #include "parser.h"
 
 int main(int argc, char** argv) {
-    JParser* parser ;
-    JParserStatus parserStatus ;
-    JToken* token ;
-    const char* text = "#int a = 0" ;
-    jParser( &parser ) ;
-    for( int counter = 0 ; counter < strlen( text ) ; ++counter )
-        jExecuteParser( parser , text[ counter ] , parserStatus , token ) ;
-    return 0 ;
+	JParser* parser ;
+	JParserStatus parserStatus ;
+	JToken* token ;
+	char* text = "$int a = 0" ;
+	jParser( &parser ) ;
+	JInputStream * stream ;
+	jagryBufferInputStream( &( JBuffer ){ .bytes = text , .size = 10 } , &stream  ) ;
+	for( ; ; )
+		{
+			jExecuteParser( parser , token ) ;
+		}
+	return 0 ;
 }
 

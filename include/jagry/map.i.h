@@ -85,8 +85,8 @@
 #define jSupersMapMethods JMapMethods map ; jBaseMethodsSupers
 
 // 0 include
+#include "base.i.h"
 #include "buffer.h"
-#include "ibase.h"
 
 // 0 typedef
 typedef union JMap JMap ;

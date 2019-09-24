@@ -1,9 +1,9 @@
-#include "buffer.h"
+#include <jagry/buffer.h>
 #include "parser.h"
 
 #include "is.h"
 
-int getIdentifier( Parser const* parser , const char character , JBufferS* out ) {
+int getIdentifier( Parser const* parser , const char character , JBuffer* out ) {
     /*for( ; ; ) {
         int result = readCharacter( parser , stream ) ;
         if( result < 0 )

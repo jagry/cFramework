@@ -13,9 +13,9 @@ struct dd {
 static struct dd keywords[ 1 ] = {
     { .identifier = INT_KEYWORD , .name = "int" } } ;
 
-int getIdentifier( Parser const* parser , jIInputStream const* stream , JBufferS* out ) ;
+int getIdentifier( Parser* parser , JInputStream* stream , JBuffer* out ) ;
 
-int getKeyword( Parser* parser , jIInputStream* stream , Keyword* out ) {
+int getKeyword( Parser* parser , JInputStream* stream , Keyword* out ) {
     /*JBuffer buffer ;
     int result = readCharacter( parser , stream ) ;
     if( result < 0 )

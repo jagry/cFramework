@@ -15,7 +15,7 @@
 
 typedef struct JMinimal JMinimal ;
 
-#include "ibase.h"
+#include "base.i.h"
 
 //typedef struct jsmMinimal jsmMinimal ;
 

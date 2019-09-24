@@ -13,6 +13,6 @@
 #define TAB_CHARACTER '\t'
 #define ZERO_DIGIT_CHARACTER '0'
 
-int readCharacter( Parser* parser , jIInputStream* stream ) ;
+int readCharacter( Parser* parser , JIInputStream stream ) ;
 
 //#endif // JAGRY_KEYWORD

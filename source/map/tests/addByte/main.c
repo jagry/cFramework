@@ -1,5 +1,5 @@
-#include <jagry/lbase.h>
-#include <jagry/lmap.h>
+#include <jagry/base.l.h>
+#include <jagry/map.l.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
