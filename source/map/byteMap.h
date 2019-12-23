@@ -1,13 +1,13 @@
 #include "byteMap.d.h"
 
-typedef struct ByteMap ByteMap ;
-typedef struct ByteMapMethods ByteMapMethods ;
+jStdDeclareImplementation( ByteMap )
 
-typedef ByteMap * PByteMap ;
-
-struct ByteMapMethods { jAllMap( ByteMap ) ; } ;
-
-struct ByteMap {
-	jMinimalMembers( ByteMapMethods , methods )
-	ByteMapNode* node ;
+union IByteMap {
+	PDByteMap data ; } ;
+		
+struct DByteMap {
+	jSuperMembers( PCMByteMap , methods )
+	IByteMapNode node ;
 	JUnsignedInteger count ; } ;
+	
+struct MByteMap { jAllMap( IByteMap ) } ;

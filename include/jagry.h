@@ -45,13 +45,26 @@ _AIX            Defined on AIX
 	#define jRelease( argument )
 #endif
 
+#define jPrefixType( prefix , name , define ) \
+	typedef define prefix##name ; \
+	\
+	typedef prefix##name * prefix##P##name ; \
+	typedef prefix##name const prefix##C##name ; \
+	\
+	typedef prefix##C##name * prefix##PC##name ; \
+	typedef prefix##P##name * prefix##PP##name ; \
+	typedef prefix##P##name const prefix##CP##name ; \
+	\
+	typedef prefix##PC##name const prefix##CPC##name ;
+#define jType( name , base ) jPrefixType( , name , base )
+
 #define jNewLine "\r\n"
 
-#define jMaxSignedInteger ( ( JSignedInteger )( JUnsignedInteger >> 1 ) )
-#define jMaxSignedInteger1 ( ( JSignedInteger1 )( JUnsignedInteger1 >> 1 ) )
-#define jMaxSignedInteger2 ( ( JSignedInteger2 )( JUnsignedInteger2 >> 1 ) )
-#define jMaxSignedInteger4 ( ( JSignedInteger4 )( JUnsignedInteger3 >> 1 ) )
-#define jMaxSignedInteger8 ( ( JSignedInteger8 )( JUnsignedInteger4 >> 1 ) )
+#define jMaxSignedInteger ( ( JSignedInteger )( jMaxUnsignedInteger >> 1 ) )
+#define jMaxSignedInteger1 ( ( JSignedInteger1 )( jMaxUnsignedInteger1 >> 1 ) )
+#define jMaxSignedInteger2 ( ( JSignedInteger2 )( jMaxUnsignedInteger2 >> 1 ) )
+#define jMaxSignedInteger4 ( ( JSignedInteger4 )( jMaxUnsignedInteger4 >> 1 ) )
+#define jMaxSignedInteger8 ( ( JSignedInteger8 )( jMaxUnsignedInteger8 >> 1 ) )
 
 #define jMaxUnsignedInteger ( ( JUnsignedInteger )~0 )
 #define jMaxUnsignedInteger1 ( ( JUnsignedInteger1 )~0 )
@@ -84,69 +97,33 @@ _AIX            Defined on AIX
 #define jCounterSpecifier jSignedIntegerSpecifier
 #define jSizeSpecifier jSignedIntegerSpecifier
 
-typedef unsigned char JByte ;
+#include <stddef.h>
+#include <stdint.h>
 
-typedef char JCharacter1 ;
-typedef short JCharacter2 ;
-typedef int JCharacter4 ;
+jPrefixType( J , Void , void )
+jPrefixType( J , Byte , unsigned char )
 
-typedef signed char JSignedInteger1 ;
-typedef signed short JSignedInteger2 ;
-typedef signed int JSignedInteger4 ;
-typedef signed long long JSignedInteger8 ;
+jPrefixType( J , Character1 , __uint8_t )
+jPrefixType( J , Character2 , __uint16_t )
+jPrefixType( J , Character4 , __uint32_t )
 
-typedef unsigned char JUnsignedInteger1 ;
-typedef unsigned short JUnsignedInteger2 ;
-typedef unsigned int JUnsignedInteger4 ;
-typedef unsigned long long JUnsignedInteger8 ;
+jPrefixType( J , SignedInteger , signed int )
+jPrefixType( J , SignedInteger1 , __int8_t )
+jPrefixType( J , SignedInteger2 , __int16_t )
+jPrefixType( J , SignedInteger4 , __int32_t )
+jPrefixType( J , SignedInteger8 , __int64_t )
 
-typedef void JVoid ;
+jPrefixType( J , UnsignedInteger , unsigned int )
+jPrefixType( J , UnsignedInteger1 , __uint8_t )
+jPrefixType( J , UnsignedInteger2 , __uint16_t )
+jPrefixType( J , UnsignedInteger4 , __uint32_t )
+jPrefixType( J , UnsignedInteger8 , __uint64_t )
 
-#ifdef _LP64
-	typedef signed int JSignedInteger ;
-	typedef unsigned int JUnsignedInteger ;
-	typedef JUnsignedInteger8 jPointerInteger ;
-#else
-	typedef JSignedInteger4 JSignedInteger ;
-	typedef JUnsignedInteger4 JUnsignedInteger ;
-	typedef JUnsignedInteger4 jPointerInteger ;
-#endif
+jPrefixType( J , Counter , int )
+jPrefixType( J , Size , size_t )
 
 typedef enum JBoolean {
 	jFalse ,
 	jTrue } JBoolean ;
-
-typedef JSignedInteger JCounter , JSize ;
-
-typedef JByte JAByte[] ;
-typedef JCharacter1 JACharacter1[] ;
-
-typedef JByte const JCByte ;
-typedef JCharacter1 const JCCharacter1 ;
-typedef JVoid const JCVoid ;
-
-typedef JByte * JPByte ;
-typedef JCharacter1 * JPCharacter1 ;
-typedef JVoid * JPVoid ;
-
-typedef JPCharacter1 JAPCharacter1[] ;
-
-typedef JPByte const JCPByte ;
-typedef JPCharacter1 const JCPCharacter1 ;
-typedef JPVoid const JCPVoid ;
-
-typedef JACharacter1 * JPACharacter1 ;
-
-typedef JCByte * JPCByte ;
-typedef JCCharacter1 * JPCCharacter1 ;
-typedef JCVoid * JPCVoid ;
-
-typedef JPCharacter1 * JPPCharacter1 ;
-
-typedef JPCByte const JCPCByte ;
-typedef JPCCharacter1 const JCPCCharacter1 ;
-typedef JPCVoid const JCPCVoid ;
-
-// !!! 
 
 #endif

@@ -1,17 +1,23 @@
-//#ifndef JAGRY_TOKEN
-//#define JAGRY_TOKEN
+#define keywordTokenType 0
 
-typedef struct JToken JToken ;
-typedef struct JTokenMethods JTokenMethods ;
+#define defineTokenImplementation( name , members ) \
+	struct D##name { PCM##name methods ; JByte type ; members } ; \
+	union I##name { IBaseToken base ; PD##name data ; } ; \
+	struct M##name \
+	{ \
+		JResult( *execute )( IBaseToken ) ; \
+		JVoid( *free )( I##name ) ; \
+	} ;
 
-struct JToken {
-    JTokenMethods* methods ;
+jStdDeclareImplementation( BaseToken )
+jStdDeclareImplementation( KeywordToken )
+
+struct DBaseToken { PCMBaseToken methods ; JByte type ; } ;
+union IBaseToken { PDBaseToken data ; } ;
+struct MBaseToken
+{
+	JResult( *execute )( ) ;
+	JVoid( *free )( ) ;
 } ;
 
-struct JTokenMethods {
-    int( *close )( JToken* ) ;
-    int( *read )( JToken* , char* , int ) ;
-    int( *release )( JToken* ) ;
-} ;
-
-//#endif
+defineTokenImplementation( KeywordToken , JBuffer buffer ; )

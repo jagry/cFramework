@@ -1,9 +1,13 @@
 #ifndef JagryMapLibrary
 #define JagryMapLibrary
 
+#define jMapMethod jImport
+
 #include "map.i.h"
 
-jImport( JResult )jagryCreateByteMap( JMap** ) ;
-jImport( JResult )jagryCreateByteMapBase( JBase* , JBase** ) ;
+typedef JPIMap JPIByteMap ;
+typedef JIBase JPIByteMapBase ;
+
+#include "map/byte.h"
 
 #endif

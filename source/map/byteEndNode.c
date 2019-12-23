@@ -16,7 +16,7 @@ jStatic( JResult )initializeByteMapNode(
 
 // 
 JResult createByteMapNode( JPCBuffer keyIn , JPCBuffer valueIn ,
-	PByteMapNode ownerIn , JUnsignedInteger1 indexIn , PPByteMapNode out ) {
+	PDByteMapNode ownerIn , JUnsignedInteger1 indexIn , PPByteMapItem out ) {
 JResult result ;
 if( ( *out = malloc( sizeof( ByteMapArrayNode ) ) ) == 0 )
 	return jNotEnoughtMemoryErrorMapResult ;

@@ -1,60 +1,40 @@
-//#ifndef JAGRY_PARSER
-//#define JAGRY_PARSER
+#define baseStateParserMembers IBaseStateParser previous ;
+//#define dollarStateParserMembers baseStateParserMembers JBuffer buffer ;
+//#define keywordStateParserMembers dollarStateParserMembers
+//#define numberStateParserMembers dollarStateParserMembers
+#define startStateParserMembers baseStateParserMembers
+#define textStateParserMembers baseStateParserMembers JBuffer buffer ;
 
-#define jExecuteParser( self , out ) ( ( self )->methods->execute( ( self ) , &( out ) ) )
+#define jExecuteParser( self , out ) ( self.data->methods->execute( self , &out ) )
+#define jFreeParser( self ) ( self.data->methods->free( self ) )
+#define jExecuteStateParser( self , parser , out ) ( self.data->methods->execute( parser , out ) )
 
-#include "stream.h"
-#include "token.h"
+#define continueResult 1
 
-typedef struct JParser JParser ;
-typedef struct JParserMethods JParserMethods ;
-typedef struct JParserStatus JParserStatus ;
-typedef struct JParserStatusMethods JParserStatusMethods ;
+#define defineImplementation( name , members ) \
+	struct D##name { PCMBaseStateParser methods ; members } ; \
+	union I##name { IBaseStateParser base ; PD##name data ; } ;
 
-typedef JParser * JIParser ;
-typedef JParserStatus * JIParserStatus ;
-typedef JParserMethods * JPParserMethods ;
-typedef JParserStatusMethods * JPParserStatusMethods ;
+jStdDeclareImplementation( Parser )
+jStdDeclareImplementation( BaseStateParser )
+jStdDeclareImplementation( TextStateParser ) // Последовательность после символf "$", переключается на Heximal или Keyword
+//jStdDeclareInterface( JDollarStateParser ) // Последовательность после символf "$", переключается на Heximal или Keyword
+//jStdDeclareInterface( JNumberStateParser ) // Число с указанием системы счисления
+//jStdDeclareInterface( JKeywordStateParser )
+jStdDeclareImplementation( StartStateParser )
 
-typedef JPParserMethods * JCPParserMethods ;
+union IBaseStateParser { PDBaseStateParser data ; } ;
+struct DBaseStateParser { PCMBaseStateParser methods ; IBaseStateParser previous ; } ;
+struct MBaseStateParser { JResult( *execute )( IParser , PIBaseToken ) ; JVoid( *free )( IParser ) ; JResult( *token )( IParser , IBaseToken ) ; } ;
 
-struct JParser {
-	const JParserMethods * methods ;
-	JInputStream * stream ;
-} ;
+struct DParser { PCMParser methods ; IBaseStateParser current ; JIReader reader ; } ;
+union IParser { PDParser data ; } ;
+struct MParser { JResult( *execute )( IParser , PIBaseToken ) ; JVoid( *free )( IParser ) ; } ;
 
-struct JParserMethods {
-	JIParserStatus( *execute )( const JParser* , JToken** ) ;
-} ;
+//defineImplementation( JDollarStateParser , dollarStateParserMembers )
+//defineImplementation( JNumberStateParser , numberStateParserMembers )
+//defineImplementation( JKeywordStateParser , keywordStateParserMembers )
+defineImplementation( StartStateParser , startStateParserMembers )
+defineImplementation( TextStateParser , textStateParserMembers )
 
-struct JParserStatus {
-} ;
-
-int jParser( JParser** ) ;
-
-//
-
-typedef struct LocalParser LocalParser ;
-typedef struct Parser Parser ;
-typedef struct StartParser StartParser ;
-
-struct LocalParser {
-	JParserMethods* methods ;
-	Parser* stack ;
-} ;
-
-/*struct LocalParserMethods {
-    int( *execute )( const Parser* , const char , JParserStatus* , JToken** ) ;
-} ;*/
-
-struct Parser {
-	const JParserMethods *methods ;
-	JInputStream *stream ;
-	LocalParser *current ;
-} ;
-
-struct StartParser {
-	const JParserMethods* methods ;
-} ;
-
-//#endif
+int parser( JIReader , PIParser ) ;

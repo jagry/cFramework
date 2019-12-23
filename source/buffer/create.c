@@ -1,17 +1,18 @@
 #include <jagry/buffer.h>
 #include <stdlib.h>
 
-JResult jagryCreatePBuffer( JPCBuffer in , JPPBuffer out ) {
-if( in ) return jagryCreateBuffer( in->bytes , in->size , out ) ;
-*out = 0 ;
-return jPointerIsNilWarningResult ;
+JResult jagryCreatePBuffer( JCPBuffer in , JPPBuffer out ) {
+return in ?
+	jagryCreateBuffer( in->bytes , in->size , out ) :
+	( *out = 0 , jPointerIsNilWarningResult ) ;
 }
 
 JResult jagryCreateBuffer( JPCByte bytesIn , JSize sizeIn , JPPBuffer out ) {
 JResult result ;
-if( ( *out = malloc( sizeof( JBuffer ) ) ) == 0 )
+if( !( *out = malloc( sizeof( JBuffer ) ) ) )
 	return jNotEnoughtMemoryErrorResult ;
-if( jResultIsError( result = jagryInitializeBuffer( *out , bytesIn , sizeIn ) ) )
+result = jagryInitializeBuffer( *out , bytesIn , sizeIn ) ;
+if( jResultIsError( result ) )
 	free( *out ) ;
 return result ;
 }

@@ -2,73 +2,91 @@
 #define JagryMapInterfece
 
 // define all
-#define jAllMap( type ) jEachMap( type , type , type , type , type , type , type , type , type , type , type )
-#define jAllMapItem( type ) jEachMapItem( type , type , type , type , type )
+#define jAllMap( type ) jEachMap( type , type , type , type , type , type , type , type , type , type , type , type )
+#define jAllMapItem( type ) jEachMapItem( type , type , type , type , type , type , type , type )
 
 // define each
-#define jEachMap( acquire , getInterface , release , addItem , clear , eraseItem , eraseItemNext , \
-		eraseItemPrevious , getFirstItem , getItem , getLastItem ) \
+#define jEachMap( acquire , getInterface , release , \
+		addItem , clear , eraseItem , getFirstItem , \
+		getLastItem , getItem , newItem , putItem , setItem ) \
 	jBaseEach( acquire , getInterface , release ) \
-	jSelfMap( addItem , clear , eraseItem , eraseItemNext , eraseItemPrevious , getFirstItem , getItem , \
-		getLastItem )
-#define jEachMapItem( erase , eraseNext , erasePrevious , getNext , getPrevious ) \
-	jSelfMapItem( erase , eraseNext , erasePrevious , getNext , getPrevious )
+	jSelfMap( addItem , clear , eraseItem , getFirstItem , \
+		getLastItem , getItem , newItem , putItem , setItem )
+#define jEachMapItem( free , freeNext , freePrevious , \
+		getKey , getNext , getPrevious , getValue , setValue ) \
+	jSelfMapItem( free , freeNext , freePrevious , \
+		getKey , getNext , getPrevious , getValue , setValue )
 
 // define object map inherit methods
-#define jMapAcquire( argument ) jAcquireBase( argument )
-#define jMapGetInterface( self , in , out ) jGetBaseInterface( self , in , out )
-#define jMapRelease( argument ) jReleaseBase( argument )
-
-// define object map pointers
-#define jPMapAddItem( type ) JResult( *addItem )( type* , JBuffer , JBuffer , JPBuffer ) ;
-#define jPMapClear( type ) JResult( *clear )( type* ) ;
-#define jPMapEraseItem( type ) JResult( *eraseItem )( type* , JBuffer ) ;
-#define jPMapEraseItemNext( type ) JResult( *eraseItemNext )( type* , JBuffer , JMapItem** ) ;
-#define jPMapEraseItemPrevious( type ) JResult( *eraseItemPrevious )( type* , JBuffer , JMapItem** ) ;
-#define jPMapGetFirstItem( type ) JResult( *getFirstItem )( type* , JMapItem** ) ;
-#define jPMapGetLastItem( type ) JResult( *getLastItem )( type* , JMapItem** ) ;
-#define jPMapGetItem( type ) JResult( *getItem )( type* , JCBuffer , JMapItem** ) ;
+#define jAcquireMap( self ) jAcquireBase( self.super )
+#define jGetMapInterface( self , in , out ) jGetBaseInterface( self.super , in , out )
+#define jReleaseMap( self ) jReleaseBase( self.super )
 
 // define object map self method
-#define jMapAddItem( self , keyIn , valueIn , out ) ( self )->methods->addItem( self , keyIn , valueIn , out )
-#define jMapClear( self ) ( self )->methods->clear( self )
-#define jMapEraseItem( self , in ) ( self )->methods->eraseItem( self , in )
-#define jMapEraseItemNext( self , in , out ) ( self )->methods->eraseItem( self , in , out )
-#define jMapEraseItemPrevious( self , in , out ) ( self )->methods->eraseItem( self , in , out )
-#define jMapGetFirstItem( self , out ) ( self )->methods->getFirstItem( self , out )
-#define jMapGetItem( self , in , out ) ( self )->methods->getItem( self , in , out )
-#define jMapGetLastItem( self , out ) ( self )->methods->getLastItem( self , out )
+#define jAddMapItem( self , keyIn , valueIn , out ) ( self )->methods->addItem( self , keyIn , valueIn , out )
+#define jClearMap( self ) ( self )->methods->clear( self )
+#define jEraseMapItem( self , in ) ( self )->methods->eraseItem( self , in )
+//#define jEraseMapItemNext( self , in , out ) ( self )->methods->eraseItem( self , in , out )
+//#define jEraseMapItemPrevious( self , in , out ) ( self )->methods->eraseItem( self , in , out )
+#define jGetFirstMapItem( self , out ) ( self )->methods->getFirstItem( self , out )
+#define jGetLastMapItem( self , out ) ( self )->methods->getLastItem( self , out )
+#define jGetMapItem( self , in , out ) ( self )->methods->getItem( self , in , out )
+#define jNewMapItem( self , keyIn , valueIn , out ) ( self )->methods->newItem( self , keyIn , valueIn , out )
+#define jPutMapItem( self , keyIn , valueIn , out ) ( self )->methods->putItem( self , keyIn , valueIn , out )
+#define jSetMapItem( self , keyIn , valueIn , out ) ( self )->methods->setItem( self , keyIn , valueIn , out )
+
+// define object map pointers
+#define jAddMapItemDeclare( type ) JResult( *addItem )( type , JCPCBuffer , JCPCBuffer , JPIMapItem ) ;
+#define jClearMapDeclare( type ) JResult( *clear )( type ) ;
+#define jEraseMapItemDeclare( type ) JResult( *eraseItem )( type , JBuffer ) ;
+//#define jMapEraseItemNextDeclare( type ) JResult( *eraseItemNext )( type , JBuffer , JMapItem** ) ;
+//#define jMapEraseItemPreviousDeclare( type ) JResult( *eraseItemPrevious )( type* , JBuffer , JMapItem** ) ;
+#define jGetFirstMapItemDeclare( type ) JResult( *getFirstItem )( type , JIMapItem** ) ;
+#define jGetLastMapItemDeclare( type ) JResult( *getLastItem )( type , JIMapItem** ) ;
+#define jGetMapItemDeclare( type ) JResult( *getItem )( type , JCBuffer , JIMapItem** ) ;
+#define jNewMapItemDeclare( type ) JResult( *newItem )( type , JCPCBuffer , JCPCBuffer , JPIMapItem ) ;
+#define jPutMapItemDeclare( type ) JResult( *putItem )( type , JCPCBuffer , JCPCBuffer , JPIMapItem ) ;
+#define jSetMapItemDeclare( type ) JResult( *setItem )( type , JCPCBuffer , JCPCBuffer , JPIMapItem ) ;
 
 // define object mapItem methods
-#define jMapItemErase( self ) ( self )->methods->erase( self )
-#define jMapItemEraseNext( self , out ) ( self )->methods->eraseNext( self , out )
-#define jMapItemErasePrevious( self , out ) ( self )->methods->erasePrevious( self , out )
-#define jMapItemGetNext( self , out ) ( self )->methods->getNext( self , out )
-#define jMapItemGetPrevious( self , out ) ( self )->methods->getPrevious( self , out )
+#define jDeleteMapItem( self ) ( self )->methods->free( self )
+#define jDeleteMapItemAndNext( self , out ) ( self )->methods->freeAndNext( self , out )
+#define jDeleteMapItemAndPrevious( self , out ) ( self )->methods->freeAndPrevious( self , out )
+#define jGetMapItemNext( self , out ) ( self )->methods->getNext( self , out )
+#define jGetMapItemPrevious( self , out ) ( self )->methods->getPrevious( self , out )
 
 // define object mapItem pointers
-#define jPMapItemErase( type ) JResult( *erase )( type* ) ;
-#define jPMapItemEraseNext( type ) JResult( *eraseNext )( type* , JMapItem** ) ;
-#define jPMapItemErasePrevious( type ) JResult( *erasePrevious )( type* , JMapItem** ) ;
-#define jPMapItemGetNext( type ) JResult( *next )( type* , JMapItem** ) ;
-#define jPMapItemGetPrevious( type ) JResult( *previous )( type* , JMapItem** ) ;
+#define jFreeMapItemDeclare( type ) JResult( *free )( type* ) ;
+#define jFreeMapItemNextDeclare( type ) JResult( *freeNext )( type* , JPIMapItem ) ;
+#define jFreeMapItemPreviousDeclare( type ) JResult( *freePrevious )( type* , JPIMapItem ) ;
+#define jGetMapItemKeyDeclare( type ) JResult( *getKey )( type* , JPIMapItem ) ;
+#define jGetMapItemNextDeclare( type ) JResult( *getNext )( type* , JPIMapItem ) ;
+#define jGetMapItemPreviousDeclare( type ) JResult( *getPprevious )( type* , JPIMapItem ) ;
+#define jGetMapItemValueDeclare( type ) JResult( *getValue )( type* , JPIMapItem ) ;
+#define jSetMapItemValueDeclare( type ) JResult( *setValue )( type* , JPIMapItem ) ;
 
 // define self
-#define jSelfMap( addItem , clear , eraseItem , eraseItemNext , eraseItemPrevious , getFirstItem , getItem , getLastItem ) \
-	jPMapAddItem( addItem ) \
-	jPMapClear( clear ) \
-	jPMapEraseItem( eraseItem ) \
-	jPMapEraseItemNext( eraseItemNext ) \
-	jPMapEraseItemPrevious( eraseItemPrevious ) \
-	jPMapGetFirstItem( getFirstItem ) \
-	jPMapGetItem( getItem ) \
-	jPMapGetLastItem( getLastItem )
-#define jSelfMapItem( erase , eraseNext , erasePrevious , getNext , getPrevious ) \
-	jPMapItemErase( getNext ) \
-	jPMapItemEraseNext( getNext ) \
-	jPMapItemErasePrevious( getPrevious ) \
-	jPMapItemGetNext( getNext ) \
-	jPMapItemGetPrevious( getPrevious )
+#define jSelfMap( addItem , clear , eraseItem , getFirstItem , \
+		getLastItem , getItem , newItem , putItem , setItem ) \
+	jAddMapItemDeclare( addItem ) \
+	jClearMapDeclare( clear ) \
+	jEraseMapItemDeclare( eraseItem ) \
+	jGetFirstMapItemDeclare( getFirstItem ) \
+	jGetLastMapItemDeclare( getLastItem ) \
+	jGetMapItemDeclare( getItem ) \
+	jNewMapItemDeclare( newItem ) \
+	jPutMapItemDeclare( putItem ) \
+	jSetMapItemDeclare( setItem )
+#define jSelfMapItem( free , freeNext , freePrevious , \
+		getKey , getNext , getPrevious , getValue , setValue ) \
+	jFreeMapItemDeclare( free ) \
+	jFreeMapItemNextDeclare( freeNext ) \
+	jFreeMapItemPreviousDeclare( freePrevious ) \
+	jGetMapItemKeyDeclare( getKey ) \
+	jGetMapItemNextDeclare( getNext ) \
+	jGetMapItemPreviousDeclare( getPrevious ) \
+	jGetMapItemValueDeclare( getValue ) \
+	jSetMapItemValueDeclare( setValue )
 
 // define status
 #define jEmptyErrorMapResult -20
@@ -84,35 +102,21 @@
 #define jSupersMap JMap map ; jBaseSupers
 #define jSupersMapMethods JMapMethods map ; jBaseMethodsSupers
 
-// 0 include
 #include "base.i.h"
 #include "buffer.h"
+		
+jPrefixType( J , DMapItem , struct JDMapItem ) ;
+jPrefixType( J , IMapItem , struct JIMapItem ) ;
+jPrefixType( J , MMapItem , struct JMMapItem ) ;
 
-// 0 typedef
-typedef union JMap JMap ;
-typedef struct JMapItem JMapItem ;
-typedef union JMapMethods JMapMethods ;
-typedef struct JMapItemMethods JMapItemMethods ;
+jPrefixStdDeclareInterface( J , Map )
+jPrefixStdDefineInterface( J , Map , jAllMap( JIMap ) , JIBase )
 
-// 1 interfce
-jInterface( JMap , JBase , jBaseSupers , methods , jAllMap( JMap ) , JMapMethods , JBaseMethods , jBaseMethodsSupers )
-//jInterface( JMapItem , JBase , jBaseSupers , methods , jAllMapItem( JMapItem ) , JMapItemMethods , JBaseMethods , jBaseMethodsSupers )
+struct JDMapItem { JCPCMMapItem methods ; }	;
+struct JIMapItem { JPDMapItem data ; } ;
+struct JMMapItem { jAllMapItem( JIMapItem ) } ;
 
-// 1 struct
-struct JMapItemMethods {
-	jAllMapItem( JMapItem ) } ;
-
-// 1 typedef
-typedef JMap * JIMap ;
-typedef JMapItem * JPMapItem ;
-typedef JMapItemMethods * JPMapItemMethods ;
-
-// 2 struct
-struct JMapItem {
-	JPMapItemMethods methods ; } ;
-
-// 2 typedef
-typedef JIMap * JPIMap ;
-typedef JPMapItem * JPPMapItem ;
+#define jIMapNil ( ( JIMap ){ .data = 0 } )
+#define jIMapItemNil ( ( JIMapItem ){ .data = 0 } )
 
 #endif
