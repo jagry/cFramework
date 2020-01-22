@@ -1,7 +1,7 @@
 #include <jagry/buffer.h>
 #include <stdlib.h>
 
-JResult jagryCreatePBuffer( JCPBuffer in , JPPBuffer out ) {
+JResult jagryCreatePBuffer( JCPCBuffer in , JPPBuffer out ) {
 return in ?
 	jagryCreateBuffer( in->bytes , in->size , out ) :
 	( *out = 0 , jPointerIsNilWarningResult ) ;

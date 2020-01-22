@@ -7,7 +7,7 @@
 
 #define jExecuteReader( self , bytes , size ) ( self.data->methods->execute( self , bytes , size ) )
 
-#define jEndReaderErrorResult ( -20 )
+#define jEndErrorReaderResult ( -20 )
 
 #define jExecuteReaderPointer( type ) JResult( *execute )( type , JPByte , JPSize ) ;
 

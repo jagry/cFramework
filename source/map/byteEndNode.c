@@ -7,46 +7,14 @@
 #include "byteMapNode.h"
 
 // 1 method declare
-jStatic( JResult )initializeByteMapNode(
-	PByteMapNode ,
-	JPCBuffer ,
-	JPCBuffer ,
-	PByteMapArrayNode ,
-	JUnsignedInteger1 ) ;
+//jStatic( JResult )initializeByteMapNode(
+//	PByteMapNode ,
+//	JPCBuffer ,
+//	JPCBuffer ,
+//	PByteMapArrayNode ,
+//	JUnsignedInteger1 ) ;
 
 // 
-JResult createByteMapNode( JPCBuffer keyIn , JPCBuffer valueIn ,
-	PDByteMapNode ownerIn , JUnsignedInteger1 indexIn , PPByteMapItem out ) {
-JResult result ;
-if( ( *out = malloc( sizeof( ByteMapArrayNode ) ) ) == 0 )
-	return jNotEnoughtMemoryErrorMapResult ;
-if( jResultIsNotError( result = jagryInitializeBuffer( &( *out )->key , keyIn->bytes , keyIn->size ) ) )
-	{
-		if( jResultIsNotError( result = jagryCreatePBuffer( valueIn , &( *out )->value ) ) )
-			{
-				if( ( ( *out )->owner = ownerIn ) )
-					{
-						if( ( ( *out )->previous = ownerIn->last ) )
-							ownerIn->last->next = *out ;
-						else
-							ownerIn->first = *out ;
-						ownerIn->last = *out ;
-						++ownerIn->count ;
-					}
-				else
-					( *out )->next = ( *out )->previous = 0 ;
-				memset( ( ( PByteMapArrayNode )*out )->subs , 0 , sizeof( ( ( PByteMapArrayNode )*out )->subs ) ) ;
-				( ( PByteMapArrayNode )*out )->first = ( ( PByteMapArrayNode )*out )->last = ( ( PByteMapArrayNode )*out )->next = 0 ;
-				// !!! ( *out )->index = indexIn ;
-				( ( PByteMapArrayNode )*out )->count = 0 ;
-				return jSuccessMapResult ;
-			}
-		jagryFreeBuffer( ( *out )->value ) ;
-	}
-free( *out ) ;
-*out = 0 ;
-return result ;
-}
 
 /*JResult createByteMapEndNode( JPCBuffer keyIn , JPCBuffer valueIn ,
 	PByteMapArrayNode ownerIn , JUnsignedInteger1 indexIn , PPByteMapNode out ) {
@@ -95,7 +63,7 @@ free( *object ) ;
 return result ;
 }*/
 
-JVoid freeByteMapNode( PByteMapNode self ) {
+JVoid freeByteMapNode( IByteMapNode self ) {
 //printf( "=== free self = %p , owner = %p\r\n" , self , self->owner ) ;
 /*if( self->owner )
 	//printf( "\t" jSignedInteger2Specifier "->" jSignedIntegerSpecifier "\r\n" , self->owner->count , self->owner->count - 1 ) ,

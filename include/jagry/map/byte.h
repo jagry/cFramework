@@ -1,5 +1,5 @@
-jMapMethod( JResult )jagryCreateByteMap(
+jMapMethod( JResult )jagryByteMap(
 	JPIByteMap ) ;
-jMapMethod( JResult )jagryCreateByteMapBase(
+jMapMethod( JResult )jagryByteMapBase(
 	JIBase ,
 	JPIByteMapBase ) ;

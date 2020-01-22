@@ -21,7 +21,7 @@ _AIX            Defined on AIX
 #endif
 
 #define jExport( type ) type
-#define jHidden( type ) type
+#define jInternal( type ) type
 #define jImport( type ) type
 #define jStatic( type ) static type
 

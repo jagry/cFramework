@@ -50,7 +50,7 @@ JResult executeBufferReader( BufferReaderI self ,
 	JPByte buffer , JPSize size ) {
 int available = self.data->buffer.size - self.data->offset ;
 if( !available )
-	return jEndReaderErrorResult ;
+	return jEndErrorReaderResult ;
 if( available < *size )
 	*size = available ;
 memcpy( buffer , self.data->buffer.bytes + self.data->offset , *size ) ;

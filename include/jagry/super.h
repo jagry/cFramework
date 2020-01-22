@@ -1,11 +1,11 @@
 #ifndef JagrySuper
 #define JagrySuper
 
-#define jInitializeSuper( self , methodsArg , ownerArg , referencesArg ) \
+#define jInitializeSuper( self , implementation , methodsArg , ownerArg , referencesArg ) \
 	{ \
-		( self ).data->methods = &methodsArg ; \
-		( self ).data->owner.data = ownerArg ; \
-		( self ).data->references = referencesArg ; \
+		( self ).implementation->methods = &methodsArg ; \
+		( self ).implementation->owner.data = ownerArg ; \
+		( self ).implementation->references = referencesArg ; \
 	}
 
 #define jSuperMembers( type , name ) \

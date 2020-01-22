@@ -4,28 +4,17 @@
 #define jEmptyBuffer jBuffer( 0 , 0 )
 #define jBuffer( bytesIn , sizeIn ) ( ( JBuffer ){ .bytes = bytesIn , .size = sizeIn } )
 #define jStringBuffer( in ) ( ( JCBuffer ){ .bytes = in , .size = strlen( in ) } )
+#define jMethodBuffer( in ) ( ( JCBuffer ){ .bytes = ( JPByte )&in , .size = sizeof( &in ) } )
 
-
-/*typedef struct JBuffer JBuffer ;
-
-typedef JBuffer const JBufferC ;
-typedef JBuffer * JPBuffer ;
-
-typedef JBufferC * JBufferCP ;
-typedef JPBuffer * JPBufferP ;
-
-typedef JBufferCP const JBufferCPC ;*/
-
+#include <jagry/result.h>
 #include <string.h>
 #include "reader.i.h"
 
 jPrefixType( J , Buffer , struct JBuffer )
 
-struct JBuffer
-{
+struct JBuffer {
 	JPByte bytes ;
-	JSize size ;
-} ;
+	JSize size ; } ;
 
 jExport( JResult )jagryAddBufferByte(
 	JPBuffer ,
@@ -42,7 +31,9 @@ jExport( JResult )jagryConcateBuffer(
 	JCPCBuffer ,
 	JCPCBuffer ,
 	JPBuffer ) ;
-//jExport( JResult )jagryCreatePBuffer( JCPBuffer , JPPBuffer ) ;
+jExport( JResult )jagryCreatePBuffer(
+	JCPCBuffer ,
+	JPPBuffer ) ;
 jExport( JResult )jagryCreateBuffer(
 	JPCByte ,
 	JSize ,

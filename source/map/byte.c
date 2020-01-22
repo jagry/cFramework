@@ -8,7 +8,19 @@
 
 #include "byteMapNode.h"
 
-#include "byteMap.h"
+jStdDeclareImplementation( ByteMap )
+
+union IByteMap {
+	PDByteMap data ; } ;
+		
+struct DByteMap {
+	jSuperMembers( PCMByteMap , methods )
+	IByteMapNode node ;
+	JUnsignedInteger count ; } ;
+	
+struct MByteMap { jEachMap( JISuper , IByteMap , IByteMap ,
+	IByteMap , IByteMap , IByteMap , IByteMap , IByteMap ,
+	IByteMap , IByteMap , IByteMap , IByteMap , IByteMap ) } ;
 
 typedef PIByteMap JPIByteMap , JPIByteMapBase ;
 
@@ -27,20 +39,37 @@ static JResult eraseByteMapItem(
 static JResult getByteMapItem(
 	IByteMap ,
 	JBuffer ,
-	JPIMapItem** ) ;
+	JPIMapItem ) ;
+static JResult getByteMapValue(
+	IByteMap ,
+	JBuffer ,
+	JPBuffer ) ;
 static JCounter releaseByteMap(
 	IByteMap ) ;
 
+static JResult createByteMapNode(
+	JCPCBuffer /* in key buffer */ ,
+	JCPCBuffer /* in value buffer */ ,
+	IByteMapNode /* in owner node */ ,
+	PIByteMapNode /* out !!! created node */ ) ;
+static JCounter getByteMapNodeValue(
+	IByteMapNode ,
+	JPBuffer ) ;
+
 static MByteMap mByteMap = {
-	/* base */
-		.acquire      = 0 ,
+	// base
+		.acquire      = jagryAcquireSuper ,
 		.getInterface = 0 ,
 		.release      = releaseByteMap ,
-	/* map */
+	// map
 		.addItem     = addByteMapItem ,
 		.clear       = clearByteMap ,
 		.eraseItem   = eraseByteMapItem ,
-		.getLastItem = 0 } ;
+		.getItem     = getByteMapItem ,
+		.getLastItem = 0 ,
+		.getValue    = getByteMapValue } ;
+static MByteMapNode mByteMapNode = {
+	.getValue = getByteMapNodeValue } ;
 
 JResult jagryByteMap( PIByteMap out ) {
 if( ( out->data = malloc( sizeof( DByteMap ) ) ) == 0 )
@@ -61,12 +90,11 @@ return jSuccessResult ;
 JResult addByteMapItem( IByteMap self , JCPCBuffer keyIn ,
 	JCPCBuffer valueIn , JPIMapItem out ) {
 JResult result ;
-//IByteMapNode node ;
 PIByteMapNode pointer = &self.data->node ;
 if( pointer->data == 0 )
 	{
-		result = createByteMapNode( keyIn , valueIn , 0 , 0 , &self.data->node ) ;
-		if( jResultIsError( result ) )
+		if( jResultIsError( result = createByteMapNode( keyIn ,
+				valueIn , iByteMapNodeNil , &self.data->node ) ) )
 			return result ;
 		if( out )
 			*out = self.data->node.interface ;
@@ -96,42 +124,31 @@ for(
 				}
 		else
 			{
-				result = createByteMapNode( &jBuffer( pointer->data->key.bytes ,
-					( *pointer )->key.size - local.size ) , &valueIn ,
-						( *pointer )->owner , ( *pointer )->key.bytes[ -1 ] , &node ) ;
-				if( jResultIsNotError( result ) )
-					{
-						result =
-							createByteMapNode(
-								&jBuffer( ( *pointer )->key.bytes , ( *pointer )->key.size - local.size ) ,
-								&valueIn ,
-								( *pointer )->owner ,
-								( *pointer )->key.bytes[ -1 ] ,
-								&node ) ;
-						if( jResultIsNotError( result ) )
-							return result ;
-						freeByteMapNode( node ) ;
-					}
+				IByteMapNode node ;
+				if( jResultIsError( result = createByteMapNode( &jBuffer(
+						pointer->data->key.bytes , pointer->data->key.size - local.size ) ,
+						valueIn , pointer->data->owner , &node ) ) )
+					return result ;
+				result = createByteMapNode( &jBuffer( local.bytes , local.size ) ,
+					pointer->data->value , node , &node.data->subs[ *local.bytes ] ) ;
+				if( jResultIsError( result ) )
+					return freeByteMapNode( node ) , result ;
+				if( node.data->owner.data )
+					node.data->owner.data->subs[ *node.data->owner.data->key.bytes ] =
+						node ;
+				else
+					self.data->node = node ;
 				return result ;
 			}
 	else
 		if( local.size == 0 )
-			if( ( *pointer )->subs[ *key.bytes ] )
-				{
-					local = ( *( pointer = &( *pointer )->subs [ *key.bytes ] ) )->key ;
-					continue ;
-				}
+			if( pointer->data->subs[ *key.bytes ].data )
+				local = ( pointer = &pointer->data->subs[ *key.bytes ] )->data->key ;
 			else
 				{
-					result =
-						createByteMapNode(
-							&jBuffer( key.bytes + 1 , key.size - 1 ) ,
-							&valueIn,
-							*pointer ,
-							*key.bytes ,
-							&( *pointer )->subs [ *key.bytes ] ) ;
-					if( result == jSuccessResult )
-						++self->count ;
+					if( ( result = createByteMapNode( &key , valueIn , *pointer ,
+							&pointer->data->subs[ *key.bytes ] ) ) == jSuccessResult )
+						++self.data->count ;
 					return result ;
 				}
 		else
@@ -212,102 +229,91 @@ if( jResultIsError( status ) )
 return jMapItemErase( item ) ;*/
 }
 
-JResult getByteMapItem( IByteMap self , JBuffer in , JPPMapItem out ) {
-/*drawByteMapBuffer( in ) ;
-PByteMapNode current = self->node ;
-PByteMapNode owner = 0 ;
-if( !current )
-	eraseByteMapReturn( eraseByteMapEmptyPoint , jValueNotFoundErrorMapResult )
-for( JBuffer currentKey = current->key ; ; ++in.bytes , --in.size )
-	if( in.size == 0 )
-		if( currentKey.size == 0 )
-			if( current->value )
-				{
-					//JPBuffer value = current->value ;
-					//current->value = 0 ;
-					// !!! Надо вернуть value
-					// 1. Если current->count = 0 , то:
-					//  а. удалить узел
-					//  б. проверить родителя
-					// 2. Если current->count = 1 , то объединить узел с единственным ДУ
-					// Проверка родителя:
-					// А. Очистить указатель на дочерний узел(ДУ)
-					// Б. Уменьшить счетчик дочерних узлов(СДУ)
-					// В. Если СДУ = 0, то у узла должно быть значение.
-					//   Проверить в отладочной сборке и ничего не делать
-					// Г. Если СДУ = 1, то:
-					//  1. Если у узла есть значение, то ничего не делать
-					//  2. Если у узла нет значения, объединить узел с единственным ДУ
-					/ *if( current->count == 0 )
-						{
-							if( owner )
-								{
-									drawByteMapBuffer( in ) ;
-									JUnsignedInteger1 index = *( in.bytes - current->key.size - 1 ) ;
-									printf( "dddd %i" jNewLine , index ) ;
-									jAssert( owner->count == 1 && owner->value == 0 )
-									if( owner->count < 3 && !owner->value )
-										{
-											PByteMapNode other = owner->last == current ? owner->first : owner->last ;
-											JBuffer buffer = { .size = other->key.size + owner->key.size + 1 } ;
-											if( !( buffer.bytes = realloc( owner->key.bytes , buffer.size ) ) )
-												return jNotEnoughtMemoryErrorMapResult ;
-											memcpy( &owner->subs , &other->subs , sizeof( PByteMapNode ) * subCount );
-											memcpy( buffer.bytes + owner->key.size + 1 , other->key.bytes , other->key.size ) ;
-											memcpy( buffer.bytes , owner->key.bytes , owner->key.size ) ;
-											buffer.bytes[ owner->key.size ] = index ;
-											owner->first = other->first ;
-											owner->value = other->value ;
-											owner->last = other->last ;
-											owner->key = buffer ;
-											printf(
-												"!!! sizes other = %i " jNewLine ,
-												buffer.bytes[ index ] ) ;
-											eraseByteMapPoint( eraseByteMapConcateParentPoint ) ;
-										}
-									else
-										eraseByteMapPoint( eraseByteMapNotModifyOwnerPoint ) ,
-										owner->subs[ index ] = 0 ,
-										--owner->count ;
-								}
-							else
-								eraseByteMapPoint( eraseByteMapLastNodePoint ) , self->count = 0 , self->node = 0 ;
-							if( out )
-								eraseByteMapPoint( eraseByteMapSetValuePoint ) , *out = *current->value , current->value = 0 ;
-							// Может стоить продублировать функцию freeByteMapNode без удаления .value. чтобы не делать
-							// current->value = 0
-							freeByteMapNode( current ) ;
-							return jSuccessMapResult ;
-						}
-					else
-						if( current->count == 1 )
-							{
-								PByteMapNode other = owner->last == current ? owner->first : owner->last ;
-							}* /
-				}
-			else
-				eraseByteMapReturn( eraseByteMapNoValuePoint , jValueNotFoundErrorMapResult )
-		else
-			eraseByteMapReturn( eraseByteMapEndInPoint , jValueNotFoundErrorMapResult )
+JResult getByteMapItem( IByteMap self , JBuffer in , JPIMapItem out ) {
+IByteMapNode current = self.data->node ;
+printf( "DEBUG %s(%i)\n" , __PRETTY_FUNCTION__ , __LINE__ ) ;
+if( !current.data )
+	return jValueNotFoundErrorMapResult ;
+for( JBuffer currentKey = current.data->key ; ; ++in.bytes , --in.size )
+{
+	printf( "DEBUG %s(%i) %c %c\n" , __PRETTY_FUNCTION__ , __LINE__ , *currentKey.bytes , *in.bytes ) ;
+	if( currentKey.size )
+		if( in.size )
+			if( *currentKey.bytes != *in.bytes ) return jValueNotFoundErrorMapResult ;
+			else ++currentKey.bytes , --currentKey.size ;
+		else return jValueNotFoundErrorMapResult ;
 	else
-		if( currentKey.size == 0 )
-			/ *if( current->subs[ *in.bytes ] )
-				eraseByteMapIncrement(
-					node ,
-					owner = current ; currentKey = ( current = current->subs[ *in.bytes ] )->key )
-			else
-				eraseByteMapReturn( eraseByteMapMissingChildPoint , jValueNotFoundErrorMapResult )* / ;
+		if( in.size )
+			if( current.data->subs[ *currentKey.bytes ].data )
+				current = current.data->subs[ *currentKey.bytes ] ,
+				currentKey.bytes = current.data->key.bytes + 1 ,
+				currentKey.size =  current.data->key.size - 1 ;
+			else return jValueNotFoundErrorMapResult ;
 		else
-			if( *in.bytes == *currentKey.bytes )
-				eraseByteMapIncrement( byte , ++currentKey.bytes ; --currentKey.size )
-			else
-				eraseByteMapReturn( eraseByteMapNotEqualPoint , jValueNotFoundErrorMapResult )
-//return jSuccessResult ;*/
+			if( current.data->value )
+				return *out = current.interface , jSuccessMapResult ;
+			else return jValueNotFoundErrorMapResult ;
+}
+}
+
+JResult getByteMapValue( IByteMap self , JBuffer in , JPBuffer out ) {
+JIMapItem item ;
+printf( "DEBUG %s(%i)\n" , __PRETTY_FUNCTION__ , __LINE__ ) ;
+JResult result = getByteMapItem( self , in , &item ) ;
+if( jResultIsError( result ) ) return result ;
+printf( "DEBUG %s(%i)\n" , __PRETTY_FUNCTION__ , __LINE__ ) ;
+printf( "DEBUG %s(%i) %p\n" , __PRETTY_FUNCTION__ , __LINE__ , item.data ) ;
+printf( "DEBUG %s(%i) %p\n" , __PRETTY_FUNCTION__ , __LINE__ , item.data->methods ) ;
+printf( "DEBUG %s(%i) %p\n" , __PRETTY_FUNCTION__ , __LINE__ , item.data->methods->getValue ) ;
+return item.data->methods->getValue( item , out ) ;
 }
 
 JCounter releaseByteMap( IByteMap self ) {
 int result = __sync_sub_and_fetch( &self.data->references , 1 ) ;
-if( !result )
-	free( self.data ) ;
+if( !result ) free( self.data ) ;
 return result ;
+}
+
+JResult createByteMapNode( JCPCBuffer keyIn , JCPCBuffer valueIn ,
+	IByteMapNode ownerIn , PIByteMapNode out ) {
+JResult result ;
+if( !( out->data = malloc( sizeof( DByteMapNode ) ) ) )
+	return jNotEnoughtMemoryErrorMapResult ;
+if( jResultIsNotError( result = jagryInitializeBuffer(
+		&out->data->key , keyIn->bytes , keyIn->size ) ) )
+	{
+		result = jagryCreatePBuffer( valueIn , &out->data->value ) ;
+		if( jResultIsNotError( result ) )
+			{
+				if( ( out->data->owner = ownerIn ).data )
+					{
+						if( ( out->data->previous = ownerIn.data->last ).data )
+							ownerIn.data->last.data->next = *out ;
+						else
+							ownerIn.data->first = *out ;
+						ownerIn.data->last = *out ;
+						++ownerIn.data->count ;
+					}
+				else
+					out->data->next.data = out->data->previous.data = 0 ;
+				memset( out->data->subs , 0 , sizeof( out->data->subs ) ) ;
+				out->data->first.data = out->data->last.data =
+					out->data->next.data = 0 ;
+				out->data->count = 0 ;
+				out->data->methods = &mByteMapNode ;
+				return jSuccessMapResult ;
+			}
+		jagryFreeBuffer( out->data->value ) ;
+	}
+free( out->data ) ;
+*out = iByteMapNodeNil ;
+return result ;
+}
+
+JResult getByteMapNodeValue( IByteMapNode self , JPBuffer out ) {
+printf( "DEBUG %s(%i)\n" , __PRETTY_FUNCTION__ , __LINE__ ) ;
+printf( "DEBUG %s(%i) %p\n" , __PRETTY_FUNCTION__ , __LINE__ , self.data->value ) ;
+printf( "DEBUG %s(%i) %li\n" , __PRETTY_FUNCTION__ , __LINE__ , self.data->value->size ) ;
+printf( "DEBUG %s(%i) %p\n" , __PRETTY_FUNCTION__ , __LINE__ , self.data->value->bytes ) ;
+return jagrySetBuffer( out , self.data->value->bytes , self.data->value->size ) ;
 }

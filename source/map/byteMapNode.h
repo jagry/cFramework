@@ -1,11 +1,11 @@
 // define
 #define subCount ( jMaxUnsignedInteger1 + 1 )
-#define ByteMapNodeMembers \
-	PCMByteMapNode methods ; \
-	JBuffer key ; \
-	JPBuffer value ; \
-	IByteMapNode owner ; \
-	IByteMapNode next , previous ;
+//#define ByteMapNodeMembers \
+//	PCMByteMapNode methods ; \
+//	JBuffer key ; \
+//	JPBuffer value ; \
+//	IByteMapNode owner ; \
+//	IByteMapNode next , previous ;
 
 // 0 include
 //#include "byteMap.h"
@@ -31,19 +31,13 @@ typedef CMByteMapNode * PCMByteMapNode ;
 //typedef PByteMapNode * PPByteMapNode ;
 
 // 1 method
-jHidden( JResult )createByteMapNode(
-	JPCBuffer /* in key buffer */ ,
-	JPCBuffer /* in value buffer */ ,
-	PDByteMapNode /* in owner node */ ,
-	JUnsignedInteger1 /* in index to owner */ ,
-	PIByteMapNode /* out !!! created node */ ) ;
-jHidden( JResult )createByteMapEndNode(
+jInternal( JResult )createByteMapEndNode(
 	JPCBuffer /* in key buffer */ ,
 	JPCBuffer /* in value buffer */ ,
 	IByteMapNode /* in owner node */ ,
 	JUnsignedInteger1 /* in index to owner */ ,
 	PIByteMapNode /* out !!! created node */ ) ;
-jHidden( JVoid )freeByteMapNode(
+jInternal( JVoid )freeByteMapNode(
 	IByteMapNode self ) ;
 
 // 1 struct
@@ -58,3 +52,6 @@ struct DByteMapNode {
 	IByteMapNode subs[ subCount ] ;
 	JSignedInteger2 count ;
 	JUnsignedInteger1 index ; } ;
+struct MByteMapNode { jAllMapItem( IByteMapNode ) } ;
+
+#define iByteMapNodeNil ( ( IByteMapNode ){ .data = 0 } )

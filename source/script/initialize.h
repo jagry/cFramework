@@ -1,0 +1,1 @@
+jInternal( JResult )initialize( JPIMap out ) ;
