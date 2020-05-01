@@ -2,10 +2,12 @@
 #define JagryReaderInterface
 
 #define jAcquireReader( argument ) jAcquireBase( argument.super )
-#define jGetReaderInterface( self , identifier , out ) jGetBaseInterface( self.super , identifier , out ) 
+#define jGetReaderInterface( self , identifier , out ) \
+	jGetBaseInterface( self.super , identifier , out ) 
 #define jReleaseReader( argument ) jReleaseBase( argument.super )
 
-#define jExecuteReader( self , bytes , size ) ( self.data->methods->execute( self , bytes , size ) )
+#define jExecuteReader( self , bytes , size ) \
+	( ( *( self )._ )->execute( self , bytes , size ) )
 
 #define jEndErrorReaderResult ( -20 )
 
@@ -20,11 +22,9 @@
 #define jReaderAll( type ) jReaderEach( type , type , type , type )
 
 #include "base.i.h"
+#include "buffer.i.h"
 
 jPrefixStdDeclareInterface( J , Reader )
-
-#include "buffer.h"
-
 jPrefixStdDefineInterface( J , Reader , jReaderAll( JIReader ) , JIBase )
 
 #endif

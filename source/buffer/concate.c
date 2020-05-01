@@ -1,5 +1,12 @@
-#include <jagry/buffer.h>
+#define jBufferMethod jExport
+
+#include <jagry/buffer.i.h>
+#include <jagry/result.h>
+#include <memory.h>
 #include <stdlib.h>
+
+#include <jagry/buffer/clear.h>
+#include <jagry/buffer/concate.h>
 
 JResult jagryConcateBuffer( JCPCBuffer in1 , JCPCBuffer in2 , JPBuffer out ) {
 JBuffer local ;

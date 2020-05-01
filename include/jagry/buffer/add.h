@@ -1,0 +1,1 @@
+jBufferMethod( JResult )jagryAddBufferByte( JPBuffer , JByte ) ;

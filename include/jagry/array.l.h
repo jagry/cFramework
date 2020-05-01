@@ -1,14 +1,14 @@
 #ifndef JagryArrayLibrary
 #define JagryArrayLibrary
 
-struct VectorArray {
-	PIListArrayItem first , last ;
-	JPCArrayManager manager ;
-	JUnsignedInteger count ; } ;
-struct VectorArrayItem {
-	PIListArrayItem next , previous ;
-	JBuffer buffer ; } ;
+#define jArrayConst const
+#define jArrayMethod jImport
 
+#include "array.i.h"
+#include "array/manager.h"
+
+typedef JPIArray JPIListArray ;
+  
 #include "array/list.h"
 
 #endif

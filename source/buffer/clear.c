@@ -1,5 +1,9 @@
-#include <jagry/buffer.h>
+#define jBufferMethod jExport
+
+#include <jagry/buffer.i.h>
 #include <stdlib.h>
+
+#include <jagry/buffer/clear.h>
 
 JVoid jagryClearBuffer( JPBuffer self ) {
 if( self->bytes )

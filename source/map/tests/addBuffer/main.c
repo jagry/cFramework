@@ -1,14 +1,9 @@
-#include <jagry/base.l.h>
 #include <jagry/map.l.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "iteration.h"
 #include "../message.h"
-
-#include "../../byteMapNode.h"
-
-#include "../../byteMap.h"
 
 #define indent "   "
 
@@ -68,8 +63,8 @@ printf( " }" jNewLine ) ;
 JResult main() {
 JIMap map ;
 //Iteration iterations[] = { "AbbbCdddEfff" , "AbbbGhhh" , "AbbbCddd" } ;
-DebugByteMapAddItemPoint debugAddByteMapItemPoint = 0 ;
-Iteration iterations[] = {
+//DebugAddMapItemPoint debugAddMapItemPoint = 0 ;
+/*Iteration iterations[] = {
 	initializeIteration( "first node", "AbbbCdddEfff" , addByteMapItemFirstNode ) } ;
 JResult status = jagryCreateByteMap( &map ) ;
 if( jResultIsError( status ) )
@@ -87,6 +82,6 @@ for( JSize counter = 0 ; ( sizeof( iterations ) / sizeof( *iterations ) ) > coun
 			}
 		//if( iterations[ counter ].points != jagryDebugByteMapAddItem.points )
 	}
-jMapRelease( map ) ;
+jReleaseBufferMap( map ) ;*/
 return 0 ;
 }

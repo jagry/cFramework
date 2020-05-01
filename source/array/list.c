@@ -1,71 +1,70 @@
+/* !!! */ #include <stdio.h>
+
 #define jArrayMethod jExport
+#define jArrayConst
 
 #include <jagry/array.i.h>
 #include <jagry/super.h>
 #include <stdlib.h>
 
-jStdDeclareImplementation( ListArray )
-jStdDeclareImplementation( ListArrayItem )
+typedef struct MListArray const CMListArray ;
+typedef struct MListArrayItem const CMListArrayItem ;
+typedef struct IListArray IListArray ;
+typedef struct IListArrayItem IListArrayItem ;
 
-typedef struct MArrayItem MArrayItem ;
+typedef CMListArray * PCMListArray ;
+typedef CMListArrayItem * PCMListArrayItem ;
+typedef IListArray * PIListArray ;
+typedef IListArrayItem * PIListArrayItem ;
 
-typedef MArrayItem const CMArrayItem ;
+typedef PIListArray * JPIListArray ;
+typedef PIListArrayItem * JPIListArrayItem ;
 
-typedef CMArrayItem * PCMArrayItem ;
-
-typedef PIListArray JPIListArray ;
-typedef PIListArrayItem JPIListArrayItem ;
+#include <jagry/array/manager.h>
 
 #include <jagry/array/list.h>
 
-struct DListArray {
-	jSuperMembers( PCMListArray , methods )
-	JListArray _ ; } ;
+struct IListArray {
+	jSuperMembers( PCMListArray , _ )
+	JCounter count ;
+	PIListArrayItem first , last ;
+	JCPCArrayManager manager ; } ;
 struct MListArray { jEachArray( JISuper , IListArray , IListArray ,
 	IListArray , IListArray , IListArray , IListArray , IListArray ,
 	IListArray , IListArray , IListArray , IListArray , IListArray ,
-	IListArray , IListArray , IListArray , JPIArrayItem ) } ;	
-union IListArray {
-	PDListArray implementation ; } ;
-struct DListArrayItem {
-	PCMArrayItem methods ;
+	IListArray , IListArray , IListArray , PIListArrayItem ) } ;
+struct MListArrayItem { jAllArrayItem( IListArrayItem ) } ;
+struct IListArrayItem {
+	PCMListArrayItem methods ;
 	PIListArrayItem next , previous ;
 	JBuffer buffer ; } ;
-struct MListArrayItem { jAllArrayItem( IListArrayItem ) } ;
-union IListArrayItem {
-	PDListArrayItem implementation ;
-	/* !!! нужен ли интерфейс? */ JIArrayItem interface ; } ;
-
 static JResult pushListArrayBackward(
-	IListArray , JCPCVoid , JPIArrayItem ) ;
+	IListArray , JCPCVoid , PIListArrayItem ) ;
 
-static MListArray mListArray = {
+static CMListArray mListArray = {
 	/*base */
 		.acquire = jagryAcquireSuper ,
 	/* ListArray */
 		.pushBackward = pushListArrayBackward } ;
 
-JResult jagryCreateListArray( JCPCArrayManager in , JPIListArray out ) {
+JResult jagryListArray( JCPCArrayManager in , JPIListArray out ) {
 JResult result ;
-if( !( out->implementation = malloc( sizeof( DListArray ) ) ) )
+if( !( *out = malloc( sizeof( IListArray ) ) ) )
 	return jNotEnoughtMemoryErrorArrayResult ;
-jInitializeSuper( *out , implementation , mListArray , 0 , 1 )
-jagryInitializeListArray( &out->implementation->_ , in ) ;
+jInitializeSuper( *out , mListArray , 0 , 1 )
+// !!! jagryInitializeListArray( &out->data->_ , in ) ;
 return jSuccessArrayResult ;
 }
 
-JResult jagryPushListArrayBackward( JPListArray self , \
-	JCPCVoid in , JPListArrayItem out ) {
-*out = malloc( sizeof( JListArrayItem ) ) ;
-if( self->last ) ;
-	
-}
-
-JResult pushListArrayBackward( IListArray self ,
-	JCPCVoid in , JPIArrayItem out ) {
-JResult result =
-	jagryPushListArrayBackward( &self.implementation->_ , in, out ) ;
-if( jSuccessArrayResult != result )
-	return result ;
-
+JResult pushListArrayBackward( \
+	IListArray self , JCPCVoid in , PIListArrayItem out ) {
+//if( !( *out = malloc( sizeof( JIListArrayItem ) ) ) )
+//	return jNotEnoughtMemoryErrorArrayResult ;
+//( *out )->previous = self->last ;
+//if( self->last )
+//	self->last->next = *out ;
+//else
+//	self->first = *out ;
+//self->last = *out ;
+return jSuccessArrayResult ;
 }

@@ -1,40 +1,42 @@
+/* !!! */ #include <stdio.h>
+
+#define jBufferMethod jExport
+
 #include <jagry/reader.i.h>
 #include <jagry/super.h>
+#include <memory.h>
 #include <stdlib.h>
-#include <pthread.h>
 
-typedef struct BufferReaderD BufferReaderD ;
-typedef struct BufferReaderM BufferReaderM ;
-typedef union BufferReaderI BufferReaderI ;
+typedef struct MBufferReader const CMBufferReader ;
+typedef struct IBufferReader IBufferReader ;
 
-typedef BufferReaderD * BufferReaderPD ;
-typedef BufferReaderM const BufferReaderCM ;
-typedef BufferReaderI * BufferReaderPI ;
+typedef CMBufferReader * PCMBufferReader ;
+typedef IBufferReader * PIBufferReader ;
 
-typedef BufferReaderCM * BufferReaderPCM ;
+typedef PIBufferReader * JPIBufferReader ;
 
-struct BufferReaderD
-{
-	jSuperMembers( BufferReaderPCM , methods )
+#include <jagry/buffer/free.h>
+#include <jagry/buffer/reader.h>
+
+struct IBufferReader {
+	jSuperMembers( PCMBufferReader , _ )
 	JBuffer buffer ;
-	int offset ;
-} ;
+	int offset ; } ;
+struct MBufferReader {
+	jReaderEach( JISuper , PIBufferReader , PIBufferReader , PIBufferReader ) } ;
 
-struct BufferReaderM {
-	jReaderEach( JISuper , BufferReaderI , BufferReaderI , BufferReaderI ) } ;
-
-union BufferReaderI { BufferReaderPD data ; } ;
+//union BufferReaderI { BufferReaderPD _ ; } ;
 
 static JResult executeBufferReader( // Чтение байт из объекта
-	BufferReaderI , // in: объект буффера
+	PIBufferReader , // in: объект буффера
 	JPByte buffer , // in: указатель на приемник
 	JPSize size ) ; // in: размер буфера в байтах; out - количество считаных байт  
 static int releaseBufferCopyReader( // освобождение копирующего объекта
-	BufferReaderI ) ; // in: объект буффера
+	PIBufferReader ) ; // in: объект буффера
 static int releaseBufferInstanceReader( // освобождение не копирующего объекта
-	BufferReaderI ) ; // in: объект буффера
+	PIBufferReader ) ; // in: объект буффера
 
-static BufferReaderCM
+static CMBufferReader
 	copyMethods = {
 		/* base */
 			.acquire = jagryAcquireSuper ,
@@ -46,44 +48,46 @@ static BufferReaderCM
 			.release = releaseBufferInstanceReader ,
 		/*reader */ .execute = executeBufferReader } ;
 
-JResult executeBufferReader( BufferReaderI self ,
+JResult executeBufferReader( PIBufferReader self ,
 	JPByte buffer , JPSize size ) {
-int available = self.data->buffer.size - self.data->offset ;
+int available = self->buffer.size - self->offset ;
 if( !available )
 	return jEndErrorReaderResult ;
 if( available < *size )
 	*size = available ;
-memcpy( buffer , self.data->buffer.bytes + self.data->offset , *size ) ;
-self.data->offset += *size ;
+memcpy( buffer , self->buffer.bytes + self->offset , *size ) ;
+self->offset += *size ;
 return 0 ;
 }
 
-int jagryBufferCopyReader( JPBuffer in , JPIReader out ) {
-if( !( out->data = malloc( sizeof( BufferReaderD ) ) ) )
+int jagryBufferCopyReader( JPBuffer in , JPIBufferReader out ) {
+if( !( *out = malloc( sizeof( IBufferReader ) ) ) )
 	return jNotEnoughtMemoryErrorResult ;
-jInitializeSuper( *( BufferReaderPI )out , copyMethods , 0 , 1 )
-( ( BufferReaderPI )out )->data->buffer = *in ;
-( ( BufferReaderPI )out )->data->offset = 0 ;
+jInitializeSuper( *out , copyMethods , 0 , 1 )
+( *out )->buffer = *in ;
+( *out )->offset = 0 ;
 return jSuccessResult ;
 }
 
-int jagryBufferInstanceReader( JPBuffer in , JPIReader out ) {
-if( !( out->data = malloc( sizeof( BufferReaderD ) ) ) )
+int jagryBufferInstanceReader( JPBuffer in , JPIBufferReader out ) {
+if( !( *out = malloc( sizeof( IBufferReader ) ) ) )
 	return jNotEnoughtMemoryErrorResult ;
-jInitializeSuper( *( BufferReaderPI )out , instanceMethods , 0 , 1 )
-( ( BufferReaderPI )out )->data->buffer = *in ;
-( ( BufferReaderPI )out )->data->offset = 0 ;
+jInitializeSuper( *out , instanceMethods , 0 , 1 )
+( *out )->buffer = *in ;
+( *out )->offset = 0 ;
 return jSuccessResult ;
 }
 
-int releaseBufferCopyReader( BufferReaderI self ) {
-int result = __sync_sub_and_fetch( &self.data->references , 1 ) ;
-if( !result ) jagryFreeBuffer( &self.data->buffer ) , free( self.data ) ;
+int releaseBufferCopyReader( PIBufferReader self ) {
+int result = __sync_sub_and_fetch( &self->references , 1 ) ;
+if( !result )
+	jagryFreeBuffer( &self->buffer ) , free( self ) ;
 return result ;
 }
 
-int releaseBufferInstanceReader( BufferReaderI self ) {
-int result = __sync_sub_and_fetch( &self.data->references , 1 ) ;
-if( !result ) free( self.data ) ;
+int releaseBufferInstanceReader( PIBufferReader self ) {
+int result = __sync_sub_and_fetch( &self->references , 1 ) ;
+if( !result )
+	free( self ) ;
 return result ;
 }

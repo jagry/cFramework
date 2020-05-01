@@ -1,5 +1,10 @@
-#include <jagry/buffer.h>
+#define jBufferMethod jExport
+
+#include <jagry/buffer.i.h>
+#include <jagry/result.h>
 #include <stdlib.h>
+
+#include "jagry/buffer/add.h"
 
 JResult jagryAddBufferByte( JPBuffer self , JByte in ) {
 JSize size = self->size + 1 ;

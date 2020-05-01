@@ -1,15 +1,15 @@
 #ifndef JagrySuper
 #define JagrySuper
 
-#define jInitializeSuper( self , implementation , methodsArg , ownerArg , referencesArg ) \
+#define jInitializeSuper( self , methodsArg , ownerArg , referencesArg ) \
 	{ \
-		( self ).implementation->methods = &methodsArg ; \
-		( self ).implementation->owner.data = ownerArg ; \
-		( self ).implementation->references = referencesArg ; \
+		( self )->_ = &methodsArg ; \
+		( self )->owner = ownerArg ; \
+		( self )->references = referencesArg ; \
 	}
 
 #define jSuperMembers( type , name ) \
-	type name ; \
+	type _ ; \
 	JIBase owner ; \
 	atomic_int references ;
 
@@ -25,10 +25,12 @@ typedef JCMSuper * JPCMSuper ;
 #include <stdatomic.h>
 #include "base.i.h"
 
-struct JDSuper { jSuperMembers( JPCMSuper , methods ) } ;
 struct JMSuper { jBaseAll( JISuper ) } ;
-union JISuper { JPDSuper data ; JIBase interface ; } ;
+union JISuper {
+	struct { jSuperMembers( JPCMSuper , _ ) } * _ ;
+	JIBase interface ; } ;
 
 JCounter jagryAcquireSuper( JISuper ) ;
+JCounter jagryReleaseSuper( JISuper ) ;
 
 #endif

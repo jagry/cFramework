@@ -1,3 +1,4 @@
+#include <jagry/buffer.i.h>
 #ifndef Jagry
 #define Jagry
 
@@ -20,10 +21,11 @@ _AIX            Defined on AIX
 	#define jLinux( argument )
 #endif
 
+#define jNull 0
+
 #define jExport( type ) type
-#define jInternal( type ) type
+#define jHidden( type ) type
 #define jImport( type ) type
-#define jStatic( type ) static type
 
 #ifdef DEBUG
 	#define jAssert( condition ) \

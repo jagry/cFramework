@@ -1,11 +1,14 @@
-#include <jagry/buffer.h>
+#define jBufferMethod jExport
+
+#include <jagry/buffer.i.h>
+#include <jagry/result.h>
+#include <memory.h>
 #include <stdlib.h>
 
-/* !!! */#include <stdio.h>
+#include <jagry/buffer/set.h>
 
 JResult jagrySetBuffer( JPBuffer self , JPVoid bytes , JSize size ) {
 JPByte local ;
-printf( "DEBUG %s(%i)\n" , __PRETTY_FUNCTION__ , __LINE__ ) ;
 if( size )
 	{
 		if( ( local = malloc( size ) ) == 0 )
@@ -14,15 +17,9 @@ if( size )
 	}
 else
 	local = 0 ;
-printf( "DEBUG %s(%i)\n" , __PRETTY_FUNCTION__ , __LINE__ ) ;
 if( self->bytes )
-	printf( "DEBUG %s(%i)\n" , __PRETTY_FUNCTION__ , __LINE__ ) ,
-	free( self->bytes ) ,
-	printf( "DEBUG %s(%i)\n" , __PRETTY_FUNCTION__ , __LINE__ ) ;
-printf( "DEBUG %s(%i)\n" , __PRETTY_FUNCTION__ , __LINE__ ) ;
+	free( self->bytes ) ;
 self->bytes = local ;
-printf( "DEBUG %s(%i)\n" , __PRETTY_FUNCTION__ , __LINE__ ) ;
 self->size = size ;
-printf( "DEBUG %s(%i)\n" , __PRETTY_FUNCTION__ , __LINE__ ) ;
 return jSuccessResult ;
 }

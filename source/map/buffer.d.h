@@ -1,19 +1,26 @@
 #ifdef DEBUG
-	#define byteMapReturn( variableArg , pointsArg , valueArg ) \
+	#define bufferMapReturn( variableArg , pointsArg , valueArg ) \
 		return variableArg.points |= pointsArg , valueArg ;
 
-	//#define addByteMapItemReturn( pointArg , valueArg ) \
-	//	byteMapReturn( jagryDebugByteMapAddItem , pointArg , valueArg )
+	#define addBufferMapFirstNode ( 1 << 0 ) // Создание первого узла
 
-	#define addByteMapItemFirstNode  ( 1 << 0 ) // Создание первого узла
+	#define newBufferMapFirstNode ( 1 << 0 ) // Создание первого узла
 
-	typedef JUnsignedInteger1 DebugByteMapAddItemPoint ;
-	typedef struct DebugByteMapAddItem {
-		DebugByteMapAddItemPoint points ;
+	typedef JUnsignedInteger1 DebugAddBufferMapItemPoint ;
+	typedef struct DebugAddBufferMapItem DebugAddBufferMapItem ;
+	typedef JUnsignedInteger1 DebugNewBufferMapItemPoint ;
+	typedef struct DebugNewBufferMapItem DebugNewBufferMapItem ;
+		
+	struct DebugAddBufferMapItem {
+		DebugAddBufferMapItemPoint points ;
 		JUnsignedInteger1 byte ;
-		JUnsignedInteger1 node ; } DebugByteMapAddItem ;
+		JUnsignedInteger1 node ; } ;
+	struct DebugNewBufferMapItem {
+		DebugNewBufferMapItemPoint points ;
+		JUnsignedInteger1 byte ;
+		JUnsignedInteger1 node ; } ;
 
-	extern DebugByteMapAddItem jagryDebugByteMapAddItem ;
+	extern DebugAddBufferMapItem jagryDebugAddBufferMapItem ;
 
 	#define eraseByteMapIncrement( memberArg , actionArg ) \
 		{ \
@@ -40,25 +47,18 @@
 		eraseByteMapLastNodePoint | eraseByteMapMissingChild | eraseByteMapNotModifyOwnerPoint | \
 		eraseByteMapNotEqual | eraseByteMapNoValue | eraseByteMapSetValuePoint )
 
-	typedef JUnsignedInteger2 DebugEraseByteMapPoints ;
-	typedef struct DebugEraseByteMap DebugEraseByteMap ;
+	typedef JUnsignedInteger1 DebugEraseBufferMapItemPoints ;
+	typedef struct DebugEraseBufferMapItem DebugEraseBufferMapItem ;
 
-	struct DebugEraseByteMap {
-		DebugEraseByteMapPoints points ;
+	struct DebugEraseBufferMapItem {
+		DebugEraseBufferMapItemPoints points ;
 		JUnsignedInteger1 byte ;
 		JUnsignedInteger1 node ; } ;
 
-	extern DebugEraseByteMap jagryDebugEraseByteMap ;
+	extern DebugEraseBufferMapItem jagryDebugEraseBufferMapItem ;
 #else
 	#define byteMapReturn( variableArg , pointArg , valueArg ) return valueArg ;
 
 	#define eraseByteMapIncrement( memberArg , actionArg ) { actionArg ; }
 	#define eraseByteMapPoint( arg )
 #endif
-
-// !!! вынести отсюда
-#define addByteMapItemReturn( pointArg , valueArg ) \
-	byteMapReturn( jagryDebugByteMapAddItem , pointArg , valueArg )
-#define eraseByteMapReturn( pointArg , valueArg ) \
-	byteMapReturn( jagryDebugEraseByteMap , pointArg , valueArg )
-

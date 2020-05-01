@@ -9,6 +9,6 @@ typedef struct Iteration Iteration ;
 
 struct Iteration {
 	JPCCharacter1 name ;
-	JBuffer key ;
-	JBuffer value ;
+	JUnsignedInteger8 key ;
+	JUnsignedInteger8 value ;
 	IterationPoints points ; } ;

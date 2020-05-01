@@ -1,0 +1,1 @@
+jExport( JResult )jagrySetBuffer( JPBuffer , JPVoid , JSize ) ;

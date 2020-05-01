@@ -30,29 +30,29 @@
 // define object map self method
 #define jClearArray( self ) ( ( self ).data->methods->clear( self ) )
 #define jEraseArrayItem( self , in ) \
-	( ( self ).data->methods->eraseItem( self , in ) )
+	( ( *self._ )->eraseItem( self , in ) )
 #define jGetArrayCount( self ) \
-	( ( self ).data->methods->getCount( self ) )
+	( ( *self._ )->getCount( self ) )
 #define jGetFirstArrayItem( self , out ) \
-	( ( self ).data->methods->getFirstItem( self , out ) )
+	( ( *self._ )->getFirstItem( self , out ) )
 #define jGetLastArrayItem( self , out ) \
-	( ( self ).data->methods->getLastItem( self , out ) )
+	( ( *self._ )->getLastItem( self , out ) )
 #define jGetArrayItem( self , in , out ) \
-	( ( self ).data->methods->getItem( self , in , out ) )
+	( ( *self._ )->getItem( self , in , out ) )
 #define jGetArrayValue( self , in , out ) \
-	( ( self ).data->methods->getValue( self , in , out ) )
+	( ( *self._ )->getValue( self , in , out ) )
 #define jInsertArrayItem( self , indexIn , valueIn , out ) \
-	( ( self ).data->methods->insertItem( self , indexIn , valueIn , out ) )
+	( ( *self._ )->insertItem( self , indexIn , valueIn , out ) )
 #define jPopArrayBackwardValue( self , in , out ) \
-	( ( self ).data->methods->popBackwardItem( self , in , out ) )
+	( ( *self._ )->popBackwardItem( self , in , out ) )
 #define jPopArrayForwardValue( self , in , out ) \
-	( ( self ).data->methods->popForwardItem( self , in , out ) )
-#define jPushArrayBackwardItem( self , indexIn , valueIn , out ) \
-	( ( self ).data->methods->pushBackwardItem( self , indexIn , valueIn , out ) )
-#define jPushArrayForwardItem( self , indexIn , valueIn , out ) \
-	( ( self ).data->methods->pushForwardItem( self , indexIn , valueIn , out ) )
+	( ( *self._ )->popForwardItem( self , in , out ) )
+#define jPushArrayBackward( self , in , out ) \
+	( ( *self._ )->pushBackward( self , in , out ) )
+#define jPushArrayForward( self , in , out ) \
+	( ( *self._ )->pushForward( self , in , out ) )
 #define jSetArrayItem( self , indexIn , valueIn , out ) \
-	( ( self ).data->methods->setItem( self , indexIn , valueIn , out ) )
+	( ( *self._ )->setItem( self , indexIn , valueIn , out ) )
 
 // define object map pointers
 #define jAddArrayItemDeclare( type ) \
@@ -93,20 +93,20 @@
 	( ( self )->methods->getPrevious( self , out ) )
 
 // define object mapItem pointers
-#define jFreeMapItemDeclare( type ) JResult( *free )( type ) ;
-#define jFreeMapItemNextDeclare( type ) \
+#define jFreeArrayItemDeclare( type ) JResult( *free )( type ) ;
+#define jFreeArrayItemNextDeclare( type ) \
 	JResult( *freeNext )( type , JPIArrayItem ) ;
-#define jFreeMapItemPreviousDeclare( type ) \
+#define jFreeArrayItemPreviousDeclare( type ) \
 	JResult( *freePrevious )( type* , JPIArrayItem ) ;
-#define jGetMapItemKeyDeclare( type ) \
+#define jGetArrayItemKeyDeclare( type ) \
 	JResult( *getKey )( type , JPIArrayItem ) ;
-#define jGetMapItemNextDeclare( type ) \
+#define jGetArrayItemNextDeclare( type ) \
 	JResult( *getNext )( type , JPIArrayItem ) ;
-#define jGetMapItemPreviousDeclare( type ) \
+#define jGetArrayItemPreviousDeclare( type ) \
 	JResult( *getPprevious )( type , JPIArrayItem ) ;
-#define jGetMapItemValueDeclare( type ) \
+#define jGetArrayItemValueDeclare( type ) \
 	JResult( *getValue )( type , JPBuffer ) ;
-#define jSetMapItemValueDeclare( type ) \
+#define jSetArrayItemValueDeclare( type ) \
 	JResult( *setValue )( type , JCPCBuffer ) ;
 
 // define self
@@ -128,19 +128,19 @@
 	jSetArrayItemDeclare( setItem , item )
 #define jSelfArrayItem( free , freeNext , freePrevious , \
 		getKey , getNext , getPrevious , getValue , setValue ) \
-	jFreeMapItemDeclare( free ) \
-	jFreeMapItemNextDeclare( freeNext ) \
-	jFreeMapItemPreviousDeclare( freePrevious ) \
-	jGetMapItemNextDeclare( getNext ) \
-	jGetMapItemPreviousDeclare( getPrevious ) \
-	jGetMapItemValueDeclare( getValue ) \
-	jSetMapItemValueDeclare( setValue )
+	jFreeArrayItemDeclare( free ) \
+	jFreeArrayItemNextDeclare( freeNext ) \
+	jFreeArrayItemPreviousDeclare( freePrevious ) \
+	jGetArrayItemNextDeclare( getNext ) \
+	jGetArrayItemPreviousDeclare( getPrevious ) \
+	jGetArrayItemValueDeclare( getValue ) \
+	jSetArrayItemValueDeclare( setValue )
 
 // define status
-#define jEmptyErrorMapResult -20
-#define jValueNotFoundErrorMapResult -21
-#define jEmptyWarningMapResult 20
-#define jValueAlreadyExistsWarningMapResult 21
+//#define jEmptyErrorMapResult -20
+//#define jValueNotFoundErrorMapResult -21
+//#define jEmptyWarningMapResult 20
+//#define jValueAlreadyExistsWarningMapResult 21
 
 // define status base
 #define jSuccessArrayResult jSuccessResult
@@ -151,7 +151,7 @@
 #define jSupersMapMethods JMapMethods map ; jBaseMethodsSupers
 
 #include "base.i.h"
-#include "buffer.h"
+#include "buffer.i.h"
 		
 jPrefixType( J , DArrayItem , struct JDArrayItem ) ;
 jPrefixType( J , IArrayItem , struct JIArrayItem ) ;
@@ -159,33 +159,11 @@ jPrefixType( J , MArrayItem , struct JMArrayItem ) ;
 
 jPrefixStdDeclareInterface( J , Array )
 
-typedef struct JArrayManager JArrayManager ;
-
-typedef JArrayManager const JCArrayManager ;
-
-typedef JCArrayManager * JPCArrayManager ;
-
-typedef JPCArrayManager const JCPCArrayManager ;
-
-typedef JResult JArrayManagerFree( JCPCArrayManager , JPVoid ) ; 
-typedef JResult JArrayManagerGet( JCPCArrayManager , JPVoid , JPVoid ) ; 
-typedef JResult JArrayManagerSet( JCPCArrayManager , JPVoid , JPVoid ) ; 
-
-typedef JArrayManagerFree * JPArrayManagerFree ; 
-typedef JArrayManagerGet * JPArrayManagerGet ; 
-typedef JArrayManagerSet * JPArrayManagerSet ; 
-
 jPrefixStdDefineInterface( J , Array , jAllArray( JIArray , JPIArrayItem ) , JIBase )
 
 struct JDArrayItem { JCPCMArrayItem methods ; }	;
 struct JIArrayItem { JPDArrayItem data ; } ;
 struct JMArrayItem { jAllArrayItem( JIArrayItem ) } ;
-
-struct JArrayManager {
-	JPArrayManagerFree free ;
-	JPArrayManagerGet get ;
-	JPArrayManagerSet set ;
-	int size ; } ;
 
 #define jIArrayNil ( ( JIArray ){ .data = 0 } )
 #define jIArrayItemNil ( ( JIArrayItem ){ .data = 0 } )

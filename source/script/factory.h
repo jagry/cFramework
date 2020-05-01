@@ -1,10 +1,25 @@
-typedef JResult( *Factory )( JIMap , JPBuffer , PUToken ) ;
-typedef JResult( *KeywordFactory )( JPBuffer , PUToken ) ;
+#include <jagry/buffer.i.h>
+#include <jagry/result.h>
 
-typedef Factory * PFactory ;
-typedef KeywordFactory * PKeywordFactory ;
+//typedef JResult( *Factory )( JIBufferMap , JPBuffer , PUToken ) ;
+typedef struct FactoryDescription FactoryDescription ;
+typedef struct KeywordFactoryArgument KeywordFactoryArgument ;
+typedef union UFactoryArgument UFactoryArgument ;
 
-jInternal( JResult )declareVariableKeywordFactory( JPBuffer , PUToken ) ;
-jInternal( JResult )debugTestKeywordFactory( JPBuffer , PUToken ) ;
-jInternal( JResult )identifierFactory( JIMap , JPBuffer , PUToken ) ;
-jInternal( JResult )keywordFactory( JIMap , JPBuffer , PUToken ) ;
+//typedef Factory * PFactory ;
+typedef FactoryDescription * PFactoryDescription ;
+
+typedef JResult( *KeywordFactory )( UFactoryArgument , PUToken ) ;
+
+struct KeywordFactoryArgument {
+	JByte type ;
+	JByte identifier ; } ;
+
+union UFactoryArgument {
+	KeywordFactoryArgument keyword ; } ;
+
+struct FactoryDescription {
+	KeywordFactory method ;
+	UFactoryArgument argument ; } ;
+
+jInternal( JResult )standardFactory( UFactoryArgument in , PUToken arg ) ;

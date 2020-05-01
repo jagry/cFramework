@@ -1,1 +1,1 @@
-jInternal( JResult )initialize( JPIMap out ) ;
+jInternal( JResult )initialize( JPIBufferMap out ) ;
