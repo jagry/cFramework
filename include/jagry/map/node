@@ -1,0 +1,31 @@
+#define jValueMapNodeType 1
+
+#define jBaseMapNodeMembers \
+	JBuffer buffer ; \
+	JUMapNode owner ; \
+	JByte type ;
+#define jValueMapNodeMembers \
+	jBaseMapNodeMembers \
+	JPIMapItem item ;
+
+typedef struct JBaseMapNode JBaseMapNode ;
+typedef struct FJullMapNode JFullMapNode ;
+typedef struct JSubMapNode JSubMapNode ;
+typedef struct JSubsMapNode JSubsMapNode ;
+typedef union JUMapNode JUMapNode ;
+typedef struct JValueMapNode JValueMapNode ;
+
+typedef JBaseMapNode * JPBaseMapNode ;
+typedef JFullMapNode * JPFullMapNode ;
+typedef JSubMapNode * JPSubMapNode ;
+typedef JSubsMapNode * JPSubsMapNode ;
+typedef JUMapNode * JPUMapNode ;
+typedef JValueMapNode * JPValueMapNode ;
+
+union JUMapNode {
+	JPBaseMapNode base ;
+	JPFullMapNode full ;
+	JPSubMapNode sub ;
+	JPSubsMapNode subs ;
+	JPValueMapNode value ; } ;
+struct JValueMapNode { jValueMapNodeMembers } ;

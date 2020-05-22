@@ -1,4 +1,4 @@
-#include <jagry/buffer.i.h>
+#include <jagry/buffer.i>
 #include <stdio.h>
 
 #define iteration( nameArg , stringArg , pointsArg ) { \

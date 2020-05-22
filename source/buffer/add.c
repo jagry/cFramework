@@ -1,10 +1,10 @@
 #define jBufferMethod jExport
 
-#include <jagry/buffer.i.h>
+#include <jagry/buffer.i>
 #include <jagry/result.h>
 #include <stdlib.h>
 
-#include "jagry/buffer/add.h"
+#include "jagry/buffer/add"
 
 JResult jagryAddBufferByte( JPBuffer self , JByte in ) {
 JSize size = self->size + 1 ;

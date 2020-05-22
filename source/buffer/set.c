@@ -1,11 +1,11 @@
 #define jBufferMethod jExport
 
-#include <jagry/buffer.i.h>
+#include <jagry/buffer.i>
 #include <jagry/result.h>
 #include <memory.h>
 #include <stdlib.h>
 
-#include <jagry/buffer/set.h>
+#include <jagry/buffer/set>
 
 JResult jagrySetBuffer( JPBuffer self , JPVoid bytes , JSize size ) {
 JPByte local ;

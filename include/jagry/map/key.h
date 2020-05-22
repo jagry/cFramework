@@ -9,33 +9,25 @@
 	.set = jagryMapKeyPointer , \
 	.size = sizeof( JPVoid ) } )
 
-#define jMapKeyAll( self ) jMapKeyEach( self , self , self , self )
-#define jMapKeyEach( acquire , getInterface , release , first ) \
+#define jMapKeyAll( self ) \
+	jMapKeyEach( self , self , self , self , self , self , self )
+#define jMapKeyEach( \
+		acquire , getInterface , release , add , new , put , set ) \
 	jBaseEach( acquire , getInterface , release ) \
-	jMapKeySelf( )
-#define jMapKeySelf( ) \
-	JPCMapKeyMethods( *add )( ) ; \
-	JPCMapKeyMethods( *new )( ) ; \
-	JPCMapKeyMethods( *put )( ) ; \
-	JPCMapKeyMethods( *set )( ) ;
+	jMapKeySelf( add , new , put , set )
+#define jMapKeySelf( addArg , newArg , putArg , setArg ) \
+	JResult( *add )( addArg , JPMapData , JCPCVoid , JCPCVoid , JPIMapItem ) ; \
+	JResult( *new )( newArg , JPMapData , JCPCVoid , JCPCVoid , JPIMapItem ) ; \
+	JResult( *put )( putArg , JPMapData , JCPCVoid , JCPCVoid , JPIMapItem ) ; \
+	JResult( *set )( setArg , JPMapData , JCPCVoid , JCPCVoid , JPIMapItem ) ;
 
 #define jAcquireMapKey( self ) jAcquireBase( ( self ).super )
 #define jGetMapKeyInterface( self , in , out ) \
 	jGetBaseInterface( ( self ).super , in , out )
 #define jReleaseMapKey( self ) jReleaseBase( ( self ).super )
 
-typedef struct JMapKeyMethods JMapKeyMethods ;
-typedef JResult( *JCreateMapKeyFirst )( ) ;
-
-typedef JMapKeyMethods const JCMapKeyMethods ;
-
-typedef JCMapKeyMethods * JPCMapKeyMethods ;
-
-jPrefixStdDeclareInterface( J , MapKey )
-jPrefixStdDefineInterface( J , MapKey , jMapKeyAll( JIMapKey ) , JIBase )
-
-struct JMapKeyMethods {
-	JCreateMapKeyFirst createFirst ; } ;
+jDeclarePrefixStandardInterface( J , MapKey )
+jPrefixStdDefineInterface( J , MapKey , jMapKeyAll( JCIMapKey ) , JIBase )
 
 jMapMethod( JResult )jagryMapKey( JUnsignedInteger , JOMapKey ) ;
 jMapMethod( JResult )jagryGetMapKey( JUnsignedInteger , JOMapKey ) ;

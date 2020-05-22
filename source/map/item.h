@@ -1,7 +1,5 @@
-typedef struct Item Item ;
-typedef Item * PItem ;
+typedef struct IMapItem IMapItem ;
+typedef IMapItem * PIMapItem ;
 
-struct Item {
-	JBuffer key ; } ;
-
-jHidden( JResult )addMapItem( PIMap , JCPCVoid , JCPCVoid , JPIMapItem ) ;
+struct IMapItem {
+	JPCVoid value ; } ;

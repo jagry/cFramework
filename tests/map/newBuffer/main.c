@@ -1,4 +1,4 @@
-#include <jagry/map.l.h>
+#include <jagry/map.l>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

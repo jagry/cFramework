@@ -21,10 +21,10 @@
 
 #define jReaderAll( type ) jReaderEach( type , type , type , type )
 
-#include "base.i.h"
-#include "buffer.i.h"
+#include "base.i"
+#include "buffer.i"
 
-jPrefixStdDeclareInterface( J , Reader )
+jDeclarePrefixStandardInterface( J , Reader )
 jPrefixStdDefineInterface( J , Reader , jReaderAll( JIReader ) , JIBase )
 
 #endif

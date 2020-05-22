@@ -1,8 +1,7 @@
 #define JOMap PPIMap
 
-#include <jagry/super.h>
+#include <jagry/dynamic.l>
 
-typedef struct MapData MapData ;
 typedef struct MMap const CMMap ;
 typedef struct IMap IMap ;
 typedef struct IMapItem * PIMapItem ;
@@ -12,11 +11,8 @@ typedef IMap * PIMap ;
 
 typedef PIMap * PPIMap ;
 
-struct MapData {
-	JUnsignedInteger count ;
-	UMapNode node ; } ;
 struct IMap {
-	jSuperMembers( PCMMap , _ )
-	JIMapKey key ;
-	MapData data ; } ;
+	jDynamicMembers( PCMMap )
+	JCIMapKey key ;
+	JMapData data ; } ;
 struct MMap { jMapAll( PIMap ) } ;

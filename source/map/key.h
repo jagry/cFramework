@@ -1,24 +1,36 @@
 #define mapKeyMembers \
-	jSuperMembers( PCMMapKey , _ ) \
+	jDynamicMembers( PCMMapKey ) \
 	JUnsignedInteger size ;
 
-jStdDeclareImplementation( MapKey )
-jStdDeclareImplementation( IntegerMapKey )
-
-static JResult getMapKeyInterface( IMapKey , JUnsignedInteger , JPIBase ) ;
+jStdDeclareBaseImplementation( MapKey )
+jStdDeclareChildImplementation( FixedMapKey )
 
 #define JOMapKey PIMapKey
 
 #include <jagry/map/key.h>
 
-jStdDefineImplementation( \
+jStdDefineBaseImplementation( \
 	MapKey , \
-	mapKeyMembers , \
+	jDynamicMembers( PCMMapKey ) , \
 	JIMapKey , \
-	jMapKeyEach( JISuper , IMapKey , JISuper , IMapKey ) )
-jStdDefineImplementation( \
-	IntegerMapKey , \
-	mapKeyMembers , \
+	jMapKeyEach( \
+		JIDynamic , \
+		IMapKey , \
+		JIDynamic , \
+		IMapKey , \
+		IMapKey , \
+		IMapKey , \
+		IMapKey ) )
+jStdDefineChildImplementation( \
+	FixedMapKey , \
+	jDynamicMembers( PCMFixedMapKey ) JUnsignedInteger size ; , \
 	JIMapKey , \
-	jMapKeyEach(
-		JISuper , IMapKey , JISuper , IIntegerMapKey ) )
+	jMapKeyEach( \
+		JIStatic , \
+		IMapKey , \
+		JIStatic , \
+		IFixedMapKey , \
+		IFixedMapKey , \
+		IFixedMapKey , \
+		IFixedMapKey ) , \
+	DMapKey )

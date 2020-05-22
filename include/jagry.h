@@ -1,4 +1,3 @@
-#include <jagry/buffer.i.h>
 #ifndef Jagry
 #define Jagry
 

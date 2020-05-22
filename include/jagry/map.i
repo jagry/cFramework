@@ -100,21 +100,21 @@
 // define self status
 #define jEmptyErrorMapResult -20
 #define jItemAlreadyExistsErrorMapResult -21
-#define jValueNotFoundErrorMapResult -22
+#define jItemNotFoundErrorMapResult -22
 #define jEmptyWarningMapResult 20
-#define jValueAlreadyExistsWarningMapResult 21
+#define jItemAlreadyExistsWarningMapResult 21
 
 // define super status
 #define jSuccessMapResult jSuccessResult
 #define jNotEnoughtMemoryErrorMapResult jNotEnoughtMemoryErrorResult
 
-#include "base.i.h"
+#include "base.i"
 
 typedef union JIMapItem * JIMapItem ;
 
 typedef JIMapItem * JPIMapItem ;
 
-jPrefixStdDeclareInterface( J , Map )
+jDeclarePrefixStandardInterface( J , Map )
 jPrefixStdDefineInterface( J , Map , jMapAll( JIMap ) , JIBase )
 
 #endif

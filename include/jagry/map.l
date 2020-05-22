@@ -6,9 +6,15 @@
 #define JOMap JPIMap
 #define JOMapKey JPIMapKey
 
-#include "map.i.h"
+#include "buffer.i"
+#include "map.i"
+
+#include "map/node"
+
+#include "map/data.h"
+
 #include "map/key.h"
 
-#include "map/byte.h"
+jMapMethod( JResult )jagryMap( JCIMapKey in , JOMap out ) ;
 
 #endif

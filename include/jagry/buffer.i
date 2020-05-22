@@ -6,7 +6,7 @@
 #define jStringBuffer( in ) ( ( JCBuffer ){ .bytes = in , .size = strlen( in ) } )
 #define jMethodBuffer( in ) ( ( JCBuffer ){ .bytes = ( JPByte )&in , .size = sizeof( &in ) } )
 
-// !!! #include <string.h>
+#include <string.h>
 #include "../jagry.h"
 
 jPrefixType( J , Buffer , struct JBuffer )

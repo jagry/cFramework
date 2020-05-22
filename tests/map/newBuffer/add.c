@@ -1,6 +1,6 @@
 #define indent "   "
 
-#include <jagry/map.l.h>
+#include <jagry/map.l>
 
 #include <buffer.d.h>
 
@@ -19,15 +19,24 @@ if( jResultIsError( result ) )
 if( jResultIsError( result = jagryMap( key , &map ) ) )
 	return result ;
 for(
-		JUnsignedInteger1 counter = 0 ;
-		counter < sizeof( iterations ) / sizeof( Iteration ) ;
-		++counter )
+		JUnsignedInteger1 counter0 = 0 ;
+		counter0 < sizeof( iterations ) / sizeof( Iteration ) ;
+		++counter0 )
 	{
-		PIteration iteration = iterations + counter ;
+		PIteration iteration = iterations + counter0 ;
 		printf(
-			indent "Test '%s': key %s - " , iteration->name , iteration->key.bytes ) ;
+			indent "Test '%s': key %s\n" , iteration->name , iteration->key.bytes ) ;
 		result = jAddMapItem( map , &iteration->key , &iteration->value , 0 ) ;
-		showResult( result ) ;
+		if( jResultIsError( result ) )
+			return result ;
+		for( JUnsignedInteger1 counter1 = 0 ; counter0 >= counter1 ; ++counter1 )
+			{
+				JIMapItem item ;
+				iteration = iterations + counter1 ;
+				printf( indent indent "Get %s - " , iteration->key.bytes ) ;
+				result = jGetMapItem( map , &iteration->key , item ) ;
+				showResult( result ) ;
+			}
 	}
 return jSuccessResult ;
 }

@@ -1,36 +1,11 @@
-#ifndef JagrySuper
-#define JagrySuper
+#ifndef JagryDynamicLibrary
+#define JagryDynamicLibrary
 
-#define jInitializeSuper( self , methodsArg , ownerArg , referencesArg ) \
-	{ \
-		( self )->_ = &methodsArg ; \
-		( self )->owner = ownerArg ; \
-		( self )->references = referencesArg ; \
-	}
+#define jDynamicMethod jImport
 
-#define jSuperMembers( type , name ) \
-	type _ ; \
-	JIBase owner ; \
-	atomic_int references ;
+#include "dynamic.i"
 
-typedef struct JDSuper JDSuper ;
-typedef struct JMSuper JMSuper ;
-typedef union JISuper JISuper ;
-
-typedef JMSuper const JCMSuper ;
-typedef JDSuper * JPDSuper ;
-
-typedef JCMSuper * JPCMSuper ;
-
-#include <stdatomic.h>
-#include "base.i.h"
-
-struct JMSuper { jBaseAll( JISuper ) } ;
-union JISuper {
-	struct { jSuperMembers( JPCMSuper , _ ) } * _ ;
-	JIBase interface ; } ;
-
-JCounter jagryAcquireSuper( JISuper ) ;
-JCounter jagryReleaseSuper( JISuper ) ;
+#include "dynamic/acquire"
+#include "dynamic/release"
 
 #endif

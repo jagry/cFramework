@@ -1,0 +1,2 @@
+jStaticMethod( JCounter )jagryReleaseStatic( JIStatic ) ;
+jStaticMethod( JCounter )jagryReleaseStaticBase( JIStatic ) ;

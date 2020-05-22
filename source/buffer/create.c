@@ -1,11 +1,11 @@
 #define jBufferMethod jExport
 
-#include <jagry/buffer.i.h>
+#include <jagry/buffer.i>
 #include <jagry/result.h>
 #include <stdlib.h>
 
-#include <jagry/buffer/create.h>
-#include <jagry/buffer/initialize.h>
+#include <jagry/buffer/create>
+#include <jagry/buffer/initialize>
 
 JResult jagryCreatePBuffer( JCPCBuffer in , JPPBuffer out ) {
 return in ?
