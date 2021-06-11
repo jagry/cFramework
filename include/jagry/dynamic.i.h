@@ -8,10 +8,10 @@
 		( self )->references = referencesArg ; \
 	}
 
-#define jDynamicMembers( type ) \
-	type _ ; \
+#define jDynamicMembers( type , members ) \
+	type members ; \
 	JIBase owner ; \
-	atomic_int references ;
+	JAtomic references ;
 
 typedef struct JDDynamic JDDynamic ;
 typedef struct JMDynamic JMDynamic ;
@@ -22,11 +22,12 @@ typedef JDDynamic * JPDDynamic ;
 
 typedef JCMDynamic * JPCMDynamic ;
 
-#include <stdatomic.h>
-#include "base.i"
+#include "base.i.h"
+#include "dynamic/_l"
+#include "dynamic/_w"
 
-struct JDDynamic { jDynamicMembers( JPCMDynamic ) } ;
+struct JDDynamic { jDynamicMembers( JPCMDynamic , _ ) } ;
 struct JMDynamic { jBaseAll( JIDynamic ) } ;
-union JIDynamic { JPDDynamic _ ; JIBase interface ; } ;
+union JIDynamic { JPDDynamic _ ; JIBase i ; } ;
 
 #endif

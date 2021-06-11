@@ -1,13 +1,18 @@
 #define jDynamicMethod jExport
 
-#include <jagry/dynamic.i>
+#include "g.h"
+#include "w.h"
+
+#include <jagry/dynamic.i.h>
 
 #include <jagry/dynamic/acquire>
 
 JCounter jagryAcquireDynamicBase( JIDynamic self ) {
-return ++self._->references ;
+return jAtomicIncrement( self._->references ) ;
 }
 
 JCounter jagryAcquireDynamic( JIDynamic self ) {
-return self._->owner ? jAcquireBase( self._->owner ) : ++self._->references ;
+return self._->owner ?
+	jAcquireBase( self._->owner ) :
+	jAtomicIncrement( self._->references ) ;
 }

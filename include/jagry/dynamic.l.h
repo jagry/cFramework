@@ -1,9 +1,9 @@
 #ifndef JagryDynamicLibrary
 #define JagryDynamicLibrary
 
-#define jDynamicMethod jImport
+#define jDynamicMethod jHidden
 
-#include "dynamic.i"
+#include "dynamic.i.h"
 
 #include "dynamic/acquire"
 #include "dynamic/release"

@@ -20,11 +20,18 @@ _AIX            Defined on AIX
 	#define jLinux( argument )
 #endif
 
-#define jNull 0
+#ifdef _WIN32
+	#define jWindows( argument ) argument
+#else
+	#define jWindows( argument )
+#endif
 
-#define jExport( type ) type
+#define jNil ( ( JPVoid )0 )
+#define jZero 0
+
+#define jExport( type ) __declspec( dllexport )type
 #define jHidden( type ) type
-#define jImport( type ) type
+#define jImport( type ) __declspec( dllimport )type
 
 #ifdef DEBUG
 	#define jAssert( condition ) \
@@ -49,17 +56,19 @@ _AIX            Defined on AIX
 #define jPrefixType( prefix , name , define ) \
 	typedef define prefix##name ; \
 	\
-	typedef prefix##name * prefix##P##name ; \
 	typedef prefix##name const prefix##C##name ; \
+	typedef prefix##name * prefix##P##name ; \
 	\
+	typedef prefix##P##name const prefix##CP##name ; \
 	typedef prefix##C##name * prefix##PC##name ; \
 	typedef prefix##P##name * prefix##PP##name ; \
-	typedef prefix##P##name const prefix##CP##name ; \
 	\
-	typedef prefix##PC##name const prefix##CPC##name ;
+	typedef prefix##PC##name const prefix##CPC##name ; \
+	typedef prefix##CP##name * prefix##PCP##name;
+
 #define jType( name , base ) jPrefixType( , name , base )
 
-#define jNewLine "\r\n"
+#define jEndOfLine jWindows( "\r\n" )
 
 #define jMaxSignedInteger ( ( JSignedInteger )( jMaxUnsignedInteger >> 1 ) )
 #define jMaxSignedInteger1 ( ( JSignedInteger1 )( jMaxUnsignedInteger1 >> 1 ) )
@@ -79,20 +88,33 @@ _AIX            Defined on AIX
 #define jMinSignedInteger4 ( ~jMaxSignedInteger4 )
 #define jMinSignedInteger8 ( ~jMaxSignedInteger8 )
 
-#define jSignedIntegerSpecifier "%i"
-#define jSignedInteger1Specifier "%i"
-#define jSignedInteger2Specifier "%hi"
-#define jSignedInteger4Specifier "%i"
-#define jSignedInteger8Specifier "%lli"
+#define jSignedIntegerDecSpecifier "%i"
+#define jSignedInteger1DecSpecifier "%i"
+#define jSignedInteger2DecSpecifier "%hi"
+#define jSignedInteger4DecSpecifier "%i"
+#define jSignedInteger8DecSpecifier "%lli"
 
-#define jUnsignedIntegerSpecifier "%u"
-#define jUnsignedInteger1Specifier "%u"
-#define jUnsignedInteger2Specifier "%hu"
-#define jUnsignedInteger4Specifier "%u"
-#define jUnsignedInteger8Specifier "%llu"
+#define jUnsignedIntegerDecSpecifier "%u"
+#define jUnsignedInteger1DecSpecifier "%u"
+#define jUnsignedInteger2DecSpecifier "%hu"
+#define jUnsignedInteger4DecSpecifier "%u"
+#define jUnsignedInteger8DecSpecifier "%llu"
+
+
+#define jSignedIntegerHexSpecifier "%i"
+#define jSignedInteger1HexSpecifier "%i"
+#define jSignedInteger2HexSpecifier "%hi"
+#define jSignedInteger4HexSpecifier "%i"
+#define jSignedInteger8HexSpecifier "%lli"
+
+#define jUnsignedIntegerHexSpecifier "%u"
+#define jUnsignedInteger1HexSpecifier "%u"
+#define jUnsignedInteger2HexSpecifier "%hu"
+#define jUnsignedInteger4HexSpecifier "%u"
+#define jUnsignedInteger8HexSpecifier "%llu"
 
 #define jPointerSpecifier "%p"
-#define jStringSpecifier "%s"
+#define jString1Specifier "%s"
 
 #define jByteSpecifier jUnsignedInteger1Specifier
 #define jCounterSpecifier jSignedIntegerSpecifier
@@ -104,24 +126,29 @@ _AIX            Defined on AIX
 jPrefixType( J , Void , void )
 jPrefixType( J , Byte , unsigned char )
 
-jPrefixType( J , Character1 , __uint8_t )
-jPrefixType( J , Character2 , __uint16_t )
-jPrefixType( J , Character4 , __uint32_t )
+jPrefixType( J , Character1 , jLinux( char ) jWindows( char ) )
+jPrefixType( J , Character2 , jLinux( __uint16_t ) jWindows( wchar_t ) )
+jPrefixType( J , Character4 , jLinux( __uint32_t ) jWindows( uint32_t ) )
 
 jPrefixType( J , SignedInteger , signed int )
-jPrefixType( J , SignedInteger1 , __int8_t )
-jPrefixType( J , SignedInteger2 , __int16_t )
-jPrefixType( J , SignedInteger4 , __int32_t )
-jPrefixType( J , SignedInteger8 , __int64_t )
+jPrefixType( J , SignedInteger1 , jLinux( __int8_t ) jWindows( int8_t ) )
+jPrefixType( J , SignedInteger2 , jLinux( __int8_t ) jWindows( int8_t ) )
+jPrefixType( J , SignedInteger4 , jLinux( __int32_t ) jWindows( int32_t ) )
+jPrefixType( J , SignedInteger8 , jLinux( __int64_t ) jWindows( int64_t ) )
 
 jPrefixType( J , UnsignedInteger , unsigned int )
-jPrefixType( J , UnsignedInteger1 , __uint8_t )
-jPrefixType( J , UnsignedInteger2 , __uint16_t )
-jPrefixType( J , UnsignedInteger4 , __uint32_t )
-jPrefixType( J , UnsignedInteger8 , __uint64_t )
+jPrefixType( J , UnsignedInteger1 , jLinux( __uint8_t ) jWindows( uint8_t ) )
+jPrefixType( J , UnsignedInteger2 , jLinux( __uint16_t ) jWindows( uint16_t ) )
+jPrefixType( J , UnsignedInteger4 , jLinux( __uint32_t ) jWindows( uint32_t ) )
+jPrefixType( J , UnsignedInteger8 , jLinux( __uint64_t ) jWindows( uint64_t ) )
 
 jPrefixType( J , Counter , int )
 jPrefixType( J , Size , size_t )
+jPrefixType( J , Offset , int )
+//jPrefixType( J , Count , int )
+
+jPrefixType( J , UnsignedIntegerPointer , uintptr_t )
+jPrefixType( J , SignedIntegerPointer , intptr_t )
 
 typedef enum JBoolean {
 	jFalse ,

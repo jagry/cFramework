@@ -1,6 +1,6 @@
 #define jDynamicMethod jExport
 
-#include <jagry/dynamic.i>
+#include <jagry/dynamic.i.h>
 #include <stdlib.h>
 
 #include <jagry/dynamic/release>

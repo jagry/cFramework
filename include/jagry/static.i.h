@@ -20,10 +20,10 @@ typedef JDStatic * JPDStatic ;
 
 typedef JCMStatic * JPCMStatic ;
 
-#include "base.i"
+#include "base.i.h"
 
 struct JDStatic { jStaticMembers( JPCMStatic ) } ;
 struct JMStatic { jBaseAll( JIStatic ) } ;
-union JIStatic { JPDStatic * _ ; JIBase interface ; } ;
+union JIStatic { JPDStatic *_ ; JIBase interface ; } ;
 
 #endif
