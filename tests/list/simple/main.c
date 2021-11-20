@@ -18,13 +18,12 @@ JPTestStack stack ;
 JTestResult result = jPushTest( testIn , sizeof( Test ) , stack ) ;
 jReturnTestIfError( stack , result )
 *argument = malloc( sizeof( JISimpleArray ) ) ;
-jReturnTestNotEnoughMemoryIfNil(
-	stack , *argument , Test , _ , sizeof( Test ) )
+jReturnTestNotEnoughMemoryIfNil( stack , *argument , Test , _ , sizeof( Test ) )
 JStatus status = jagrySimpleList( jagryListPointerManager() , ( JPISimpleArray )*argument ) ;
 return jPopTest( testIn , stack ) ;
 }
 
-#define item( bodyArg , finalifeArg , initializeArg , nameArg ) \
+#define mainItem( bodyArg , finalifeArg , initializeArg , nameArg ) \
 	{ \
 		.body = bodyArg , \
 		.finalize = finalifeArg , \
@@ -33,7 +32,8 @@ return jPopTest( testIn , stack ) ;
 
 JUnsignedInteger main( JVoid ) {
 JTestItem items[] = {
-	item( clear , finalize , initialize , "clear" ) ,
-	item( eraseItem , finalize , initialize , "eraseItem" ) } ;
-return jagryRunTest( items , sizeof( items ) / sizeof( *items ) ) ? -2 : 0 ;
+	mainItem( clear , finalize , initialize , "clear" ) ,
+	mainItem( eraseItem , finalize , initialize , "eraseItem" ) ,
+	mainItem( push , finalize , initialize , "push" ) } ;
+return jagryRunTest( items , sizeof( items ) / sizeof( *items ) ) ? -1 : 0 ;
 }

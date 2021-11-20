@@ -3,10 +3,10 @@
 #include "check.h"
 #include "return.h"
 
-typedef jGetSimpleArrayItemMethod( CheckNext , JISimpleArrayItem )
-typedef JUnsignedInteger( *CheckOffset )(
-	JUnsignedInteger , JUnsignedInteger ) ;
-typedef jGetSimpleArrayStartItemMethod( CheckStart , JISimpleArray ) ;
+typedef JISimpleArrayItem( *CheckNext )( JISimpleArrayItem ) ;
+typedef JStatus( *jGetSimpleArrayItemMethod )( CheckNext , JISimpleArrayItem ) ;
+typedef JUnsignedInteger( *CheckOffset )( JUnsignedInteger , JUnsignedInteger ) ;
+// !!! typedef jGetSimpleArrayStartItemMethod( CheckStart , JISimpleArray ) ;
 typedef struct checkTestExtraItemFound CheckTestExtraItemFound ;
 typedef struct checkTestInvalidSize CheckTestInvalidSize ;
 typedef struct checkTestInvalidValue CheckTestInvalidValue ;
@@ -30,14 +30,11 @@ typedef union {
 	JTestStatusData status ; } CheckTest , *PCheckTest ;
 
 static JTestResult check( JPTest , JISimpleArray , PCGauge ) ;
-static JUnsignedInteger checkBackwardOffset(
-	JUnsignedInteger , JUnsignedInteger ) ;
-static JUnsignedInteger checkForwardOffset(
-	JUnsignedInteger , JUnsignedInteger ) ;
+static JUnsignedInteger checkBackwardOffset( JUnsignedInteger , JUnsignedInteger ) ;
+static JUnsignedInteger checkForwardOffset( JUnsignedInteger , JUnsignedInteger ) ;
 static JISimpleArrayItem checkGetNext( JISimpleArrayItem ) ;
 static JISimpleArrayItem checkGetPrevious( JISimpleArrayItem ) ;
-static JTestResult checkIteration(
-	JPTest , JISimpleArrayItem , CheckOffset , CheckNext , PCGauge ) ;
+static JTestResult checkIteration( JPTest , JISimpleArrayItem , CheckOffset , CheckNext , PCGauge ) ;
 static JVoid writeCheckExtraItemFound( JPCTest , JPCVoid ) ;
 static JVoid writeCheckInvalidSize( JPCTest , JPCVoid ) ;
 static JVoid writeCheckInvalidValue( JPCTest , JPCVoid ) ;
@@ -173,11 +170,11 @@ JTestResult checkStatic(
 	JPTest testIn ,
 	JISimpleArray listIn ,
 	JSize sizeIn ,
-	JPUnsignedIntegerPointer guageIn ) {
+	JPUnsignedIntegerPointer gaugeIn ) {
 PGauge gauge ; JPTestStack stack ; JStatus status ;
 JTestResult result = jPushTest( testIn , sizeof( CheckTest ) , stack ) ;
 jReturnTestIf( stack , jTestIsError( result ) , result ) ;
-status = gaugeStatic( sizeIn , guageIn , &gauge ) ;
+status = gaugeStatic( sizeIn , gaugeIn , &gauge ) ;
 jReturnTestStatusIfError( stack , CheckTest , status , status ) ;
 result = check( testIn , listIn , gauge ) ;
 jReturnTestIfError( stack , result )

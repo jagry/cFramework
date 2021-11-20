@@ -16,15 +16,19 @@ _AIX            Defined on AIX
 
 #ifdef __linux__
 	#define jLinux( argument ) argument
+	#define jLinuxSystem
 #else
 	#define jLinux( argument )
 #endif
 
 #ifdef _WIN32
+	#define jWindowsSystem
 	#define jWindows( argument ) argument
 #else
 	#define jWindows( argument )
 #endif
+
+#define jSystem( appleArg , linuxArg , windowsArg ) jLinux( linuxArg ) jWindows( windowsArg )
 
 #define jNil ( ( JPVoid )0 )
 #define jZero 0
@@ -68,7 +72,7 @@ _AIX            Defined on AIX
 
 #define jType( name , base ) jPrefixType( , name , base )
 
-#define jEndOfLine jWindows( "\r\n" )
+#define jEndOfLine jSystem( "\r" , "\n" , "\r\n" )
 
 #define jMaxSignedInteger ( ( JSignedInteger )( jMaxUnsignedInteger >> 1 ) )
 #define jMaxSignedInteger1 ( ( JSignedInteger1 )( jMaxUnsignedInteger1 >> 1 ) )
@@ -119,6 +123,9 @@ _AIX            Defined on AIX
 #define jByteSpecifier jUnsignedInteger1Specifier
 #define jCounterSpecifier jSignedIntegerSpecifier
 #define jSizeSpecifier jSignedIntegerSpecifier
+
+#include "jagry/_u.h"
+#include "jagry/_w.h"
 
 #include <stddef.h>
 #include <stdint.h>

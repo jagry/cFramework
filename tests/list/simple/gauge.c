@@ -14,7 +14,7 @@ JStatus gaugeRange(
 	PPGauge out ) {
 if( !( *out = malloc( sizeof( Gauge ) ) ) )
 	return jNotEnoughtMemoryErrorStatus ;
-if( !( ( *out )->data = malloc( sizeof( GuageItem ) * countIn ) ) )
+if( !( ( *out )->data = malloc( sizeof( GaugeItem ) * countIn ) ) )
 	return free( *out ) , jNotEnoughtMemoryErrorStatus ;
 for( JUnsignedInteger counter = 0 ; counter < countIn ; ++counter )
 	( *out )->data[ counter ] = counter * stepIn + startIn ;

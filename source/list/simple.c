@@ -9,7 +9,7 @@
 #include "simple.h"
 
 static JStatus clearSimpleList( USimpleList ) ;
-static JStatus eraseSimpleListItem( USimpleList , JOffset ) ;
+//static JStatus eraseSimpleListItem( USimpleList , JOffset ) ;
 static JSize getSimpleListCount( USimpleList ) ;
 static JStatus getSimpleListInterface(
 	USimpleList , JInterfaceIdentifier , JPIBase ) ;
@@ -27,51 +27,49 @@ static JStatus addSimpleListItemAfter(
 static JStatus addSimpleListItemBefore(
 	USimpleListItem , JPVoid , JPISimpleArrayItem ) ;
 static JVoid freeSimpleListItem( USimpleListItem ) ;
-static JISimpleArrayItem freeSimpleListItemNext( USimpleListItem ) ;
-static JISimpleArrayItem freeSimpleListItemPrevious( USimpleListItem ) ;
 static JISimpleArrayItem getSimpleListItemNext( USimpleListItem ) ;
 static JISimpleArrayItem getSimpleListItemPrevious( USimpleListItem ) ;
 static JStatus getSimpleListItemValue( USimpleListItem , JPVoid ) ;
 
 static CMSimpleList simpleList = {
 	/* base */
-		.acquire = jagryAcquireDynamic ,
-		.getInterface = getSimpleListInterface ,
-		.release = releaseSimpleList ,
+		.acquire = jNil , // jagryAcquireDynamic ,
+		.getInterface = jNil , // getSimpleListInterface ,
+		.release = jNil , // releaseSimpleList ,
 	/* simpleList */
-		.clear = clearSimpleList ,
-		.eraseItem = eraseSimpleListItem ,
-		.getCount = getSimpleListCount ,
-		.getFirst = getSimpleListFirst ,
-		//.getItem = getSimpleListItem ,
-		.getLast = getSimpleListLast ,
-		.pushBackward = pushSimpleListBackward ,
-		.pushForward = pushSimpleListForward } ;
+		.clear = jNil , // clearSimpleList ,
+		.getCount = jNil , // getSimpleListCount ,
+		.getFirst = jNil , // getSimpleListFirst ,
+		.getItem = jNil , // getSimpleListItem ,
+		.getLast = jNil , // getSimpleListLast ,
+		.pushBackward = jNil , // pushSimpleListBackward ,
+		.pushForward = jNil } ; // pushSimpleListForward } ;
 static CMSimpleListItem simpleListItem = {
-	.addAfter = addSimpleListItemAfter ,
-	.addBefore = addSimpleListItemBefore ,
-	.free = freeSimpleListItem ,
-	.getNext = getSimpleListItemNext ,
-	.getNextFree = freeSimpleListItemNext ,
-	.getPrevious = getSimpleListItemPrevious ,
-	.getPreviousFree = freeSimpleListItemNext ,
-	.getValue = getSimpleListItemValue } ;
+	.addAfter = jNil , // addSimpleListItemAfter ,
+	.addBefore = jNil , // addSimpleListItemBefore ,
+	.free = jNil , // freeSimpleListItem ,
+	.getNext = jNil , // getSimpleListItemNext ,
+	.getPrevious = jNil , // getSimpleListItemPrevious ,
+	.getValue = jNil } ; // getSimpleListItemValue } ;
 
 static JUnsignedInteger simpleListChunk = 1 ;
 
 JStatus clearSimpleList( USimpleList self ) {
-JISimpleArrayItem item = self._->first.i ;
-while( item != jISimpleArrayItemNil )
-	item = jGetSimpleArrayItemNextFree( item ) ;
-return jSuccessArrayStatus;
+JISimpleArrayItem nextItem ,
+	item = self._->first.i ;
+while( jISimpleArrayItemIsNotNil( item ) )
+	nextItem = jGetSimpleArrayItemNext( item ) ,
+	jFreeSimpleArrayItem( item ) ,
+	item = nextItem ;
+return jSuccessArrayStatus ;
 }
 
-JStatus eraseSimpleListItem( USimpleList self , JOffset in ) {
+/*JStatus eraseSimpleListItem(USimpleList self, JOffset in) {
 JISimpleArrayItem item ;
 JStatus status = getSimpleListItem( self , in , &item ) ;
 if( jStatusIsNotError( status ) ) jFreeSimpleArrayItem( item ) ;
 return status ;
-}
+}*/
 
 JSize getSimpleListCount( USimpleList self ) {
 return self._->count ;
@@ -85,7 +83,7 @@ JStatus getSimpleListItem(
 	USimpleList self , JOffset in , JPISimpleArrayItem out ) {
 if( in < 0 )
 	{
-		if( self._->count  < ( JSize )-in )
+		if( self._->count < ( JSize )-in )
 			return jOffsetOutRangeErrorArrayResult ;
 		*out = self._->last.i ;
 		for( JSignedInteger counter = in ; ++counter ; )
@@ -116,14 +114,6 @@ case JSimpleArrayInterfaceIdentifier :
 	return jSuccessArrayStatus ;
 }
 return jNoInterfaceArrayErrorStatus ;
-}
-
-JUnsignedInteger jagryGetSimpleListChunk( JVoid ) {
-return simpleListChunk ;
-}
-
-JVoid jagrySetSimpleListChunk( JUnsignedInteger in ) {
-simpleListChunk = in ;
 }
 
 JStatus jagrySimpleList( JCPCListManager in , JPISimpleList out ) {
@@ -220,27 +210,10 @@ self._->owner->manager->free( self._->owner->manager , self._->data ) ;
 free( self._ ) ;
 }
 
-JISimpleArrayItem freeSimpleListItemNext( USimpleListItem self ) {
-USimpleListItem result = self._->next ;
-freeSimpleListItem( self ) ;
-return result.i ;
-}
+JISimpleArrayItem getSimpleListItemNext( USimpleListItem self ) { return self._->next.i ; }
 
-JISimpleArrayItem freeSimpleListItemPrevious( USimpleListItem self ) {
-USimpleListItem result = self._->previous ;
-freeSimpleListItem( self ) ;
-return result.i ;
-}
+JISimpleArrayItem getSimpleListItemPrevious( USimpleListItem self ) { return self._->previous.i ; }
 
-JISimpleArrayItem getSimpleListItemNext( USimpleListItem self ) {
-return self._->next.i ;
-}
-
-JISimpleArrayItem getSimpleListItemPrevious( USimpleListItem self ) {
-return self._->previous.i ;
-}
-
-JStatus getSimpleListItemValue( USimpleListItem self , JPVoid out ) {
-return
-	self._->owner->manager->get( self._->owner->manager , out , self._->data ) ;
+JStatus getSimpleListItemValue(USimpleListItem self, JPVoid out) {
+return self._->owner->manager->get( self._->owner->manager , out , self._->data ) ;
 }

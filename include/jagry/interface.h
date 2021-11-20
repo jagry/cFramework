@@ -1,138 +1,103 @@
 #ifndef JagryInterface
 #define JagryInterface
 
-#define jDeclareBaseInterface( \
-		name , \
-		nameC , \
-		nameP , \
-		methods , \
-		methodsC , \
-		methodsPC , \
-		methodsCPC ) \
-	typedef struct methods methods ; \
-	typedef methods const methodsC ; \
-	typedef methodsC * methodsPC ; \
-	typedef methodsPC const methodsCPC ; \
-	typedef methodsCPC * name ; \
-	typedef name * nameP ;
+// TODO: Нужен ли const interface?
+#define jDeclareBaseInterface( nameArg , nameCArg , namePArg , methodsArg , methodsCArg , methodsPCArg , methodsCPCArg ) \
+	typedef struct methodsArg methodsArg ; \
+	typedef methodsArg const methodsCArg ; \
+	typedef methodsCArg * methodsPCArg ; \
+	typedef methodsPCArg const methodsCPCArg ; \
+	typedef methodsCPCArg * nameArg ; \
+	typedef nameArg * namePArg ;
 
-#define jDeclareStandardBaseInterface( name ) \
-	jDeclareBaseInterface( \
-		I##name , \
-		CI##name , \
-		PI##name , \
-		M##name , \
-		CM##name , \
-		PCM##name , \
-		CPCM##name )
+// TODO: Нужен ли const interface?
+#define jDeclarePrefixStandardBaseInterface( prefixArg , nameArg ) jDeclareBaseInterface( \
+	prefixArg##I##nameArg , \
+	prefixArg##CI##nameArg , \
+	prefixArg##PI##nameArg , \
+	prefixArg##IM##nameArg , \
+	prefixArg##CIM##nameArg , \
+	prefixArg##PCIM##nameArg , \
+	prefixArg##CPCIM##nameArg )
 
-#define jDeclarePrefixStandardBaseInterface( prefix , name ) \
-	jDeclareBaseInterface( \
-		prefix##I##name , \
-		prefix##CI##name , \
-		prefix##PI##name , \
-		prefix##M##name , \
-		prefix##CM##name , \
-		prefix##PCM##name , \
-		prefix##CPCM##name )
+// TODO: Нужен ли const interface?
+#define jDeclareStandardBaseInterface( nameArg ) \
+	jDeclareBaseInterface( I##nameArg , CI##nameArg , PI##nameArg , IM##nameArg , CIM##nameArg , PCIM##nameArg , CPCIM##nameArg )
 
-#define jDefineBaseInterface( name , nameC , methods ) \
-	struct { methods } * * name ; \
-	struct { methods } * * nameC ;
+// TODO: Нужен ли const interface?
+#define jDefineBaseInterface( nameArg , nameCArg , methodsStructureArg , methodsNameArg ) \
+	union nameArg { struct { methodsStructureArg } * methodsNameArg ; } ; \
+	union nameCArg { struct { methodsStructureArg } * methodsNameArg ; } ;
 
-#define jDefineStandardInterface( type , structure ) \
-	jDefineBaseInterface( I##type , CI##type , structure )
+// TODO: Нужен ли const interface?
+#define jDefineStandardBaseInterface( nameArg , structureArg ) jDefineBaseInterface( I##nameArg , CI##nameArg , structureArg , _ )
 
-#define jDefinePrefixStandardBaseInterface( prefix , type , structure ) \
-	jDefineBaseInterface( prefix##I##type , prefix##CI##type , structure )
+// TODO: Нужен ли const interface?
+#define jDefinePrefixStandardBaseInterface( prefixArg , nameArg , structureArg ) \
+	jDefineBaseInterface( prefixArg##I##nameArg , prefixArg##CI##nameArg , structureArg , _ )
 
-#define jDeclareChildInterface( \
-		name , \
-		nameC , \
-		nameP , \
-		methods , \
-		methodsC , \
-		methodsPC , \
-		methodsCPC ) \
-	typedef union name name ; \
-	typedef union name nameC ; \
-	typedef name * nameP ; \
-	typedef struct methods methods ; \
-	typedef methods const methodsC ; \
-	typedef methodsC * methodsPC ; \
-	typedef methodsPC const methodsCPC ;
+// TODO: Нужен ли const interface?
+#define jDeclareChildInterface( nameArg , nameCArg , namePArg , methodsArg , methodsCArg , methodsPCArg , methodsCPCArg ) \
+	typedef struct methodsArg methodsArg ; \
+	typedef union nameArg * nameArg ; \
+	typedef methodsArg const methodsCArg ; \
+	typedef nameArg * namePArg ; \
+	typedef methodsCArg * methodsPCArg ; \
+	typedef methodsPCArg const methodsCPCArg ;
 
-#define jDeclareStandardChildInterface( name ) \
+// TODO: Нужен ли const interface?
+#define jDeclareStandardChildInterface( nameArg ) \
+	jDeclareChildInterface( I##nameArg , CI##nameArg , PI##nameArg , IM##nameArg , CIM##nameArg , PCIM##nameArg , CPCIM##nameArg )
+
+// TODO: Нужен ли const interface?
+#define jDeclarePrefixStandardChildInterface( prefixArg , nameArg ) \
 	jDeclareChildInterface( \
-		I##name , \
-		CI##name , \
-		PI##name , \
-		M##name , \
-		CM##name , \
-		PCM##name , \
-		CPCM##name )
+		prefixArg##I##nameArg , \
+		prefixArg##CI##nameArg , \
+		prefixArg##PI##nameArg , \
+		prefixArg##IM##nameArg , \
+		prefixArg##CIM##nameArg , \
+		prefixArg##PCIM##nameArg , \
+		prefixArg##CPCIM##nameArg )
 
-#define jDeclarePrefixStandardChildInterface( prefix , name ) \
-	jDeclareChildInterface( \
-		prefix##I##name , \
-		prefix##CI##name , \
-		prefix##PI##name , \
-		prefix##M##name , \
-		prefix##CM##name , \
-		prefix##PCM##name , \
-		prefix##CPCM##name )
+// TODO: Нужен ли const interface?
+#define jDefineChildInterface( nameArg , nameCArg , methodsStructureArg , methodsNameArg , baseTypeArg , baseNameArg , superTypeArg , superNameArg ) \
+	union nameArg { struct { methodsStructureArg } * methodsNameArg ; baseTypeArg baseNameArg ; superTypeArg superNameArg ; } ; \
+	union nameCArg { struct { methodsStructureArg } * methodsNameArg ; baseTypeArg baseNameArg ; superTypeArg superNameArg ; } ;
 
-#define jDefineChildInterface( \
-		name , \
-		nameC , \
-		methodsStructure , \
-		methodsName , \
-		baseType , \
-		baseName , \
-		superType , \
-		superName ) \
-	union name { \
-		struct { methodsStructure } * * methodsName ; \
-		baseType baseName ; \
-		superType superName ; } ; \
-	union nameC { \
-		struct { methodsStructure } * * methodsName ; \
-		baseType baseName ; \
-		superType superName ; } ;
+// TODO: Нужен ли const interface?
+#define jDefinePrefixStandardChildInterface( prefixArg , nameArg , structureArg , baseArg , superArg ) \
+	jDefineChildInterface( prefixArg##I##nameArg , prefixArg##CI##nameArg , structureArg , _ , baseArg , base , superArg , super )
 
-#define jDefinePrefixStandardChildInterface( \
-		prefix , type , structure , superType ) \
-	jDefineChildInterface( \
-		prefix##I##type , \
-		prefix##CI##type , \
-		structure , \
-		_ , \
-		JIBase , \
-		base , \
-		superType , \
-		super )
+// TODO: Нужен ли const interface?
+#define jDefineStandardChildInterface( nameArg , structureArg , superArg , baseArg ) \
+	jDefineChildInterface( I##nameArg , CI##nameArg , structureArg , _ , baseArg , base , superArg , super )
 
-#define jDefineStandardChildInterface( type , structure , superType ) \
-	jDefineChildInterface( \
-		I##type , \
-		CI##type , \
-		structure , \
-		_ , \
-		JIBase , \
-		base , \
-		superType , \
-		super )
+#define jBaseInterface( nameArg , nameCArg , namePArg , methodsArg , methodsCArg , methodsPCArg , methodsCPCArg , structureArg ) \
+	jDeclareBaseInterface( nameArg , nameCArg , namePArg , methodsArg , methodsCArg , methodsPCArg , methodsCPCArg ) \
+	jDefineBaseInterface( nameArg , nameCArg , structureArg )
+
+#define jStandardBaseInterface( nameArg , structureArg ) \
+	jDeclareStandardBaseInterface( nameArg ) \
+	jDefineStandardBaseInterface( nameArg , structureArg )
+
+#define jPrefixStandardBaseInterface( prefixArg , nameArg , structureArg ) \
+	jDeclarePrefixStandardBaseInterface( prefixArg , nameArg ) \
+	jDefinePrefixStandardBaseInterface( prefixArg , nameArg , structureArg )
 
 #include "../jagry.h"
 
 typedef JUnsignedInteger8 JInterfaceIdentifier ;
 
-#define JBaseInterfaceIdentifier        ( ( JInterfaceIdentifier )0 )
-#define JArrayInterfaceIdentifier       ( ( JInterfaceIdentifier )1 )
-#define JSimpleArrayInterfaceIdentifier ( ( JInterfaceIdentifier )2 )
-#define JSortArrayInterfaceIdentifier   ( ( JInterfaceIdentifier )3 )
-#define JListInterfaceIdentifier        ( ( JInterfaceIdentifier )4 )
-#define JSimpleListInterfaceIdentifier  ( ( JInterfaceIdentifier )5 )
-#define JSortListInterfaceIdentifier    ( ( JInterfaceIdentifier )6 )
+#define jBaseInterfaceIdentifier        ( ( JInterfaceIdentifier )0 )
+#define jArrayInterfaceIdentifier       ( ( JInterfaceIdentifier )1 )
+#define jSimpleArrayInterfaceIdentifier ( ( JInterfaceIdentifier )2 )
+#define jSortArrayInterfaceIdentifier   ( ( JInterfaceIdentifier )3 )
+#define jListInterfaceIdentifier        ( ( JInterfaceIdentifier )4 )
+#define jSimpleListInterfaceIdentifier  ( ( JInterfaceIdentifier )5 )
+#define jSortListInterfaceIdentifier    ( ( JInterfaceIdentifier )6 )
+#define jSliceInterfaceIdentifier       ( ( JInterfaceIdentifier )7 )
+#define jSimpleSliceInterfaceIdentifier ( ( JInterfaceIdentifier )8 )
+#define jSortSliceInterfaceIdentifier   ( ( JInterfaceIdentifier )9 )
 
 #endif

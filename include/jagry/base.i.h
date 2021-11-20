@@ -1,43 +1,44 @@
 #ifndef JagryBaseInterface
 #define JagryBaseInterface
 
-#define jAcquireBasePointer( type ) JCounter( *acquire )( type ) ;
-#define jGetBaseInterfacePointer( type ) JStatus( *getInterface )( type , JInterfaceIdentifier , JPIBase ) ;
-#define jReleaseBasePointer( type ) JCounter( *release )( type ) ;
+// base interface
+#define jBaseSelfMethods( acquireArg , getInterfaceArg , releaseArg ) \
+	JCounter( *acquire )( acquireArg ) ; \
+	JStatus( *getInterface )( getInterfaceArg , JInterfaceIdentifier , JPIBase ) ; \
+	JCounter( *release )( releaseArg ) ;
+#define jBaseEachMethods( acquireArg , getInterfaceArg , releaseArg ) jBaseSelfMethods( acquireArg , getInterfaceArg , releaseArg )
+#define jBaseAllMethods( typeArg ) jBaseEachMethods( typeArg , typeArg , typeArg )
 
-#define jAcquireBase( self ) ( ( *self )->acquire( self ) )
-#define jGetBaseInterface( self , identifier , out ) ( ( *self )->getInterface( self , identifier , out ) )
-#define jReleaseBase( self ) ( ( *self )->release( self ) )
+// base self methods
+#define jAcquireBase( self ) ( ( self ).t->m->acquire( self ) )
+#define jGetBaseInterface( self , identifier , out ) ( ( self ).t->m->getInterface( self , identifier , &out ) )
+#define jReleaseBase( self ) ( ( self ).t->m->release( self ) )
 
-#define jBaseSupers JBase base ;
-#define jBaseMethodsSupers JBaseMethods base ;
+#define jSuccessBaseStatus jSuccessStatus
+#define jNotEnoughtMemoryErrorBaseStatus jNotEnoughtMemoryErrorStatus
 
-#define jBaseSelf( acquire , getInterface , release ) \
-	jAcquireBasePointer( acquire ) \
-	jGetBaseInterfacePointer( getInterface ) \
-	jReleaseBasePointer( release )
-#define jBaseEach( acquire , getInterface , release ) jBaseSelf( acquire , getInterface , release )
-#define jBaseAll( type ) jBaseEach( type , type , type )
+#define jBaseErrorLastStatus jNotImplementErrorBaseStatus
+#define jBaseWarningLastStatus jWarningLastStatus
 
-#define jNoInterfaceBaseErrorStatus ( jErrorStatusMask | ~( ( JInterfaceIdentifier )1 ) )
-
-
-//jPrefixStdDeclareInterface( J , Base )
-
-//typedef struct JMBase JMBase ;
-//typedef JMBase const JCMBase ;
-//typedef JCMBase * JPCMBase ;
-//typedef JPCMBase const JCPCMBase ;
-//typedef JCPCMBase * JIBase ;
-//typedef JIBase * JPIBase ;
+#define jNoInterfaceErrorBaseStatus  ( ( JStatus )( jErrorLastStatus - 1 ) )
+#define jNotImplementErrorBaseStatus ( ( JStatus )( jErrorLastStatus - 2 ) )
 
 #include "interface.h"
 #include "status.h"
 
-jDeclarePrefixStandardBaseInterface( J , Base )
-struct JMBase { jBaseAll( JIBase ) } ;
-//struct JMBase { jBaseAll( JIBase ) } ;
+//jPrefixStandardBaseInterface( J , Base , jBaseAllMethods( JIBase ) )
+typedef struct JIMBase JIMBase ; \
+typedef JIMBase const JICMBase ; \
+typedef JICMBase * JIPCMBase ; \
+typedef JIPCMBase const JICPCMBase ; \
+typedef union JIDBase JIDBase ; \
+typedef JIDBase * JIPDBase ; \
+typedef union JIBase JIBase ; \
+typedef JIBase * JPIBase ;
 
-//#define jNullInterface
+union JIDBase { JICPCMBase m ; };
+union JIBase { JIPDBase t ; } ;
+struct JIMBase { jBaseAllMethods( JIBase ) } ;
+
 
 #endif

@@ -2,9 +2,9 @@ build/
 dist/
 nbproject/
 .dep.inc
-f1.stackdump
 Makefile
 Debug/
 Release/
 .vs/
-.vcxproj
+*.vcxproj
+*.vcxproj.user

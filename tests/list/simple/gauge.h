@@ -2,10 +2,10 @@
 
 typedef struct gauge Gauge ;
 typedef JVoid GaugeFree( PGauge ) ;
-typedef JUnsignedIntegerPointer GuageItem ;
+typedef JUnsignedIntegerPointer GaugeItem ;
 
 typedef Gauge const CGauge;
-typedef GuageItem * PGuageItem ;
+typedef GaugeItem * PGaugeItem ;
 typedef Gauge * PGauge ;
 typedef GaugeFree * PGaugeFree ;
 
@@ -13,7 +13,7 @@ typedef CGauge * PCGauge;
 typedef PGauge * PPGauge ;
 
 struct gauge {
-	PGuageItem data ;
+	PGaugeItem data ;
 	PGaugeFree free ;
 	JSize size ; } ;
 

@@ -7,12 +7,6 @@
 
 #include <jagry/dynamic/acquire>
 
-JCounter jagryAcquireDynamicBase( JIDynamic self ) {
-return jAtomicIncrement( self._->references ) ;
-}
+JCounter jagryAcquireDynamic( JDynamic self ) { return /* self.d->b.t ? jAcquireBase(self.d->b) :*/ jAtomicIncrement(self.d->r); }
 
-JCounter jagryAcquireDynamic( JIDynamic self ) {
-return self._->owner ?
-	jAcquireBase( self._->owner ) :
-	jAtomicIncrement( self._->references ) ;
-}
+JCounter jagryAcquireDynamicBase( JDynamic self ) { return jAtomicIncrement( self.d->r ) ; }

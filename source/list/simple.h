@@ -34,9 +34,7 @@ struct mSimpleList { jEachSimpleArrayMethods(
 	USimpleList ,
 	USimpleList ,
 	USimpleList ,
-	USimpleList ,
-	USimpleList ,
-	USimpleList ) } ;
+	JISimpleArrayItem ) } ;
 union uSimpleList { PSSimpleList _ ; JISimpleArray i ; } ;
 union uSimpleListItem { PSSimpleListItem _ ; JISimpleArrayItem i ; } ;
 

@@ -4,39 +4,27 @@
 static JVoid writeTestError( JPTest testIn , JPCTestResult resultIn ) ;
 
 JVoid jagryWriteTestResult( JPTest testIn , JPCTestResult resultIn ) {
-if( resultIn->methods )
-	writeTestError( testIn , resultIn ) ;
-else
-	printf( writeSucces ) ;
+if( resultIn->methods ) writeTestError( testIn , resultIn ) ; else printf( writeSucces ) ;
 }
 
-JVoid writeAlreadyHasErrorTestResult( JPTest testIn , JPCVoid dataIn ) {
-printf( "already has error" );
-}
+JVoid writeAlreadyHasErrorTestResult( JPTest testIn , JPCVoid dataIn ) { printf( "already has error" ) ; }
 
-JVoid writeInvalidStackTestResult( JPTest testIn , JPCVoid dataIn ) {
-printf( "invalid stack" ) ;
-}
+JVoid writeEmptyTestResult( JPTest testIn , JPCVoid dataIn ) {}
+
+JVoid writeInvalidStackTestResult( JPTest testIn , JPCVoid dataIn ) { printf( "invalid stack" ) ; }
 
 JVoid writeNotEnoughMemoryTestResult( JPTest testIn , JPCVoid dataIn ) {
-printf(
-	"not enough memory(size(bytes): %i)" ,
-	( ( JPCTestNotEnoudhMemoryData )dataIn )->size ) ;
+printf( "not enough memory(size(bytes): %i)" , ( ( JPCTestNotEnoudhMemoryData )dataIn )->size ) ;
 }
 
 JVoid writeNotInitializeDataTestResult( JPTest testIn , JPCVoid dataIn ) {
 printf( "not initialize stack data(size(bytes): %i)" , testIn->internalSize ) ;
 }
 
-JVoid writeNotInitializeStackTestResult( JPTest testIn , JPCVoid dataIn ) {
-printf( "not initialize stack" ) ;
-}
+JVoid writeNotInitializeStackTestResult( JPTest testIn , JPCVoid dataIn ) { printf( "not initialize stack" ) ; }
 
 JVoid writeStatusTestResult( JPTest testIn , JPCVoid dataIn ) {
-printf(
-	"method returned %i(%Xh)" ,
-	( ( JPCTestStatusData )dataIn )->code ,
-	( ( JPCTestStatusData )dataIn )->code ) ;
+printf( "method returned %i(%Xh)" , ( ( JPCTestStatusData )dataIn )->code , ( ( JPCTestStatusData )dataIn )->code ) ;
 }
 
 JVoid writeTestError( JPTest testIn , JPCTestResult resultIn ) {

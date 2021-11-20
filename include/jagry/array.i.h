@@ -1,238 +1,158 @@
 ﻿#ifndef JagryArrayInterfece
 #define JagryArrayInterfece
 
-// declare self methods
-#define jClearSimpleArray( self ) ( ( *( self )._ )->clear( self ) )
-#define jEraseSimpleArrayItem( self , in ) \
-	( ( *( self )._ )->eraseItem( self , in ) )
-#define jGetSimpleArrayCount( self ) ( ( *( self )._ )->getCount( self ) )
-#define jGetSimpleArrayFirst( self ) ( ( *( self )._ )->getFirst( self ) )
-#define jGetSimpleArrayLast( self ) ( ( *( self )._ )->getLast( self ) )
-#define jEraseSimpleArrayItem( self , in ) \
-	( ( *( self )._ )->eraseItem( self , in ) )
-#define jGetSimpleArrayValue( self , in , out ) \
-	( ( *( self )._ )->getValue( self , in , out ) )
-#define jInsertSimpleArrayItem( self , indexIn , valueIn , out ) \
-	( ( *( self )._ )->insertItem( self , indexIn , valueIn , out ) )
-#define jPopSimpleArrayBackwardValue( self , in , out ) \
-	( ( *( self )._ )->popBackwardItem( self , in , out ) )
-#define jPopSimpleArrayForwardValue( self , in , out ) \
-	( ( *( self )._ )->popForwardItem( self , in , out ) )
-#define jPushSimpleArrayBackward( self , in , out ) \
-	( ( *( self )._ )->pushBackward( self , in , out ) )
-#define jPushSimpleArrayForward( self , in , out ) \
-	( ( *( self )._ )->pushForward( self , in , out ) )
-#define jSetSimpleArrayItem( self , indexIn , valueIn , out ) \
-	( ( *( self )._ )->setItem( self , indexIn , valueIn , out ) )
+// array interface
+#define jSelfArrayMethods( clearArg , getCountArg , getFirstArg , getItemArg , getLastArg , itemArg ) \
+	JVoid( *clear )( clearArg ) ; \
+	JUnsignedInteger( *getCount )( getCountArg ) ; \
+	itemArg( *getFirst )( getFirstArg ) ; \
+	itemArg( *getItem )( getItemArg , JUnsignedInteger ) ; \
+	itemArg( *getLast )( getLastArg ) ;
+#define jEachArrayMethods( acquireArg , getInterfaceArg , releaseArg , clearArg , getCountArg , getFirstArg , getItemArg , getLastArg , itemArg ) \
+	jBaseEachMethods( acquireArg , getInterfaceArg , releaseArg ) \
+	jSelfArrayMethods( clearArg , getCountArg , getFirstArg , getItemArg , getLastArg , itemArg )
+#define jAllArrayMethods( selfArg , itemArg ) \
+	jEachArrayMethods( selfArg , selfArg , selfArg , selfArg , selfArg , selfArg , selfArg , selfArg , itemArg )
 
-// declare self methods(item)
-#define jAddSimpleArrayItemAfter( self , out ) \
-	( ( *( self ) )->addAfter( self ) )
-#define jAddSimpleArrayItemBefore( self , out ) \
-	( ( *( self ) )->addBefore( self ) )
-#define jFreeSimpleArrayItem( self ) ( ( *( self ) )->free( self ) )
-#define jGetSimpleArrayItemNext( self ) \
-	( ( *( self ) )->getNext( self ) )
-#define jGetSimpleArrayItemNextFree( self ) \
-	( ( *self )->getNextFree( self ) )
-#define jGetSimpleArrayItemPrevious( self ) \
-	( ( *( self ) )->getPrevious( self ) )
-#define jgetSimpleArrayItemPreviousFree( self ) \
-	( ( *( self ) )->methods->getPreviousFree( self ) )
-#define jGetSimpleArrayItemValue( self , out ) \
-	( ( *( self ) )->getValue( self , out ) )
+// arrayItem interface
+#define jSelfArrayItemMethods( freeArg , getNextArg , getPreviousArg , getValueArg ) \
+	JVoid( *free )( freeArg ) ; \
+	getNextArg( *getNext )( getNextArg ) ; \
+	getPreviousArg( *getPrevious )( getPreviousArg ) ; \
+	getValueArg( *getValue )( getValueArg ) ;
+#define jEachArrayItemMethods( freeArg  , getNextArg , getPreviousArg , getValueArg ) \
+	jSelfArrayItemMethods( freeArg , getNextArg , getPreviousArg , getValueArg )
+#define jAllArrayItemMethods( arg ) jEachArrayItemMethods( arg , arg , arg , arg )
 
-// define methods
-#define jClearSimpleArrayMethod( name , type ) JStatus( *name )( type )
-#define jEraseSimpleArrayItemMethod( name , type ) JStatus( *name )( type , JOffset )
-#define jGetSimpleArrayCountMethod( name , type ) JCounter( *name )( type )
-#define jGetSimpleArrayStartItemMethod( name , type ) \
-	JISimpleArrayItem( *name )( type )
-#define jGetSimpleArrayItemByIndexMethod( name , type ) \
-	JStatus( *name )( type , JUnsignedInteger , JPISimpleArrayItem )
-#define jGetSimpleArrayValueMethod( name , type ) \
-	JStatus( *name )( type , JUnsignedInteger , JPBuffer )
-#define jInsertSimpleArrayItemMethod( name , type ) \
-	JStatus( *name )( type , JUnsignedInteger , JPBuffer , JPISimpleArrayItem )
-#define jPopSimpleArrayMethod( name , type ) \
-	JStatus( *name )( type , JPBuffer )
-#define jPushSimpleArrayMethod( name , type ) \
-	JStatus( *name )( type , JCPCVoid , JPISimpleArrayItem )
-#define jSetSimpleArrayItemMethod( name , type ) \
-	JStatus( *setItem )( \
-		type , JUnsignedInteger , JPBuffer , JPISimpleArrayItem )
+// simpleArray interface
+#define jSelfSimpleArrayMethods( insertArg , popBackwardArg , popForwardArg , pushBackwardArg , pushForwardArg , itemArg ) \
+	JStatus( *insert )( insertArg  , JPVoid , itemArg ) ; \
+	JStatus( *popBackward )( popBackwardArg , itemArg ) ; \
+	JStatus( *popForward )( popForwardArg , itemArg ) ; \
+	JStatus( *pushBackward )( pushBackwardArg , JPVoid , itemArg ) ; \
+	JStatus( *pushForward )( pushForwardArg , JPVoid , itemArg ) ;
+#define jEachSimpleArrayMethods( \
+		acquireArg  , \
+		getInterfaceArg  , \
+		releaseArg , \
+		clearArg , \
+		getCountArg , \
+		getFirstArg , \
+		getItemArg , \
+		getLastArg , \
+		insertArg , \
+		popBackwardArg , \
+		popForwardArg , \
+		pushBackwardArg , \
+		pushForwardArg , \
+		itemArg ) \
+	jEachArrayMethods( acquireArg , getInterfaceArg , releaseArg , clearArg , getCountArg , getFirstArg , getItemArg , getLastArg , itemArg ) \
+	jSelfSimpleArrayMethods( insertArg , popBackwardArg , popForwardArg , pushBackwardArg , pushForwardArg , itemArg )
+#define jAllSimpleArrayMethods( selfArg , itemArg ) \
+	jEachSimpleArrayMethods( \
+		selfArg , \
+		selfArg , \
+		selfArg , \
+		selfArg , \
+		selfArg , \
+		selfArg , \
+		selfArg , \
+		selfArg , \
+		selfArg , \
+		selfArg , \
+		selfArg , \
+		selfArg , \
+		selfArg , \
+		itemArg )
 
-// define methods(item)
-#define jAddSimpleArrayItemMethod( name , type ) \
-	JStatus( *name )( type , JPVoid , JPISimpleArrayItem ) ;
-#define jFreeSimpleArrayItemMethod( name , type ) JVoid( *name )( type ) ;
-#define jGetSimpleArrayItemMethod( name , type ) \
-	JISimpleArrayItem( *name )( type ) ;
-#define jGetSimpleArrayItemValueMethod( name , type ) \
-	JStatus( *name )( type , JPVoid ) ;
-#define jSetSimpleArrayItemValueMethod( name , type ) \
-	JStatus( *name )( type , JCPCBuffer ) ;
+// simpleArrayItem interface
+#define jSelfSimpleArrayItemMethods( addAfterArg , addBeforeArg , setValueArg ) \
+	JStatus( *addAfter )( addAfterArg ) ; JStatus( *addBefore )( addBeforeArg ) ; JStatus( *setValue )( setValueArg ) ;
+#define jEachSimpleArrayItemMethods( freeArg , getNextArg , getPreviousArg , getValueArg , addAfterArg , addBeforeArg , setValueArg ) \
+	jEachArrayItemMethods( freeArg , getNextArg , getPreviousArg , getValueArg ) \
+	jSelfSimpleArrayItemMethods( addAfterArg , addBeforeArg , setValueArg )
+#define jAllSimpleArrayItemMethods( arg ) \
+	jEachSimpleArrayItemMethods( arg , arg , arg , arg , arg , arg , arg )
 
-// define method list(item)
-#define jSelfSimpleArrayItemMethods( \
-		addAfterArg , \
-		addBeforeArg , \
-		freeArg , \
-		getNextArg , \
-		getNextFreeArg , \
-		getPreviousArg , \
-		getPreviousFreeArg , \
-		getValueArg , \
-		setValueArg ) \
-	jAddSimpleArrayItemMethod( addAfter , addAfterArg ) \
-	jAddSimpleArrayItemMethod( addBefore , addBeforeArg ) \
-	jFreeSimpleArrayItemMethod( free , freeArg ) \
-	jGetSimpleArrayItemMethod( getNext , getNextArg ) \
-	jGetSimpleArrayItemMethod( getNextFree , getNextFreeArg ) \
-	jGetSimpleArrayItemMethod( getPrevious , getPreviousArg ) \
-	jGetSimpleArrayItemMethod( getPreviousFree , getPreviousFreeArg ) \
-	jGetSimpleArrayItemValueMethod( getValue , getValueArg ) \
-	jSetSimpleArrayItemValueMethod( setValue , setValueArg )
-#define jEachSimpleArrayItemMethods( \
-		addAfterArg , \
-		addBeforeArg , \
-		freeArg , \
-		getNextArg , \
-		getNextFreeArg , \
-		getPreviousArg , \
-		getPreviousFreeArg , \
-		getValueArg , \
-		setValueArg ) \
-	jSelfSimpleArrayItemMethods( \
-		addAfterArg , \
-		addBeforeArg , \
-		freeArg , \
-		getNextArg , \
-		getNextFreeArg , \
-		getPreviousArg , \
-		getPreviousFreeArg , \
-		getValueArg , \
-		setValueArg )
-#define jAllSimpleArrayItemMethods( argument ) \
-	jEachSimpleArrayItemMethods( \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument )
+// inherit methods: array , base
+#define jAcquireArray( self ) jAcquireBase( ( self ).super )
+#define jGetArrayInterface( self , in , out ) jGetBaseInterface( ( self ).super , in , out )
+#define jReleaseArray( self ) jReleaseBase( ( self ).super )
 
-// define nils
-#define jISimpleArrayNil ( ( JISimpleArray ){ ._ = 0 } )
-#define jISimpleArrayItemNil ( ( JISimpleArrayItem )0 )
+// inherit methods: simpleArray , array
+#define jClearSimpleArray( self ) jClearArray( self )
+#define jEraseSimpleArrayItem( self , in ) jEraseArrayItem( self , in )
+#define jGetSimpleArrayCount( self ) jGetArrayCount( self )
+#define jGetSimpleArrayFirst( self ) jGetArrayFirst( self )
+#define jGetSimpleArrayItem( self , in , out ) jGetArrayItem( self , in , out )
+#define jGetSimpleArrayLast( self ) jGetArrayLast( self )
+#define jGetSimpleValue( self , in , out ) jGetValue( self , in , out )
 
-// define status inherit
-// !!! Надо наследоваться от base
-#define jSuccessArrayStatus jSuccessStatus
-#define jNoInterfaceArrayErrorStatus jNoInterfaceBaseErrorStatus
-#define jNotEnoughtMemoryErrorArrayStatus jNotEnoughtMemoryErrorStatus
+// inherit methods: simpleArray , base
+#define jAcquireSimpleArray( self ) jAcquireArray( self )
+#define jGetSimpleArrayInterface( self , in , out ) jGetArrayInterface( self , in , out )
+#define jReleaseSimpleArray( self ) jReleaseArray( self )
 
-// define status self
+// inherit methods: simpleArrayItem, arrayItem
+#define jFreeSimpleArrayItem( self ) jFreeArrayItem( self )
+#define jGetSimpleArrayItemNext( self ) jGetArrayItemNext( self )
+#define jGetSimpleArrayItemPrevious( self ) jGetArrayItemPrevious( self )
+#define jGetSimpleArrayItemValue( self , out ) jGetArrayItemValue( self , out )
+
+// self methods: array
+#define jClearArray( self ) ( ( *( self )._ )->clear( self ) )
+#define jEraseArrayItem( self , in ) ( ( *( self )._ )->eraseItem( self , in ) )
+#define jGetArrayCount( self ) ( ( *( self )._ )->getCount( self ) )
+#define jGetArrayFirst( self ) ( ( *( self )._ )->getFirst( self ) )
+#define jGetArrayItem( self , in , out ) ( ( *( self )._ )->getItem( self , in , out ) )
+#define jGetArrayLast( self ) ( ( *( self )._ )->getLast( self ) )
+#define jGetValue( self , in , out ) ( ( *( self )._ )->getValue( self , in , out ) )
+
+// self methods: arrayItem
+#define jFreeArrayItem( self ) ( ( *( ( self )._ ) )->free( self ) )
+#define jGetArrayItemNext( self ) ( ( *( ( self )._ ) )->getNext( self ) )
+#define jGetArrayItemPrevious( self ) ( ( *( ( self )._ ) )->getPrevious( self ) )
+#define jGetArrayItemValue( self , out ) ( ( *( ( self )._ ) )->getValue( self , out ) )
+
+// self methods: simpleArray
+#define jInsertSimpleArrayItem( self , indexIn , valueIn , out ) ( ( *( self )._ )->insertItem( self , indexIn , valueIn , out ) )
+#define jPopSimpleArrayBackward( self , in , out ) ( ( *( self )._ )->popBackwardItem( self , in , out ) )
+#define jPopSimpleArrayForward( self , in , out ) ( ( *( self )._ )->popForwardItem( self , in , out ) )
+#define jPushSimpleArrayBackward( self , in , out ) ( ( *( self )._ )->pushBackward( self , in , out ) )
+#define jPushSimpleArrayForward( self , in , out ) ( ( *( self )._ )->pushForward( self , in , out ) )
+//#define jSetSimpleArrayItemValue( self , in ) ( ( *( self )._ )->setValue( self , in ) )
+
+// self methods: simpleArrayItem
+#define jAddSimpleArrayItemAfter( self , out ) ( ( *( self ) )->addAfter( self ) )
+#define jAddSimpleArrayItemBefore( self , out ) ( ( *( self ) )->addBefore( self ) )
+#define jSetSimpleArrayItemValue( self , in ) ( ( *( self ) )->getValue( self , in ) )
+
+// nil
+#define jIArrayNil ( ( JIArray ){ ._ = jNil } )
+#define jIArrayItemNil ( ( JIArrayItem )jNil )
+#define jISimpleArrayNil ( ( JISimpleArray ){ ._ = jNil } )
+#define jISimpleArrayItemIsNil( arg ) ( ( arg )._ == jNil )
+#define jISimpleArrayItemIsNotNil( arg ) ( ( arg ) != jNil )
+
+// status inherit
+#define jSuccessArrayStatus jSuccessBaseStatus
+#define jNoInterfaceArrayErrorStatus jNoInterfaceErrorBaseStatus
+#define jNotEnoughtMemoryErrorArrayStatus jNotEnoughtMemoryErrorBaseStatus
+
+// status self
 #define jOffsetOutRangeErrorArrayResult ( -20 )
 
 #include "base.i.h"
-#include "buffer.i.h"
 
-// declare inherit methods
-#define jAcquireArray( self ) jAcquireBase( ( self ).super )
-#define jGetArrayInterface( self , in , out ) \
-	jGetBaseInterface( ( self ).super , in , out )
-#define jReleaseArray( self ) jReleaseBase( ( self ).super )
-
-// define method list
-#define jSelfSimpleArrayMethods( \
-		clearArg , \
-		eraseItemArg , \
-		getCountArg , \
-		getFirstArg , \
-		getItemArg , \
-		getLastArg , \
-		getValueArg , \
-		insertItemArg , \
-		popBackwardArg , \
-		popForwardArg , \
-		pushBackwardArg , \
-		pushForwardArg , \
-		setItemArg ) \
-	jClearSimpleArrayMethod( clear , clearArg ) ; \
-	jEraseSimpleArrayItemMethod( eraseItem , eraseItemArg ) ; \
-	jGetSimpleArrayCountMethod( getCount , getCountArg ) ; \
-	jGetSimpleArrayStartItemMethod( getFirst , getFirstArg ) ; \
-	jGetSimpleArrayItemByIndexMethod( getItem , getItemArg ) ; \
-	jGetSimpleArrayStartItemMethod( getLast , getLastArg ) ; \
-	jGetSimpleArrayValueMethod( getValue , getValueArg ) ; \
-	jInsertSimpleArrayItemMethod( insertItem , insertItemArg ) ; \
-	jPopSimpleArrayMethod( popBackward , popBackwardArg ) ; \
-	jPopSimpleArrayMethod( popForward , popForwardArg ) ; \
-	jPushSimpleArrayMethod( pushBackward , pushBackwardArg ) ; \
-	jPushSimpleArrayMethod( pushForward , pushForwardArg ) ; \
-	jSetSimpleArrayItemMethod( setItem , setItemArg ) ;
-#define jEachSimpleArrayMethods( \
-		acquireArg , \
-		getInterfaceArg , \
-		releaseArg , \
-		clearArg , \
-		eraseItemArg , \
-		getCountArg , \
-		getFirstArg , \
-		getItemArg , \
-		getLastArg , \
-		getValueArg , \
-		insertItemArg , \
-		popBackwardArg , \
-		popForwardArg , \
-		pushBackwardArg , \
-		pushForwardArg , \
-		setItemArg ) \
-	jBaseEach( acquireArg , getInterfaceArg , releaseArg ) \
-	jSelfSimpleArrayMethods( \
-		clearArg , \
-		eraseItemArg , \
-		getCountArg , \
-		getFirstArg , \
-		getItemArg , \
-		getLastArg , \
-		getValueArg , \
-		insertItemArg , \
-		popBackwardArg , \
-		popForwardArg , \
-		pushBackwardArg , \
-		pushForwardArg , \
-		setItemArg )
-#define jAllSimpleArrayMethods( argument ) \
-	jEachSimpleArrayMethods( \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument , \
-		argument )
-
-jDeclarePrefixStandardBaseInterface( J , SimpleArrayItem )
+jDeclarePrefixStandardBaseInterface( J , ArrayItem )
+jDeclarePrefixStandardChildInterface( J , Array )
 jDeclarePrefixStandardChildInterface( J , SimpleArray )
-jDefinePrefixStandardChildInterface(
-	J ,
-	SimpleArray ,
-	jAllSimpleArrayMethods( JISimpleArray ) ,
-	JIBase )
-struct JMSimpleArrayItem { jAllSimpleArrayItemMethods( JISimpleArrayItem ) } ;
+jDeclarePrefixStandardChildInterface( J , SimpleArrayItem )
+
+struct JMArrayItem { jAllArrayItemMethods( JIArrayItem ) } ;
+jDefinePrefixStandardBaseInterface( J , ArrayItem , jAllArrayItemMethods( JIArrayItem ) )
+jDefinePrefixStandardChildInterface( J , Array , jAllArrayMethods( JIArray , JIArrayItem ) , JIBase , JIBase )
+jDefinePrefixStandardChildInterface( J , SimpleArray , jAllSimpleArrayMethods( JISimpleArray , JISimpleArrayItem ) , JIBase , JIArray )
+jDefinePrefixStandardChildInterface( J , SimpleArrayItem , jAllSimpleArrayItemMethods( JISimpleArrayItem ) , JIArrayItem , JIArrayItem )
 
 #endif

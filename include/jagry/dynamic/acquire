@@ -1,2 +1,2 @@
-jDynamicMethod( JCounter )jagryAcquireDynamic( JIDynamic ) ;
-jDynamicMethod( JCounter )jagryAcquireDynamicBase( JIDynamic ) ;
+jDynamicMethod( JCounter )jagryAcquireDynamic( JDynamic ) ;
+jDynamicMethod( JCounter )jagryAcquireDynamicBase( JDynamic ) ;

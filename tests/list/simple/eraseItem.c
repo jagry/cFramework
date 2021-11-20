@@ -1,6 +1,6 @@
 #define eraseItemCount 7
-#define eraseItemIteration( count , guage ) \
-	{ count , ( ( JUnsignedIntegerPointer[] ){ guage } ) }
+#define eraseItemIteration( count , gauge ) \
+	{ count , ( ( JUnsignedIntegerPointer[] ){ gauge } ) }
 
 #include "check.h"
 #include "return.h"
@@ -28,7 +28,7 @@ JCTestMethods eraseItemMethods = {
 JTestResult eraseItem( JPTest testIn , JPISimpleArray arrayIn ) {
 typedef struct {
 	JCOffset offset ;
-	JPUnsignedIntegerPointer guage ; } Iteration ;
+	JPUnsignedIntegerPointer gauge ; } Iteration ;
 JPTestStack stack ;
 { // !!!
 	JTestResult result = jPushTest( testIn , sizeof( EraseItemTest ), stack ) ;
@@ -46,20 +46,12 @@ JPTestStack stack ;
 		{ -3 , ( ( JUnsignedIntegerPointer[] ){ 3 , 1 , 0 } ) } ,
 		{ -2 , ( ( JUnsignedIntegerPointer[] ){ 3 , 0 } ) } ,
 		{ -1 , ( ( JUnsignedIntegerPointer[] ){ 3 } ) } } ;
-	JTestResult result =
-		checkRange( testIn , *arrayIn , eraseItemCount , eraseItemCount - 1 , -1 ) ;
+	JTestResult result = checkRange( testIn , *arrayIn , eraseItemCount , eraseItemCount - 1 , -1 ) ;
 	jReturnTestIfError( stack , result )
-	for(
-			JOffset counter = 0 ;
-			counter < ( sizeof( iterations ) / sizeof( *iterations ) ) ;
-			++counter )
+	for( JOffset counter = 0 ; counter < ( sizeof( iterations ) / sizeof( *iterations ) ) ; ++counter )
 		{
 			jEraseSimpleArrayItem( *arrayIn , iterations[ counter ].offset ) ;
-			result = checkStatic(
-				testIn ,
-				*arrayIn ,
-				eraseItemCount - counter - 1 ,
-				iterations[ counter ].guage ) ;
+			result = checkStatic( testIn , *arrayIn , eraseItemCount - counter - 1 , iterations[ counter ].gauge ) ;
 			if( jTestIsError( result ) )
 				{
 					( ( PEraseItemTest )stack->data )->iteration.counter = counter ;
@@ -73,11 +65,11 @@ return jPopTest( testIn , stack ) ;
 }
 
 JVoid freeEraseItem( JPCVoid in ) {
-PEraseItemIteration iteration = &( ( PEraseItemTest )in )->iteration ;
+/*PEraseItemIteration iteration = &((PEraseItemTest)in)->iteration;
 if( ( ( ( PEraseItemTest )in )->iteration ).sub.methods->free )
 	( ( ( PEraseItemTest )in )->iteration ).sub.methods->free(
 		( ( ( PEraseItemTest )in )->iteration ).sub.data )
-if( ( ( ( PEraseItemTest )in )->iteration ).sub.data )
+if( ( ( ( PEraseItemTest )in )->iteration ).sub.data )*/
 }
 
 JVoid writeEraseItem( JPTest testIn , JPCVoid dataIn ) {

@@ -3,41 +3,30 @@
 
 #include <stdlib.h>
 
-#define jReturnTest( _stack_ , _result_ ) \
-	return _stack_->position.line = __LINE__ , _result_ ;
-#define jReturnTestIf( _stack_ , _condition_ , _result_ ) \
-	if( _condition_ ) jReturnTest( _stack_ , _result_ )
-#define jReturnTestIfError( _stack_ , _result_ ) \
-	jReturnTestIf( _stack_ , jTestIsError( _result_ ) , _result_ )
-#define jReturnTestNotEnoughMemory( _stack_ , _type_ , _member_ , _size_ ) \
+#define jReturnTest( stackArg , resultArg ) return stackArg->position.line = __LINE__ , resultArg ;
+#define jReturnTestIf( stackArg , conditionArg , resultArg ) if( conditionArg ) jReturnTest( stackArg , resultArg )
+#define jReturnEmptyTestIf( stackArg , conditionArg ) jReturnTestIf( stackArg , conditionArg , jTestResult( jNil , jagryGetEmptyTestMethods() ) )
+
+// TODO: Заменить аргументы с _{name}_ на {name}Arg
+#define jReturnTestIfError( stackArg , resultArg ) jReturnTestIf( stackArg , jTestIsError( resultArg ) , resultArg )
+#define jReturnTestNotEnoughMemory( stackArg , typeArg , memberArg , sizeArg ) \
 	do \
 		{ \
-			( ( _type_* )_stack_->data )->_member_.size = _size_ ; \
-			jReturnTest( \
-				_stack_ , \
-				jTestResult( _stack_->data , jagryGetNotEnoughMemoryTestMethods() ) ) \
+			( ( typeArg* )stackArg->data )->memberArg.size = sizeArg ; \
+			jReturnTest( stackArg , jTestResult( stackArg->data , jagryGetNotEnoughMemoryTestMethods() ) ) \
 		} while( jFalse ) ;
-#define jReturnTestNotEnoughMemoryIf( \
-		_stack_ , _condition_ , _type_ , _member_ , _size_ ) \
-	if( _condition_ ) \
-		jReturnTestNotEnoughMemory( _stack_ , _type_ , _member_ , _size_ )
-#define jReturnTestNotEnoughMemoryIfNil( \
-		_stack_ , _pointer_ , _type_ , _member_ , _size_ ) \
-	jReturnTestNotEnoughMemoryIf( \
-		_stack_ , !( _pointer_ ) , _type_ , _member_ , _size_ )
-#define jReturnTestStatus( stack , type , member , status ) \
+#define jReturnTestStatus( stackArg , typeArg , memberArg , statusArg ) \
 	do \
 		{ \
-			( ( type* )stack->data )->member.code = status ; \
+			( ( typeArg* )stackArg->data )->memberArg.code = statusArg ; \
 			jReturnTest( \
-				stack , \
-				jTestResult( stack->data , jagryGetStatusErrorTestMethods() ) ) \
+				stackArg , \
+				jTestResult( stackArg->data , jagryGetStatusTestMethods() ) ) \
 		} while( jFalse ) ;
-#define jReturnTestStatusIf( stack , condition , type , member , status ) \
-	if( condition ) jReturnTestStatus( stack , type , member , status )
-#define jReturnTestStatusIfError( stack , type , member , status ) \
-	jReturnTestStatusIf( \
-		stack , jStatusIsError( status ) , type , member , status )
+#define jReturnTestStatusIf( stackArg , conditionArg , typeArg , memberArg , statusArg ) \
+	if( conditionArg ) jReturnTestStatus( stackArg , typeArg , memberArg , statusArg )
+#define jReturnTestStatusIfError( stackArg , typeArg , memberArg , statusArg ) \
+	jReturnTestStatusIf( stackArg , jStatusIsError( statusArg ) , typeArg , memberArg , statusArg )
 
 #define jInitializeTest( test , needSize , stack ) \
 	( \
@@ -59,16 +48,19 @@
 			( \
 				test.internalMainStack.data = jZero , \
 				( JTestResult ){ .data = jNil , .methods = jNil } ) )
-#define jPopTest( testArg , stackArg ) \
-	 jagryPopTest( testIn , stack )
-#define jPushTest( self , size , stack ) \
-	jagryPushTest( self , size , __FILE__ , __LINE__ , __FUNCTION__ , &stack )
+#define jPopTest( _self_ , _stack_ ) jagryPopTest( _self_ , _stack_ )
+#define jPushTest( _self_ , _size_ , _stack_ ) jagryPushTest( _self_ , _size_ , __FILE__ , __LINE__ , __FUNCTION__ , &_stack_ )
+#define jPushTestLoop( _self_ , _iteration_ , _stack_ ) jagryPushTestLoop( _self_ , _iteration_ , __FILE__ , __LINE__ , __FUNCTION__ , &_stack_ ) ;
 
+#define jTestItemFull( bodyArg , initializeArg , finalifeArg , nameArg ) \
+	{ .body = bodyArg , .finalize = finalifeArg , .initialize = initializeArg , .name = #bodyArg }
+#define jTestItemShort( bodyArg , initializeArg , finalizeArg ) jTestItemFull( bodyArg , initializeArg , finalizeArg , #bodyArg )
 #define jTestIsError( argument ) ( argument ).methods
 #define jTestIsNotError( argument ) !( argument ).methods
 
 #define jTestResult( dataArg , methodsArg ) \
 	( JTestResult ){ .data = dataArg , .methods = methodsArg }
+#define jEmptyErrorTestResult() jTestResult( jNil , jagryGetEmptyTestMethods() )
 #define jSuccesTestResult jTestResult( jNil , jNil )
 
 #include <jagry/status.h>
@@ -99,7 +91,6 @@ typedef JCTestItem * JPCTestItem ;
 typedef JCTestMethods * JPCTestMethods ;
 typedef JCTestResult * JPCTestResult ;
 typedef JPTestStack * JPPTestStack ;
-//typedef JPTestPosition * JPPTestPosition ;
 
 typedef JVoid( *JTestFreeMethod )( JPCVoid ) ;
 typedef JVoid( *JTestWriteMethod )( JPTest , JPCVoid ) ;
@@ -109,39 +100,23 @@ struct jTestItem {
 	JVoid( *finalize )( JPTest , JPVoid ) ;
 	JTestResult( *initialize )( JPTest , JPPVoid ) ;
 	JCPCCharacter1 name ; } ;
-//struct jTestLocal { JPTest owner ; JPTestPosition position ; } ;
 struct jTestMethods { JTestFreeMethod free ; JTestWriteMethod write ; } ;
 struct jTestPosition { JPCCharacter1 file ; JUnsignedInteger line ; } ;
-struct jTestResult {
-	JPCVoid data ;
-	//JUnsignedInteger deep ;
-	JPCTestMethods methods ; } ;
-struct jTestStack {
-	JPVoid data ; JPCCharacter1 method ; JPTestStack next ; JTestPosition position ; } ;
+struct jTestResult { JPCVoid data ; JPCTestMethods methods ; } ;
+struct jTestStack { JPVoid data ; JPCCharacter1 method ; JPTestStack next ; JTestPosition position ; } ;
 
-struct jTestNotEnoudhMemoryData {
-	JUnsignedInteger size ; } ;
-struct jTestStatusData {
-	JStatus code ; } ;
+struct jTestNotEnoudhMemoryData { JUnsignedInteger size ; } ;
+struct jTestStatusData { JStatus code ; } ;
 
-struct jTest {
-	JPTestStack stack ;
-	//JPVoid data ;
-	//`JSize size ;
-	union { JSize internalSize ; JPTestStack internalStack ; } ;
-	JTestStack internalMainStack , internalNewStack ; } ;
+struct jTest { JPTestStack stack ; union { JSize internalSize ; JPTestStack internalStack ; } ; JTestStack internalMainStack , internalNewStack ; } ;
 
 JVoid jagryFreeTest( JPCVoid ) ;
+JPCTestMethods jagryGetEmptyTestMethods( JVoid ) ;
 JPCTestMethods jagryGetNotEnoughMemoryTestMethods( JVoid ) ;
-JPCTestMethods jagryGetStatusErrorTestMethods( JVoid ) ;
+JPCTestMethods jagryGetStatusTestMethods( JVoid ) ;
 JTestResult jagryPopTest( JPTest , JPTestStack ) ;
-JTestResult jagryPushTest(
-	JPTest ,
-	JSize ,
-	JPCCharacter1 ,
-	JUnsignedInteger ,
-	JPCCharacter1 ,
-	JPPTestStack ) ;
+JTestResult jagryPushTest( JPTest , JSize , JPCCharacter1 , JUnsignedInteger , JPCCharacter1 , JPPTestStack ) ;
+JTestResult jagryPushTestLoop( JPTest , JCounter , JPCCharacter1 , JUnsignedInteger , JPCCharacter1 , JPPTestStack ) ;
 JBoolean jagryRunTest( JPCTestItem , JSize ) ;
 
 #endif

@@ -2,6 +2,7 @@
 
 #include <jagry/array.i.h>
 #include <jagry/list/manager.h>
+#include <memory.h>
 
 static JCListManager listPointerManager = {
 	.free = jagryListManagerFree ,

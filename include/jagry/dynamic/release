@@ -1,2 +1,2 @@
-jDynamicMethod( JCounter )jagryReleaseDynamic( JIDynamic ) ;
-jDynamicMethod( JCounter )jagryReleaseDynamicBase( JIDynamic ) ;
+JCounter jagryReleaseDynamic( JDynamic self ) ;
+JCounter jagryReleaseDynamicBase( JDynamic self ) ;
