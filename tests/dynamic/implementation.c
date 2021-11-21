@@ -16,12 +16,25 @@ impl.d = ( PDImplementation )( ( JPByte )( self.t ) - ( JPByte )( &( ( PDImpleme
 //	in == ownerImplementationInterfaceIdentifier ? ( *out = self.i.b , jAcquireBase( *out ) , jSuccessBaseStatus ) : jNoInterfaceErrorBaseStatus ;
 }
 
+static JUnsignedInteger acquireOwnerImplementationBase( JIBase self ) {
+Implementation impl ;
+JPByte debug0 = ( JPByte )( &( ( PDImplementation )( jNil ) )->b ) ;
+JPByte debug1 = ( JPByte )( self.t ) ;
+JPByte debug2 = debug1 - debug0 ;
+JPByte debug3 = ( JPByte )( &( ( PDImplementation )( jNil ) )->b ) ;
+
+impl.d = ( PDImplementation )( ( JPByte )( self.t ) - ( JPByte )( &( ( PDImplementation )( jNil ) )->b ) ) ;
+return ++impl.d->r ;
+}
+
 static JStatus getOwnerImplementationInterface( Implementation self , JInterfaceIdentifier in , JPIBase out ) {
 // !!!: определиться с вариантом реализации
+JPByte debug4 = ( JPByte )self.d->b.t - ( JPByte )self.d ;
 if( in == jBaseInterfaceIdentifier || in == ownerImplementationInterfaceIdentifier )
-	/* !!! */ return *out = self.i.b , jAcquireBase( self.d->b ) , jSuccessBaseStatus ;
+	/* !!! */ return *out = self.i.b , jAcquireBase( self.i ) , jSuccessBaseStatus ;
 else
-	/* !!! */ return self.d->b.t ? jGetBaseInterface( ( self.d->owned ) , in , *out ) : jNoInterfaceErrorBaseStatus ;
+	// /* !!! */ return self.d->b.t ? jGetBaseInterface( ( self.d->owned ) , in , *out ) : jNoInterfaceErrorBaseStatus ;
+	/* !!! */ return jGetBaseInterface( ( self.d->owned ) , in , *out ) ;
 //return jNotImplementErrorBaseStatus ;
 //return in == jBaseInterfaceIdentifier || in == ownerImplementationInterfaceIdentifier ?
 //	( *out = self.i.b , jAcquireBase( *out ) , jSuccessBaseStatus ) :
@@ -29,16 +42,18 @@ else
 }
 
 static JStatus getOwnedImplementationInterface( Implementation self , JInterfaceIdentifier in , JPIBase out ) {
-/* !!! */ return jNotImplementErrorBaseStatus ;
-//return self.d->b.t ? jGetBaseInterface( ( self.d->owner ) , in , *out ) : getOwnedImplementationBaseInterface ( self , in , out) ;
+if( in == jBaseInterfaceIdentifier || in == ownedImplementationInterfaceIdentifier )
+	/* !!! */ return *out = self.i.b , jAcquireBase( self.i ) , jSuccessBaseStatus ;
+else
+	/* !!! */ return jNoInterfaceErrorBaseStatus ;
 }
 
-JCMDynamic dynamicImplementationMethods = {
+/* !!! JCMDynamic dynamicImplementationMethods = {
 	.acquire = jagryAcquireDynamicBase ,
 	.getInterface = getOwnedImplementationBaseInterface ,
 	.release = jNil } ;
 JICMBase 
-	baseImplementationMethods = { .acquire = jagryAcquireDynamicBase , .getInterface = getOwnedImplementationBaseInterface , .release = jNil } ;
+	baseImplementationMethods = { .acquire = acquireOwnerImplementationBase , .getInterface = getOwnedImplementationBaseInterface , .release = jNil } ; */
 CMImplementation
-	ownedImplementationMethods = { .acquire = jagryAcquireDynamic , .getInterface = getOwnedImplementationInterface , .release = jNil } ,
+	ownedImplementationMethods = { .acquire = jagryAcquireDynamicBase , .getInterface = getOwnedImplementationInterface , .release = jNil } ,
 	ownerImplementationMethods = { .acquire = jagryAcquireDynamic , .getInterface = getOwnerImplementationInterface , .release = jNil } ;

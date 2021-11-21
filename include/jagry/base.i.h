@@ -36,7 +36,7 @@ typedef JIDBase * JIPDBase ; \
 typedef union JIBase JIBase ; \
 typedef JIBase * JPIBase ;
 
-union JIDBase { JICPCMBase m ; };
+union JIDBase { JICPCMBase m ; } ;
 union JIBase { JIPDBase t ; } ;
 struct JIMBase { jBaseAllMethods( JIBase ) } ;
 

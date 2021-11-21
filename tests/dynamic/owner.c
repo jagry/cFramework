@@ -2,8 +2,14 @@
 #define ownerMethods \
 	jBaseEachMethods( JDynamic , IOwner , IOwner ) \
 	JUnsignedInteger( *increment )( JDynamic , JUnsignedInteger ) ;
-#define ownerInterfaceIdentifier1 ( ( JInterfaceIdentifier )1 )
+//#define ownerInterfaceIdentifier1 ( ( JInterfaceIdentifier )1 )
 //#define ownerInterfaceIdentifier2 ( ( JInterfaceIdentifier )2 )
+
+#define ownerCheck() { \
+	u.result = check( testIn , argumentIn[ 0 ] , data[ 0 ] ) ; \
+	jReturnTestIfError( stack , u.result ) \
+	u.result = check( testIn , argumentIn[ 1 ] , data[ 1 ] ) ; \
+	jReturnTestIfError( stack , u.result ) ; }
 
 #include "data.h"
 #include "implementation.h"
@@ -21,9 +27,9 @@ struct Iteration {
 	JUnsignedInteger referenses ; } ;
 Data data[ 2 ] ; JIBase base , etalon ; JPTestStack stack ; union { JTestResult result ; JStatus status ; } u ;
 struct Iteration iterations[] = {
-	{ .identifier = jBaseInterfaceIdentifier , .referenses = 2 } ,
-	{ .identifier = ownedImplementationInterfaceIdentifier , .referenses = 2 } ,
-	{ .identifier = ownerImplementationInterfaceIdentifier , .referenses = 2 } } ;
+	{ .identifier = jBaseInterfaceIdentifier } ,
+	{ .identifier = ownedImplementationInterfaceIdentifier } ,
+	{ .identifier = ownerImplementationInterfaceIdentifier } } ;
 /* инициализация тест - стека */ {
 	u.result = jPushTest( testIn , sizeof( OwnerStack ) , stack ) ;
 	jReturnTestIfError( stack , u.result )
@@ -40,10 +46,7 @@ for( JCounter counter = 0 ; counter < ( sizeof( iterations ) / ( sizeof( *iterat
 			jReturnTestStatusIfError( stack , OwnerStack , _ , u.status )
 			jReturnEmptyTestIf( stack , argumentIn[ 0 ].i.b.t != etalon.t && argumentIn[ 1 ].i.b.t != etalon.t )
 			data[ 0 ].references++ ;
-			u.result = check( testIn , argumentIn[ 0 ] , data[ 0 ] ) ;
-			jReturnTestIfError( stack , u.result )
-			u.result = check( testIn , argumentIn[ 1 ] , data[ 1 ] ) ;
-			jReturnTestIfError( stack , u.result )
+			ownerCheck()
 		}
 		/* Запрос не существующего интерфеса */ {
 			u.status = jGetBaseInterface( etalon , missingImplementationInterfaceIdentifier , base ) ;

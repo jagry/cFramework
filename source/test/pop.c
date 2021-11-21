@@ -7,7 +7,7 @@ if( self->stack != stackIn )
 		self->stack = stackIn ,
 		jTestResult( jNil , &invalidStackTestMethods ) ;
 self->internalStack = self->stack->next ;
-if( self->stack->data ) free( self->stack ->data ) ;
+if( self->stack->data ) free( self->stack->data ) ;
 if( self->stack != &self->internalMainStack &&
 		self->stack != &self->internalNewStack )
 	free( self->stack ) ;

@@ -18,7 +18,7 @@ result = create( in , &( *out )[ 0 ] ) ;
 if( jTestIsNotError( result ) )
 	{
 		result = createBase( in , ( *out )[ 0 ].i.b , &implementation ) ;
-		if( jTestIsNotError( result ) ) return ( *out )[ 1 ].d->owned = ( ( *out )[ 1 ] = implementation ).i.b , jPopTest( in , stack ) ;
+		if( jTestIsNotError( result ) ) return ( *out )[ 0 ].d->owned = ( ( *out )[ 1 ] = implementation ).i.b , jPopTest( in , stack ) ;
 		jReleaseBase( ( *out )[ 0 ].i.b ) ;
 	}
 free( *out ) ;

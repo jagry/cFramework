@@ -42,5 +42,7 @@ struct DImplementation { PCMImplementation m ; JIBase b ; /* JIBase owner ; */ J
 union Implementation { PDImplementation d ; IImplementation i ; } ;
 struct MImplementation { implementationMethods( JDynamic , Implementation ) } ;
 
+typedef struct { DImplementation _ ; JIDBase i ; JIDBase d ; JIPCMBase m ; } * ImplementationBase ;
+
 extern JICMBase baseImplementationMethods ;
-extern CMImplementation ownedImplementationBaseMethods , ownerImplementationMethods ;
+extern CMImplementation ownedImplementationMethods , ownerImplementationMethods ;
