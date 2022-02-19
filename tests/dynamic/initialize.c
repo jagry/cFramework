@@ -1,25 +1,26 @@
 #include "implementation.h"
 #include <jagry\test.h>
-#include <memory.h>
+#include <stdlib.h>
 
-JTestResult create( JPTest , PImplementation ) ;
-JTestResult createBase( JPTest , JIBase , PImplementation ) ;
+JTestResult createSelf( JPTest , PUImplementation ) ;
+JTestResult createBase( JPTest , JIBase , PCSMImplementation , JIPCMBase , JPIBase , PUImplementation ) ;
 
-JTestResult initialize( JPTest in , PPImplementation out ) {
-typedef union { JTestNotEnoudhMemoryData _ ; } Stack ;
-Implementation implementation ; JPTestStack stack ;
+JTestResult initialize( JPTest in , PPUImplementation out ) {
+typedef union { JNotEnoughMemoryTestData _ ; } Stack ;
+JPTestStack stack ;
 JTestResult result = jPushTest( in , sizeof( Stack ) , stack ) ;
 jReturnTestIfError( stack , result )
-// !!! JUnsignedInteger debug = sizeof( *out ) ;
-// debug = sizeof( *out ) << 1 ;
-// debug = sizeof( *( *out )->d ) ;
-if( !( *out = malloc( sizeof( *out ) << 1 ) ) ) jReturnTestNotEnoughMemory( stack , Stack , _ , sizeof( *out ) << 1 )
-result = create( in , &( *out )[ 0 ] ) ;
+if( !( *out = malloc( sizeof( **out ) * 3 ) ) ) jReturnTestNotEnoughMemory( stack , Stack , _ , sizeof( **out ) * 3 )
+result = createSelf( in , &( *out )[ 0 ] ) ;
 if( jTestIsNotError( result ) )
 	{
-		result = createBase( in , ( *out )[ 0 ].i.b , &implementation ) ;
-		if( jTestIsNotError( result ) ) return ( *out )[ 0 ].d->owned = ( ( *out )[ 1 ] = implementation ).i.b , jPopTest( in , stack ) ;
-		jReleaseBase( ( *out )[ 0 ].i.b ) ;
+		result = createBase( in , ( *out )[ 0 ].base , &middleImplementationMethods , &middleImplementationBaseMethods , &( *out )[ 0 ].this->owned , &( *out )[ 1 ] ) ;
+		if( jTestIsNotError( result ) ) {
+			result = createBase( in , ( *out )[ 1 ].base , &lastImplementationMethods , &lastImplementationBaseMethods , &( *out )[ 1 ].this->owned , &( *out )[ 2 ] ) ;
+			if( jTestIsNotError( result ) ) return jPopTest( in , stack ) ;
+			jReleaseBase( ( *out )[ 1 ].base ) ;
+		}
+		// !!! вызвать метод реализации, а не jReleaseBase( ( JIBase ){ .t = &( *out )[ 0 ]->b ) ; } ;
 	}
 free( *out ) ;
 jReturnTest( stack , result )

@@ -85,19 +85,24 @@
 	jDeclarePrefixStandardBaseInterface( prefixArg , nameArg ) \
 	jDefinePrefixStandardBaseInterface( prefixArg , nameArg , structureArg )
 
+#define jInterfaceIsNil(_) ( ( _ ).this == jNil )
+#define jInterfaceIsNotNil(_) ( ( _ ).this != jNil )
+#define jInterfaceIsEqual(_a_,_b_) ( ( _a_ ).this == ( _b_ ).this )
+#define jInterfaceIsNotEqual(_a_,_b_) ( ( _a_ ).this != ( _b_ ).this )
+
 #include "../jagry.h"
 
 typedef JUnsignedInteger8 JInterfaceIdentifier ;
 
-#define jBaseInterfaceIdentifier        ( ( JInterfaceIdentifier )0 )
-#define jArrayInterfaceIdentifier       ( ( JInterfaceIdentifier )1 )
-#define jSimpleArrayInterfaceIdentifier ( ( JInterfaceIdentifier )2 )
-#define jSortArrayInterfaceIdentifier   ( ( JInterfaceIdentifier )3 )
-#define jListInterfaceIdentifier        ( ( JInterfaceIdentifier )4 )
-#define jSimpleListInterfaceIdentifier  ( ( JInterfaceIdentifier )5 )
-#define jSortListInterfaceIdentifier    ( ( JInterfaceIdentifier )6 )
-#define jSliceInterfaceIdentifier       ( ( JInterfaceIdentifier )7 )
-#define jSimpleSliceInterfaceIdentifier ( ( JInterfaceIdentifier )8 )
-#define jSortSliceInterfaceIdentifier   ( ( JInterfaceIdentifier )9 )
+#define jBaseInterfaceIdentifier        ( ( JInterfaceIdentifier )00 )
+#define jArrayInterfaceIdentifier       ( ( JInterfaceIdentifier )01 )
+#define jSimpleArrayInterfaceIdentifier ( ( JInterfaceIdentifier )02 )
+#define jSortArrayInterfaceIdentifier   ( ( JInterfaceIdentifier )03 )
+#define jListInterfaceIdentifier        ( ( JInterfaceIdentifier )04 )
+#define jSimpleListInterfaceIdentifier  ( ( JInterfaceIdentifier )05 )
+#define jSortListInterfaceIdentifier    ( ( JInterfaceIdentifier )06 )
+#define jSliceInterfaceIdentifier       ( ( JInterfaceIdentifier )07 )
+#define jSimpleSliceInterfaceIdentifier ( ( JInterfaceIdentifier )08 )
+#define jSortSliceInterfaceIdentifier   ( ( JInterfaceIdentifier )09 )
 
 #endif

@@ -1,4 +1,4 @@
-#define jDynamicMethod jExport
+#define jDynamicMethod jStaticExport
 
 #include "g.h"
 #include "w.h"
@@ -8,10 +8,12 @@
 
 #include <jagry/dynamic/release>
 
-JCounter jagryReleaseDynamic( JDynamic self ) { return self.d->b.t ? jReleaseBase( self.d->b ) : jAtomicDecrement( self.d->r ) ; }
+jDynamicMethod( JCounter )jagryReleaseDynamic( JDynamic self ) {
+return jReleaseBase( self.this->owner ) ;
+}
 
-JCounter jagryReleaseDynamicBase( JDynamic self ) {
-JCounter result = jAtomicDecrement( self.d->r ) ;
-if( !result ) free( self.d ) ;
+jDynamicMethod( JCounter )jagryReleaseDynamicBase( JDynamic self ) {
+JCounter result = jAtomicDecrement( self.this->references ) ;
+if( !result ) free( self.this ) ;
 return result ;
 }

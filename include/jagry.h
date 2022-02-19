@@ -30,12 +30,15 @@ _AIX            Defined on AIX
 
 #define jSystem( appleArg , linuxArg , windowsArg ) jLinux( linuxArg ) jWindows( windowsArg )
 
-#define jNil ( ( JPVoid )0 )
+#define jNil ( ( JPVoid )jZero )
 #define jZero 0
+#define jZeroSize ( ( JSize )jZero )
 
-#define jExport( type ) __declspec( dllexport )type
+#define jDynamicExport( type ) __declspec( dllexport )type
+#define jDynamicImport( type ) __declspec( dllimport )type
 #define jHidden( type ) type
-#define jImport( type ) __declspec( dllimport )type
+#define jStaticExport( type ) type
+#define jStaticImport( type ) type
 
 #ifdef DEBUG
 	#define jAssert( condition ) \

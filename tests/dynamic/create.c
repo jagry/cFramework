@@ -1,34 +1,41 @@
 #include "implementation.h"
 #include <jagry/test.h>
+#include <stdlib.h>
 
-typedef union { JTestNotEnoudhMemoryData _ ; } CreateStack ;
+typedef union { JNotEnoughMemoryTestData _ ; } CreateStack ;
 
-JTestResult create( JPTest in , PImplementation out ) {
+static JTestResult create( JPTest testIn , PUImplementation out ) {
+JPTestStack stack ;
+JTestResult result = jPushTest( testIn , sizeof( CreateStack ) , stack ) ;
+jReturnTestIfError( stack , result )
+if( !( out->this = malloc( sizeof( *out->this ) ) ) ) jReturnTestNotEnoughMemory( stack , CreateStack , _ , sizeof( *out->this ) )
+out->this->references = 1 ;
+out->this->owned.this = jNil ;
+out->this->value = jZero ;
+return jPopTest( testIn , stack ) ;
+}
+
+JTestResult createBase( JPTest testIn , JIBase baseIn , PCSMImplementation methodsIn, JIPCMBase selfMethodsIn, JPUBase baseOut , PUImplementation implementationOut ) {
+JPTestStack stack ;
+JTestResult result = jPushTest( testIn , sizeof( CreateStack ) , stack ) ;
+jReturnTestIfError( stack , result )
+result = create( testIn , implementationOut ) ;
+jReturnTestIfError( stack , result )
+implementationOut->this->methods = methodsIn ;
+implementationOut->this->owner = baseIn ;
+implementationOut->this->self.methods = selfMethodsIn ;
+*baseOut = ( JUBase ){ .this = &implementationOut->this->self } ;
+return jPopTest( testIn , stack ) ;
+}
+
+JTestResult createSelf( JPTest in , PUImplementation out ) {
 JPTestStack stack ;
 JTestResult result = jPushTest( in , sizeof( CreateStack ) , stack ) ;
 jReturnTestIfError( stack , result )
-if( !( out->d = malloc( sizeof( *out->d ) ) ) ) jReturnTestNotEnoughMemory( stack , CreateStack , _ , sizeof( *out->d ) )
-out->d->b.t = jNil ; // !!! &( *out )->m ;
-out->d->m = &ownerImplementationMethods ;
-out->d->owned.t = jNil ;
-out->d->r = 1 ;
-out->d->value = jZero ;
-// !!! ( *out )->m = &baseImplementationMethods ;
-return jPopTest( in , stack ) ;
-}
-
-JTestResult createBase( JPTest testIn , JIBase baseIn , JPIBase out ) {
-ImplementationBase ib ; JPTestStack stack ;
-JTestResult result = jPushTest( testIn , sizeof( CreateStack ) , stack ) ;
+result = create( in , out ) ;
 jReturnTestIfError( stack , result )
-if( !( ib = malloc( sizeof( *ib ) ) ) ) jReturnTestNotEnoughMemory( stack , CreateStack , _ , sizeof( *ib ) )
-ib->_.b = baseIn ;
-ib->_.m = &ownedImplementationMethods ;
-ib->_.owned.t = jNil ;
-ib->_.r = 1 ;
-ib->_.value = jZero ;
-ib->m = &baseImplementationMethods ;
-ib->d = ( JIDBase ){ .m = &ib->m } ;
-out->t = &ib->d ;
-return jPopTest( testIn , stack ) ;
+out->this->methods = &firstImplementationMethods ;
+out->this->owner.this = jNil ;
+out->this->self.methods = &firstImplementationBaseMethods ;
+return jPopTest( in , stack ) ;
 }

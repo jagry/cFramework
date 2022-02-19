@@ -1,11 +1,11 @@
 #ifdef WIN32
 
-#include <windows.h>
-
-#ifdef SINGLETHREAD
+#ifndef SINGLETHREAD
 	#define jAtomicDecrement( argument ) ( --argument )
 	#define jAtomicIncrement( argument ) ( ++argument )
 #else
+	#include <windows.h>
+
 	#define jAtomicDecrement( argument ) InterlockedDecrement( &argument )
 	#define jAtomicIncrement( argument ) InterlockedIncrement( &argument )
 #endif

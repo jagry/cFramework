@@ -1,4 +1,6 @@
-﻿#include <stdio.h>
+﻿#define jTestMethod jStaticExport
+
+#include <stdio.h>
 #include "write.h"
 
 JBoolean jagryRunTest( JPCTestItem itemsIn , JSize countIn ) {
@@ -29,7 +31,7 @@ for( JSize counter = jZero ; counter < countIn ; ++counter )
 			{
 				printf( "\tfinalize - " ) ;
 				itemsIn[ counter ].finalize( &test , data ) ;
-				printf( writeSucces ) ;
+				printf( writeSuccess ) ;
 			}
 }
 return status ;

@@ -26,11 +26,11 @@ typedef JMDynamic const JCMDynamic ; \
 typedef JCMDynamic * JPCMDynamic ; \
 typedef struct JDDynamic JDDynamic; \
 typedef JDDynamic * JPDDynamic; \
-typedef union JDynamic JDynamic ;
+typedef union JDynamic JDynamic ; \
 typedef JDynamic * JPDynamic ;
 
-struct JDDynamic { JPCMDynamic m ; JIBase b ; JUnsignedInteger r ; } ;
-union JDynamic { JPDDynamic d ; JIBase i ; } ;
+struct JDDynamic { JPCMDynamic methods ; JIBase owner ; JICPCMBase self ; JUnsignedInteger references ; } ;
+union JDynamic { JPDDynamic this ; JIBase interface ; } ;
 struct JMDynamic { jBaseAllMethods( JDynamic ) } ;
 
 #endif

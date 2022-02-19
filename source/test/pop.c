@@ -1,4 +1,10 @@
 #include "methods.h"
+#include <stdlib.h>
+
+#ifdef STA
+
+#endif // DEBUG
+
 
 JTestResult jagryPopTest( JPTest self , JPTestStack stackIn ) {
 if( self->stack != stackIn )
